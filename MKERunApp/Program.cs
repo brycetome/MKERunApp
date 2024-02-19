@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MKERunApp.Components;
 using MKERunApp.Components.Account;
-using MKERunApp.Data;
+using Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +24,10 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(connectionString, x => x.MigrationsAssembly(builder.Configuration["Migrations_Folder"]));
+    options.UseNpgsql(connectionString, x => x.MigrationsAssembly(builder.Configuration["Migrations_Folder"]));
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using MKERunApp.Data;
+using Models;
 
 namespace MKERunApp.Components.Account
 {

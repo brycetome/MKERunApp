@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using MKERunApp.Components.Account.Pages;
 using MKERunApp.Components.Account.Pages.Manage;
-using MKERunApp.Data;
+using Models;
 using System.Security.Claims;
 using System.Text.Json;
 

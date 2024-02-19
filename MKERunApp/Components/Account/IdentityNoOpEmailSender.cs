@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using MKERunApp.Data;
+using Models;
 
 namespace MKERunApp.Components.Account
 {
