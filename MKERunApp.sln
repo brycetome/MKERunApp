@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MKERunApp", "MKERunApp\MKERunApp.csproj", "{7BE6D28C-2750-448C-91A9-FEACB0EEC05D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MKERunApp", "MKERunApp\MKERunApp.csproj", "{7BE6D28C-2750-448C-91A9-FEACB0EEC05D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{0092FDF7-131A-46C8-AF08-1C1174936502}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalMigrations", "LocalMigrations\LocalMigrations.csproj", "{22A68DBC-FDEB-4912-BAA0-7CE875BF2D74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMigrations", "ServerMigrations\ServerMigrations.csproj", "{331BE667-09A2-47C8-B709-39EFF1E29EAE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UITests", "UITests\UITests.csproj", "{2D205CA1-C8F5-4732-8770-ED89E547C4A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeTests", "CodeTests\CodeTests.csproj", "{EFA72CA9-E452-4DF9-994B-598EF9FCACDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +25,26 @@ Global
 		{7BE6D28C-2750-448C-91A9-FEACB0EEC05D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BE6D28C-2750-448C-91A9-FEACB0EEC05D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BE6D28C-2750-448C-91A9-FEACB0EEC05D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0092FDF7-131A-46C8-AF08-1C1174936502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0092FDF7-131A-46C8-AF08-1C1174936502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0092FDF7-131A-46C8-AF08-1C1174936502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0092FDF7-131A-46C8-AF08-1C1174936502}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A68DBC-FDEB-4912-BAA0-7CE875BF2D74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A68DBC-FDEB-4912-BAA0-7CE875BF2D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A68DBC-FDEB-4912-BAA0-7CE875BF2D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A68DBC-FDEB-4912-BAA0-7CE875BF2D74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{331BE667-09A2-47C8-B709-39EFF1E29EAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331BE667-09A2-47C8-B709-39EFF1E29EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331BE667-09A2-47C8-B709-39EFF1E29EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331BE667-09A2-47C8-B709-39EFF1E29EAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D205CA1-C8F5-4732-8770-ED89E547C4A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D205CA1-C8F5-4732-8770-ED89E547C4A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D205CA1-C8F5-4732-8770-ED89E547C4A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D205CA1-C8F5-4732-8770-ED89E547C4A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFA72CA9-E452-4DF9-994B-598EF9FCACDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFA72CA9-E452-4DF9-994B-598EF9FCACDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFA72CA9-E452-4DF9-994B-598EF9FCACDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFA72CA9-E452-4DF9-994B-598EF9FCACDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
