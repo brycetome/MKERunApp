@@ -1,0 +1,10 @@
+﻿<MudDrawer DisableOverlay
+           Elevation="24"
+           Variant="DrawerVariant.Mini">
+    <MudNavMenu>
+        @foreach (var linkInfo in MKERunAppLink.NavLinks)
+        {
+            <MudNavLink Href="@linkInfo.Link" Icon="@linkInfo.Icon" />
+        }
+    </MudNavMenu>
+</MudDrawer>
