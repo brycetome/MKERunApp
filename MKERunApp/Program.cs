@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using MKERunApp.Components;
 using MKERunApp.Components.Account;
 using Models;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
