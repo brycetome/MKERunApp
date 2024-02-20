@@ -1,10 +1,12 @@
 ﻿@inherits LayoutComponentBase
+@using MKERunApp.Components.Layout.NavMenu
 
 <ThemeProvider/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
+    <NavMenuDesktop />
     <MudMainContent>
         @Body
     </MudMainContent>

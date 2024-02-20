@@ -1,0 +1,23 @@
+﻿<MudDrawer Open
+           Anchor="Anchor.Bottom"
+           Width="100%"
+           Height="42px"
+           Variant="DrawerVariant.Persistent"
+           Class="nav-menu-mobile-drawer">
+    <MudStack Row>
+        @foreach (var linkInfo in MKERunAppLink.NavLinks)
+        {
+            <MudIconButton DisableRipple
+                           DisableElevation
+                           Style="IconButtonStlye"
+                           Variant="Variant.Filled"
+                           Icon="@linkInfo.Icon"
+                           Href="@linkInfo.Link" />
+        }
+    </MudStack>
+</MudDrawer>
+
+@code {
+    private static readonly float ButtonWidth = (MKERunAppLink.NavLinks.Length / 3) * 100;
+    private string IconButtonStlye = $"width:{ButtonWidth}%;" + "height:100%";
+}
