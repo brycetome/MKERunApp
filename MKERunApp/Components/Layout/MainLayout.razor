@@ -5,8 +5,15 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <NavMenuDesktop />
+<MudLayout Style="height:100vh">
+    <MudHidden Breakpoint="Breakpoint.Xs">
+        <NavMenuDesktop />
+    </MudHidden>
+
+    <MudHidden Breakpoint="Breakpoint.SmAndUp">
+        <NavMenuMobile />
+    </MudHidden>
+
     <MudMainContent>
         @Body
     </MudMainContent>

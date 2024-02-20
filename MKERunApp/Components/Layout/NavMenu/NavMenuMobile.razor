@@ -3,8 +3,8 @@
            Width="100%"
            Height="42px"
            Variant="DrawerVariant.Persistent"
-           Class="nav-menu-mobile-drawer">
-    <MudStack Row>
+           Style="position: absolute;bottom:0;right:0;width:100%;">
+    <MudStack Row Justify="Justify.SpaceAround" Spacing="0">
         @foreach (var linkInfo in MKERunAppLink.NavLinks)
         {
             <MudIconButton DisableRipple
