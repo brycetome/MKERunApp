@@ -3,7 +3,6 @@ using Bunit;
 using MudBlazor.Services;
 namespace UITests
 {
-
     public abstract class BunitTestContext : TestContextWrapper
     {
         [TestInitialize]

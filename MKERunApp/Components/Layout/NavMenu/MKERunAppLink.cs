@@ -7,7 +7,6 @@ namespace MKERunApp.Components.Layout.NavMenu
         public string Link => _Link;
         public string Icon => _Icon;
 
-
         private readonly string _Link = link;
         private readonly string _Icon = icon;
 
