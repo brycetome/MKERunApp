@@ -1,10 +1,22 @@
 ﻿<CascadingValue Value="false" Name="UsePopoverProvider">
-    <MudThemeProvider Theme="MKERunAppTheme" IsDarkMode="true"/>
+    <MudThemeProvider Theme="MKERunAppTheme" IsDarkMode />
 </CascadingValue>
 
 @code {
     public static MudTheme MKERunAppTheme => new()
     {
-
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#95759f",
+            PrimaryLighten = "#d5c8d9",
+            Background = "#ABAAA1",
+            Surface = "#C0B09E",
+            TextPrimary = "#FFFFFF",
+            TextSecondary = "#FFFFFF"
+        },
+        LayoutProperties = new LayoutProperties()
+        {
+            DefaultBorderRadius = "12px",
+        }
     };
 }
