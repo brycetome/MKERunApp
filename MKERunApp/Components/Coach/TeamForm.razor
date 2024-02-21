@@ -44,28 +44,18 @@
             {
                 _Teams.Add(await CreateNewTeam());
                 await TeamsChanged.InvokeAsync(_Teams);
-                Snackbar.Add("Added the new team.", Severity.Success);
                 await ShowChanged.InvokeAsync(false);
+                Snackbar.Add("Added the new team.", Severity.Success);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Snackbar.Add(e.Message, Severity.Error);
+                Snackbar.Add(ex.Message, Severity.Error);
             }
         }
     }
 
     private async Task<Team> CreateNewTeam()
     {
-        var user = await UserManager.GetUserAsync(SignInManager.Context.User)
-            ?? throw new NullReferenceException("Failed to load user.");
-        var newTeam = new Team()
-            {
-                Name = TeamName
-            };
-        user.CoachedTeams.Add(newTeam);
-        var result = await UserManager.UpdateAsync(user);
-        if (!result.Succeeded)
-            throw new Exception("Failed to add team.");
-        return newTeam;
+        return await UserManager.AddCoahedTeam(SignInManager.Context.User, TeamName);
     }
 }

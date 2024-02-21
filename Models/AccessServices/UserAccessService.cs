@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,5 +28,19 @@ namespace Models.AccessServices
             return User;
         }
 
+        public static async Task<Team> AddCoahedTeam(
+            this UserManager<ApplicationUser> UserManager,
+            ClaimsPrincipal UserClaim,
+            string teamName)
+        {
+            var newTeam = new Team(teamName);
+            var user = await UserManager.GetUserAsync(UserClaim)
+                ?? throw new NullReferenceException("Failed to load user.");
+            user.CoachedTeams.Add(new Team(teamName));
+            var result = await UserManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                throw new Exception("Failed to add team.");
+            return newTeam;
+        }
     }
 }
