@@ -1,0 +1,14 @@
+@using MKERunApp.Components.Pages
+@attribute [TestClass]
+@inherits BunitTestContext
+@code
+{
+    [TestMethod]
+    public void AddTeam()
+    {
+        var cut = Render(@<CoachedTeams/>);
+        cut.Find("#new-button").Click();
+
+    }
+
+}

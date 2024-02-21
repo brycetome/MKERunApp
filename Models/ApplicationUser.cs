@@ -4,6 +4,6 @@ namespace Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public IEnumerable<Team> CoachedTeams { get; set; } = [];
+        public List<Team> CoachedTeams { get; set; } = [];
     }
 }

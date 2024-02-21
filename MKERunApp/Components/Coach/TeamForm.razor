@@ -1,0 +1,62 @@
+﻿@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+<MudForm @ref="form">
+    <MudTextField @bind-Value="TeamName"
+                  T="string"
+                  Label="Team Name"
+                  Required
+                  RequiredError="Team name is required." />
+    <MudButton>Sumbit</MudButton>
+</MudForm>
+
+@code {
+    [Parameter] public ApplicationUser? User { get; set; }
+    // [Parameter] public List<Team> Teams { get; set; } = [];
+    // [Parameter] public EventCallback<List<Team>> TeamsChanged { get; set; }
+
+    private List<Team> _Teams = [];
+    private string TeamName = "";
+    private MudForm? form;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // _Teams = Teams.ToList();
+    }
+
+    private async Task PressSubmit()
+    {
+        form?.Validate();
+        if (form?.IsValid ?? false)
+        {
+            try
+            {
+                _Teams.Add(await CreateNewTeam());
+                // await TeamsChanged.InvokeAsync(_Teams);
+                Snackbar.Add("Added the new team.", Severity.Success);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add(e.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task<Team> CreateNewTeam()
+    {
+        var user = await UserManager.GetUserAsync(SignInManager.Context.User)
+            ?? throw new NullReferenceException("Failed to load user.");
+        var newTeam = new Team()
+        {
+            Name = TeamName
+        };
+        user.CoachedTeams.Add(newTeam);
+        var result = await UserManager.UpdateAsync(user);
+        if (!result.Succeeded)
+            throw new Exception("Failed to add team.");
+        return newTeam;
+    }
+}

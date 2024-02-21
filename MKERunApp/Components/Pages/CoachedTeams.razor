@@ -1,0 +1,38 @@
+﻿@page "/CoachedTeams"
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<div>
+    <MudButton EndIcon="@Icons.Material.Filled.Add"
+               Variant="Variant.Filled"
+               Color="Color.Tertiary"
+               OnClick="PressNew"
+               UserAttributes="@(new() {{"id", "new-button"}})">
+        New
+    </MudButton>
+
+    <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
+        <MKERunApp.Components.Coach.TeamForm User="User">
+
+        </MKERunApp.Components.Coach.TeamForm>
+    </MudPopover>
+</div>
+
+
+@code {
+    private ApplicationUser? User;
+    private bool OpenNewTeamForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await UserManager.GetUserAsync(SignInManager.Context.User);
+        StateHasChanged();
+    }
+
+    private void PressNew()
+    {
+        OpenNewTeamForm = true;
+        StateHasChanged();
+    }
+}
