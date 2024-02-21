@@ -20,7 +20,7 @@
 
             <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
                 <MudPaper Class="pa-2">
-                    <TeamForm User="User" @bind-Show=OpenNewTeamForm @bind-Teams=User.CoachedTeams />
+                    <TeamForm @bind-Show=OpenNewTeamForm @bind-Teams=User.CoachedTeams />
                 </MudPaper>
             </MudPopover>
         </div>
@@ -30,8 +30,6 @@
         }
     }
 </AuthorizeView>
-
-
 
 @code {
     private ApplicationUser? User;
