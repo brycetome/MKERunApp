@@ -2,12 +2,22 @@
 @using MKERunApp.Components.Coach
 
 <AuthorizeView>
-    <MudText Typo="Typo.h4"><b>Teams</b></MudText>
     <MudGrid>
         <MudItem md="3">
-            <MudPaper Class="pa-2">
-                <TeamSelector />
-            </MudPaper>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.h4"><b>Teams</b></MudText>
+                <MudPaper Class="pa-2">
+                    <TeamSelector @bind-SelectedTeam=SelectedTeam />
+                </MudPaper>
+                @if (SelectedTeam != null)
+                {
+                    <InviteAthleteToTeam Team="SelectedTeam" />
+                }
+            </MudStack>
         </MudItem>
     </MudGrid>
 </AuthorizeView>
+
+@code {
+    private Team? SelectedTeam;
+}

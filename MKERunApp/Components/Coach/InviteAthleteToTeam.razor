@@ -1,0 +1,29 @@
+﻿@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+
+<MudStack Row>
+    <MudTextField Margin=Margin.Dense @bind-Value=email/>
+    <MudButton OnClick="InviteEmail">Invite</MudButton>
+</MudStack>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    required public Team Team { get; set; }
+
+
+    private string email = "";
+
+    private async Task InviteEmail()
+    {
+        try
+        {
+            await UserManager.SendInvite(Team, email);
+            Snackbar.Add("Invited the athelte.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+}

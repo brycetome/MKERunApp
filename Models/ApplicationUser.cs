@@ -5,5 +5,7 @@ namespace Models
     public class ApplicationUser : IdentityUser
     {
         public List<Team> CoachedTeams { get; set; } = [];
+        public List<TeamAthlete> AthleteTeams { get; set; } = [];
+        public List<TeamInvitation> Invitations { get; set; } = [];
     }
 }

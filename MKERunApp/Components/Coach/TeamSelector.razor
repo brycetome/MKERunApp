@@ -2,12 +2,14 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudStack Row AlignItems="AlignItems.Center" Spacing="6">
+<MudStack Row AlignItems="AlignItems.Center" Spacing="1">
+
     <MudSelect T="Team"
                Dense
                Margin="Margin.Dense"
                Variant="Variant.Outlined"
-               Placeholder="Select Team">
+               Placeholder="Select Team"
+               ValueChanged="team => TeamChanged(team)">
         @foreach (Team team in Teams)
         {
             <MudSelectItem Value="team" />
@@ -15,13 +17,12 @@
     </MudSelect>
 
     <div style="display:inline-block">
-        <MudButton EndIcon="@Icons.Material.Filled.Add"
-                   Variant="Variant.Filled"
-                   Color="Color.Tertiary"
-                   OnClick="PressNew"
-                   UserAttributes="@(new() {{"id", "new-button"}})">
-            New
-        </MudButton>
+        <MudFab StartIcon="@Icons.Material.Filled.Add"
+                DisableElevation
+                Size="Size.Small"
+                Color="Color.Tertiary"
+                OnClick="PressNew"
+                UserAttributes="@(new() {{"id", "new-button"}})" />
 
         <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
             <MudPaper Class="pa-2">
@@ -32,6 +33,9 @@
 </MudStack>
 
 @code {
+    [Parameter] public Team? SelectedTeam { get; set; }
+    [Parameter] public EventCallback<Team?> SelectedTeamChanged { get; set; }
+
     private List<Team> Teams = [];
     private bool OpenNewTeamForm;
 
@@ -52,5 +56,10 @@
     private void PressNew()
     {
         OpenNewTeamForm = !OpenNewTeamForm;
+    }
+
+    private void TeamChanged(Team team)
+    {
+        SelectedTeamChanged.InvokeAsync(team);
     }
 }
