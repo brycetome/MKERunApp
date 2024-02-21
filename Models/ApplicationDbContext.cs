@@ -5,5 +5,6 @@ namespace Models
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
+        public DbSet<Team> Team { get; set; }
     }
 }

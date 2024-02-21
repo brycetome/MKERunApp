@@ -13,7 +13,7 @@ namespace MKERunApp.Components.Layout.NavMenu
         public static readonly MKERunAppLink[] NavLinks =
         [
             new MKERunAppLink("/", Icons.Material.Filled.Home),
-            new MKERunAppLink("/Coach", Icons.Material.Filled.Sports),
+            new MKERunAppLink("/CoachedTeams", Icons.Material.Filled.Sports),
         ];
     }
 }

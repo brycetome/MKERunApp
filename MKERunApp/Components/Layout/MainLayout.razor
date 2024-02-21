@@ -4,6 +4,7 @@
 <ThemeProvider/>
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider />
 
 <MudLayout Style="height:100vh">
     <MudHidden Breakpoint="Breakpoint.Xs">
@@ -15,7 +16,9 @@
     </MudHidden>
 
     <MudMainContent>
-        @Body
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-2">
+                @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 

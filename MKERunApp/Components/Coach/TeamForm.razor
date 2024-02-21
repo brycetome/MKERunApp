@@ -1,0 +1,59 @@
+﻿@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+<MudForm @ref="form">
+    <MudStack>
+        <MudTextField @bind-Value="TeamName"
+                      T="string"
+                      Label="Team Name"
+                      Required
+                      RequiredError="Team name is required." />
+        <MudButton Color="Color.Primary"
+                   OnClick="ClickSubmit">
+            Submit
+        </MudButton>
+    </MudStack>
+</MudForm>
+
+@code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public EventCallback<bool> ShowChanged { get; set;}
+
+    [Parameter] public List<Team> Teams { get; set; } = [];
+    [Parameter] public EventCallback<List<Team>> TeamsChanged { get; set; }
+
+    private List<Team> _Teams = [];
+    private string TeamName = "";
+    private MudForm? form;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _Teams = Teams.ToList();
+    }
+
+    private async Task ClickSubmit()
+    {
+        form?.Validate();
+        if (form?.IsValid ?? false)
+        {
+            try
+            {
+                _Teams.Add(await CreateNewTeam());
+                await TeamsChanged.InvokeAsync(_Teams);
+                await ShowChanged.InvokeAsync(false);
+                Snackbar.Add("Added the new team.", Severity.Success);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task<Team> CreateNewTeam()
+    {
+        return await UserManager.AddCoahedTeam(SignInManager.Context.User, TeamName);
+    }
+}

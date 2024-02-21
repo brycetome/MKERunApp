@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(options =>
 
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(connectionString, x => x.MigrationsAssembly(builder.Configuration["Migrations_Folder"]));
 });
