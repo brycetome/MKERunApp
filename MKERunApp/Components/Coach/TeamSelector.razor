@@ -3,7 +3,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-
     <MudSelect T="Team"
                Dense
                Margin="Margin.Dense"
@@ -34,7 +33,6 @@
 
 @code {
     [Parameter] public EventCallback<Team?> SelectedTeamChanged { get; set; }
-
 
     private List<Team> Teams = [];
     private bool OpenNewTeamForm;
