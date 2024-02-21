@@ -17,5 +17,7 @@ namespace Models
         {
             Name = name;
         }
+
+        public override string ToString() => Name;
     }
 }
