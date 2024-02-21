@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @using MKERunApp.Components.Layout.NavMenu
-@rendermode InteractiveServer
 
 <ThemeProvider/>
 <MudDialogProvider />
@@ -18,7 +17,9 @@
 
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-2">
-            @Body
+            <AuthorizeView>
+                @Body
+            </AuthorizeView>
         </MudContainer>
     </MudMainContent>
 </MudLayout>

@@ -1,23 +1,34 @@
 ﻿@page "/CoachedTeams"
+
+@using MKERunApp.Components.Coach
+
+@inject ISnackbar Snackbar
 @inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IDbContextFactory<ApplicationDbContext> factory
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<div>
-    <MudButton EndIcon="@Icons.Material.Filled.Add"
-               Variant="Variant.Filled"
-               Color="Color.Tertiary"
-               OnClick="PressNew"
-               UserAttributes="@(new() {{"id", "new-button"}})">
-        New
-    </MudButton>
+@if (User is not null)
+{
+    <div style="display:inline-block">
+        <MudButton EndIcon="@Icons.Material.Filled.Add"
+                   Variant="Variant.Filled"
+                   Color="Color.Tertiary"
+                   OnClick="PressNew"
+                   UserAttributes="@(new() {{"id", "new-button"}})">
+            New
+        </MudButton>
 
-    <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
-        <MKERunApp.Components.Coach.TeamForm User="User">
+        <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
+            <MudPaper Class="pa-2">
+                <TeamForm User="User" @bind-Show=OpenNewTeamForm @bind-Teams=User.CoachedTeams />
+            </MudPaper>
+        </MudPopover>
+    </div>
+    @foreach(Team team in User.CoachedTeams)
+    {
+        @team.Name
+    }
+}
 
-        </MKERunApp.Components.Coach.TeamForm>
-    </MudPopover>
-</div>
 
 
 @code {
@@ -26,13 +37,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        User = await UserManager.GetUserAsync(SignInManager.Context.User);
+        try
+        {
+            User = await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User.", Severity.Error);
+        }
         StateHasChanged();
     }
 
     private void PressNew()
     {
-        OpenNewTeamForm = true;
-        StateHasChanged();
+        OpenNewTeamForm = !OpenNewTeamForm;
     }
 }
