@@ -9,7 +9,7 @@
                Margin="Margin.Dense"
                Variant="Variant.Outlined"
                Placeholder="Select Team"
-               ValueChanged="team => TeamChanged(team)">
+               ValueChanged="SelectedTeamChanged">
         @foreach (Team team in Teams)
         {
             <MudSelectItem Value="team" />
@@ -33,8 +33,8 @@
 </MudStack>
 
 @code {
-    [Parameter] public Team? SelectedTeam { get; set; }
     [Parameter] public EventCallback<Team?> SelectedTeamChanged { get; set; }
+
 
     private List<Team> Teams = [];
     private bool OpenNewTeamForm;

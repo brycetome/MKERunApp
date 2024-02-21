@@ -1,9 +1,15 @@
 ﻿@inject ISnackbar Snackbar
 @inject UserManager<ApplicationUser> UserManager
 
-<MudStack Row>
-    <MudTextField Margin=Margin.Dense @bind-Value=email/>
-    <MudButton OnClick="InviteEmail">Invite</MudButton>
+<MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+    <MudTextField @bind-Value=email
+                  Margin=Margin.Dense
+                  Variant="Variant.Outlined" />
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               OnClick="InviteEmail">
+        Invite
+    </MudButton>
 </MudStack>
 
 @code {
