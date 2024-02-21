@@ -1,0 +1,57 @@
+﻿@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<MudStack Row AlignItems="AlignItems.Center" Spacing="6">
+    <MudSelect T="Team"
+               Dense
+               Margin="Margin.Dense"
+               Variant="Variant.Outlined"
+               Placeholder="Select Team">
+        @foreach (Team team in Teams)
+        {
+            <MudSelectItem Value="team" />
+        }
+    </MudSelect>
+
+    <div style="display:inline-block">
+        <MudButton EndIcon="@Icons.Material.Filled.Add"
+                   Variant="Variant.Filled"
+                   Color="Color.Tertiary"
+                   OnClick="PressNew"
+                   UserAttributes="@(new() {{"id", "new-button"}})">
+            New
+        </MudButton>
+
+        <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
+            <MudPaper Class="pa-2">
+                <TeamForm @bind-Show=OpenNewTeamForm @bind-Teams=Teams />
+            </MudPaper>
+        </MudPopover>
+    </div>
+</MudStack>
+
+@code {
+    private List<Team> Teams = [];
+    private bool OpenNewTeamForm;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Teams = (await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider)).CoachedTeams;
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User.", Severity.Error);
+        }
+        StateHasChanged();
+    }
+
+
+    private void PressNew()
+    {
+        OpenNewTeamForm = !OpenNewTeamForm;
+    }
+}

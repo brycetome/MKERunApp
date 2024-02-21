@@ -1,71 +1,13 @@
 ﻿@page "/CoachedTeams"
-
 @using MKERunApp.Components.Coach
-
-@inject ISnackbar Snackbar
-@inject UserManager<ApplicationUser> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <AuthorizeView>
     <MudText Typo="Typo.h4"><b>Teams</b></MudText>
-    @if (User is not null)
-    {
-        <MudGrid>
-            <MudItem md="3">
-                <MudPaper Class="pa-2">
-                    <MudStack Row AlignItems="AlignItems.Center" Spacing="6">
-                        <MudSelect T="Team"
-                                   Dense
-                                   Margin="Margin.Dense"
-                                   Variant="Variant.Outlined"
-                                   Placeholder="Select Team">
-                            @foreach (Team team in User.CoachedTeams)
-                            {
-                                <MudSelectItem Value="team" />
-                            }
-                        </MudSelect>
-
-                        <div style="display:inline-block">
-                            <MudButton EndIcon="@Icons.Material.Filled.Add"
-                                       Variant="Variant.Filled"
-                                       Color="Color.Tertiary"
-                                       OnClick="PressNew"
-                                       UserAttributes="@(new() {{"id", "new-button"}})">
-                                New
-                            </MudButton>
-
-                            <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
-                                <MudPaper Class="pa-2">
-                                    <TeamForm @bind-Show=OpenNewTeamForm @bind-Teams=User.CoachedTeams />
-                                </MudPaper>
-                            </MudPopover>
-                        </div>
-                    </MudStack>
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
-    }
+    <MudGrid>
+        <MudItem md="3">
+            <MudPaper Class="pa-2">
+                <TeamSelector />
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 </AuthorizeView>
-
-@code {
-    private ApplicationUser? User;
-    private bool OpenNewTeamForm;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            User = await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider);
-        }
-        catch
-        {
-            Snackbar.Add("Failed to load the User.", Severity.Error);
-        }
-        StateHasChanged();
-    }
-
-    private void PressNew()
-    {
-        OpenNewTeamForm = !OpenNewTeamForm;
-    }
-}
