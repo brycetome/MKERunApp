@@ -2,12 +2,31 @@
 @using MKERunApp.Components.Coach
 
 <AuthorizeView>
-    <MudText Typo="Typo.h4"><b>Teams</b></MudText>
     <MudGrid>
-        <MudItem md="3">
-            <MudPaper Class="pa-2">
-                <TeamSelector />
-            </MudPaper>
+        <MudItem xs="12 "sm="6" md="5" lg="3" xl="2">
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.h4"><b>Teams</b></MudText>
+                <MudPaper Class="pa-2">
+                    <TeamSelector SelectedTeamChanged=SelectedTeamChanged />
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="12 " sm="6" md="5" lg="3" xl="2">
+            @if (SelectedTeam != null)
+            {
+                <MudPaper Class="pa-2">
+                    <InviteAthleteToTeam Team="SelectedTeam" />
+                </MudPaper>
+            }
         </MudItem>
     </MudGrid>
 </AuthorizeView>
+
+@code {
+    private Team? SelectedTeam;
+
+    private void SelectedTeamChanged(Team team)
+    {
+        SelectedTeam = team;
+    }
+}
