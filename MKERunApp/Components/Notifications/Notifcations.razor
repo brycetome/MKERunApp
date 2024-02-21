@@ -1,0 +1,63 @@
+﻿@using Models.DTO.Notifications
+
+@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<MudStack>
+    @foreach (var notification in NotifcationsList)
+    {
+        <MudText>@notification.Title</MudText>
+        <MudText>@notification.Description</MudText>
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudButton OnClick="() => Action(notification)">@notification.ActionTitle</MudButton>
+            <MudButton OnClick="() => ClearNotifcation(notification)">@notification.ClearTitle</MudButton>
+        </MudStack>
+        <MudDivider/>
+    }
+</MudStack>
+
+
+
+@code {
+    private List<AbstractNotification> NotifcationsList = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider);
+            NotifcationsList = user.GetNotifications(factory);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load notifications.", Severity.Error);
+        }
+    }
+
+    private async Task Action(AbstractNotification notification)
+    {
+        try
+        {
+            await notification.Action();
+            Snackbar.Add("Success", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task ClearNotifcation(AbstractNotification notification)
+    {
+        try
+        {
+            await notification.Clear();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+}

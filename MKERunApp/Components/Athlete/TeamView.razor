@@ -1,0 +1,29 @@
+﻿@inject ISnackbar Snackbar
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if(team != null)
+{
+    @team.Name
+}
+
+
+@code {
+    private Team? team;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var ATeams = (await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider)).AthleteTeams;
+            if(ATeams.Count > 0)
+                team = ATeams.First().Team;
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
+        }
+        StateHasChanged();
+    }
+}

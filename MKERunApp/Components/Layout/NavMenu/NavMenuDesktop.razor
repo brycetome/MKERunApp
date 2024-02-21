@@ -7,4 +7,21 @@
             <MudNavLink Href="@linkInfo.Link" Icon="@linkInfo.Icon" />
         }
     </MudNavMenu>
+    <MudSpacer />
+    <AuthorizeView>
+        <div style="display:inline-block">
+            <MudStack AlignItems="AlignItems.Center" Class="mb-2">
+                <MudFab StartIcon="@Icons.Material.Outlined.Notifications" Size="Size.Small" OnClick="() => OpenNotifications = true" />
+            </MudStack>
+            <MudPopover AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.BottomLeft" Open=OpenNotifications Fixed>
+                <MudPaper Class="pa-2">
+                    <MKERunApp.Components.Notifications.Notifcations />
+                </MudPaper>
+            </MudPopover>
+        </div>
+    </AuthorizeView>
 </MudDrawer>
+
+@code {
+    private bool OpenNotifications;
+}

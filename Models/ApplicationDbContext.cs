@@ -6,6 +6,7 @@ namespace Models
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Team> Team { get; set; }
+        public DbSet<TeamInvitation> TeamInvitation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
