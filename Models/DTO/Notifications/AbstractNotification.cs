@@ -8,7 +8,9 @@
         public virtual string ClearTitle => "Dismiss";
         public abstract string ActionTitle { get; }
 
-        public abstract Task Clear();
-        public abstract Task Action();
+        public abstract string ActionSuccessMessage { get; }
+
+        public abstract Task ClearNotification();
+        public abstract Task NotificationAction();
     }
 }

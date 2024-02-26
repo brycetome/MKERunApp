@@ -5,12 +5,20 @@ namespace Models.AccessServices
 {
     public static class NotificationService
     {
-        public static List<AbstractNotification> GetNotifications(
-            this ApplicationUser user,
-            IDbContextFactory<ApplicationDbContext> factory)
+        public static async Task<List<AbstractNotification>> GetNotificationsForUser(
+            this IDbContextFactory<ApplicationDbContext> factory,
+            string userId)
         {
             List<AbstractNotification> notifications = [];
-            foreach(var invite in user.Invitations)
+
+            using var ctx = factory.CreateDbContext();
+            var user = await ctx.Users
+                    .Include(u => u.Invitations)
+                    .ThenInclude(inv => inv.Team)
+                    .FirstOrDefaultAsync(u => u.Id == userId)
+                    ?? throw new NullReferenceException("Failed to load notifications.");
+
+            foreach (var invite in user.Invitations)
             {
                 notifications.Add(new InvitationNotification(invite, user.Id, factory));
             }

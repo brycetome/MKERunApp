@@ -18,12 +18,13 @@ namespace Models.DTO.Notifications
 
         public override string ClearTitle => "Deny";
         public override string ActionTitle => "Accept";
+        public override string ActionSuccessMessage => $"Accepted invitaion for {Invite.Team.Name}";
 
-        private TeamInvitation Invite = invite;
-        private string UserId = userId;
+        private readonly TeamInvitation Invite = invite;
+        private readonly string UserId = userId;
         private IDbContextFactory<ApplicationDbContext> Factory = factory;
 
-        public override async Task Action()
+        public override async Task NotificationAction()
         {
             using var ctx = Factory.CreateDbContext();
             var user = await ctx.Users.FindAsync(UserId)
@@ -43,7 +44,7 @@ namespace Models.DTO.Notifications
             await ctx.DisposeAsync();
         }
 
-        public override async Task Clear()
+        public override async Task ClearNotification()
         {
             using var ctx = Factory.CreateDbContext();
             ctx.TeamInvitation.Remove(Invite);

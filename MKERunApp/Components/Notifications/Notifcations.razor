@@ -37,8 +37,10 @@
     {
         try
         {
-            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
-            NotifcationsList = user.GetNotifications(factory);
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var userId = UserManager.GetUserId(user) ?? throw new NullReferenceException();
+            NotifcationsList = await factory.GetNotificationsForUser(userId);
         }
         catch
         {
@@ -50,9 +52,9 @@
     {
         try
         {
-            await notification.Action();
+            await notification.NotificationAction();
             RemoveNotification(notification);
-            Snackbar.Add("Success", Severity.Success);
+            Snackbar.Add(notification.ActionSuccessMessage, Severity.Success);
         }
         catch (Exception ex)
         {
@@ -64,7 +66,7 @@
     {
         try
         {
-            await notification.Clear();
+            await notification.ClearNotification();
             RemoveNotification(notification);
         }
         catch (Exception ex)

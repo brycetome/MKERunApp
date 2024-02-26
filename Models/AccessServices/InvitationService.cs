@@ -11,10 +11,10 @@ namespace Models.AccessServices
             var user = await UserManager.Users
                 .Include(u => u.AthleteTeams)
                 .FirstOrDefaultAsync(u => u.Email == email)
-                ?? throw new NullReferenceException("Could not find user's email.");
+                ?? throw new NullReferenceException($"Could not find user email {email}.");
 
             if (user.AthleteTeams.Any(at => at.TeamId == team.Id))
-                throw new Exception($"Athelte already has an invitation for {team.Name}.");
+                throw new Exception($"Athlete already has an invitation for {team.Name}.");
 
             var invitation = new TeamInvitation(team);
             user.Invitations.Add(invitation);
