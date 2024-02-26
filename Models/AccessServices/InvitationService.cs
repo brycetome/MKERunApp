@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Models.AccessServices
 {
@@ -6,8 +7,14 @@ namespace Models.AccessServices
     {
         public static async Task SendInvite(this UserManager<ApplicationUser> UserManager, Team team, string email)
         {
-            var user = await UserManager.FindByEmailAsync(email)
+
+            var user = await UserManager.Users
+                .Include(u => u.AthleteTeams)
+                .FirstOrDefaultAsync(u => u.Email == email)
                 ?? throw new NullReferenceException("Could not find user's email.");
+
+            if (user.AthleteTeams.Any(at => at.TeamId == team.Id))
+                throw new Exception($"Athelte already has an invitation for {team.Name}.");
 
             var invitation = new TeamInvitation(team);
             user.Invitations.Add(invitation);

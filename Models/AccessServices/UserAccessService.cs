@@ -8,14 +8,17 @@ namespace Models.AccessServices
     public static class UserAccessService
     {
         public static async Task<ApplicationUser> LoadUser(
+            this IDbContextFactory<ApplicationDbContext> factory,
             UserManager<ApplicationUser> UserManager,
             AuthenticationStateProvider AuthenticationStateProvider)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
+            using var ctx = factory.CreateDbContext();
+
             var userId = UserManager.GetUserId(user);
-            var User = await UserManager.Users
+            var User = await ctx.Users
                 .Include(u => u.CoachedTeams)
                 .Include(u => u.AthleteTeams)
                 .ThenInclude(at => at.Team)

@@ -6,28 +6,38 @@
 @inject IDbContextFactory<ApplicationDbContext> factory
 
 <MudStack>
-    @foreach (var notification in NotifcationsList)
+    @if (NotifcationsList.Count == 0)
     {
-        <MudText>@notification.Title</MudText>
-        <MudText>@notification.Description</MudText>
-        <MudStack Row AlignItems="AlignItems.Center">
-            <MudButton OnClick="() => Action(notification)">@notification.ActionTitle</MudButton>
-            <MudButton OnClick="() => ClearNotifcation(notification)">@notification.ClearTitle</MudButton>
-        </MudStack>
-        <MudDivider/>
+        <MudText>No notifications</MudText>
+    }
+    else
+    {
+        foreach (var notification in NotifcationsList)
+        {
+            <MudText>@notification.Title</MudText>
+            <MudText>@notification.Description</MudText>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudButton OnClick="() => Action(notification)">@notification.ActionTitle</MudButton>
+                <MudButton OnClick="() => ClearNotifcation(notification)">@notification.ClearTitle</MudButton>
+            </MudStack>
+            <MudDivider />
+        }
     }
 </MudStack>
 
 
 
 @code {
+    [Parameter] public bool IsShowing { get; set; }
+    [Parameter] public EventCallback<bool> IsShowingChanged { get; set; }
+
     private List<AbstractNotification> NotifcationsList = [];
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var user = await UserAccessService.LoadUser(UserManager, AuthenticationStateProvider);
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
             NotifcationsList = user.GetNotifications(factory);
         }
         catch
@@ -41,6 +51,7 @@
         try
         {
             await notification.Action();
+            RemoveNotification(notification);
             Snackbar.Add("Success", Severity.Success);
         }
         catch (Exception ex)
@@ -54,10 +65,16 @@
         try
         {
             await notification.Clear();
+            RemoveNotification(notification);
         }
         catch (Exception ex)
         {
             Snackbar.Add(ex.Message, Severity.Error);
         }
+    }
+
+    private void RemoveNotification(AbstractNotification notification)
+    {
+        NotifcationsList.Remove(notification);
     }
 }

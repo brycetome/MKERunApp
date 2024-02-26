@@ -28,13 +28,17 @@ namespace Models.DTO.Notifications
             using var ctx = Factory.CreateDbContext();
             var user = await ctx.Users.FindAsync(UserId)
                 ?? throw new NullReferenceException("Failed to load the user.");
+
             var newTeam = new TeamAthlete()
             {
-                User = user,
                 Team = Invite.Team
             };
             user.AthleteTeams.Add(newTeam);
-            ctx.TeamInvitation.Remove(Invite);
+
+            var OldInvite = await ctx.TeamInvitation.FindAsync(Invite.Id);
+            if (OldInvite != null)
+                ctx.TeamInvitation.Remove(OldInvite);
+
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
         }
