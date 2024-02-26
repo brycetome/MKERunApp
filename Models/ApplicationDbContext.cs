@@ -24,6 +24,18 @@ namespace Models
                 .WithMany(t => t.Athletes)
                 .HasForeignKey(at => at.TeamId);
 
+            modelBuilder.Entity<Team>()
+                .HasMany(team => team.Groups)
+                .WithOne(group => group.Team)
+                .HasForeignKey(grop => grop.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TeamGroup>()
+                .HasMany(group => group.Athletes)
+                .WithOne(ath => ath.Group)
+                .HasForeignKey(ath => ath.GroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             base.OnModelCreating(modelBuilder);
         }
     }
