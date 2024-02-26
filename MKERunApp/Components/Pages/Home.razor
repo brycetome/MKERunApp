@@ -1,7 +1,9 @@
 ﻿@page "/"
 
+@using MKERunApp.Components.Athlete
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<AuthorizeView>
+    <TeamView />
+</AuthorizeView>

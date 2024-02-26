@@ -1,0 +1,30 @@
+﻿@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@foreach (var team in teams)
+{
+    @team.Name
+}
+
+
+@code {
+    private IEnumerable<Team> teams = [];
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider))
+                .AthleteTeams
+                .Select(t => t.Team);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
+        }
+        StateHasChanged();
+    }
+}

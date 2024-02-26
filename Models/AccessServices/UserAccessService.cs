@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace Models.AccessServices
@@ -11,15 +8,22 @@ namespace Models.AccessServices
     public static class UserAccessService
     {
         public static async Task<ApplicationUser> LoadUser(
+            this IDbContextFactory<ApplicationDbContext> factory,
             UserManager<ApplicationUser> UserManager,
             AuthenticationStateProvider AuthenticationStateProvider)
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
+            using var ctx = factory.CreateDbContext();
+
             var userId = UserManager.GetUserId(user);
-            var User = await UserManager.Users
+            var User = await ctx.Users
                 .Include(u => u.CoachedTeams)
+                .Include(u => u.AthleteTeams)
+                .ThenInclude(at => at.Team)
+                .Include(u => u.Invitations)
+                .ThenInclude(inv => inv.Team)
                 .SingleOrDefaultAsync(u => u.Id == userId)
                 ?? throw new NullReferenceException("Failed to load the user.");
             return User;
