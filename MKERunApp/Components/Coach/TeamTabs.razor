@@ -1,0 +1,13 @@
+﻿@using MKERunApp.Components.Coach
+
+<MudStack>
+    <MudTabs Rounded PanelClass="mt-4">
+        <MudTabPanel Text="Groups">
+            <ManageTeamGroups @bind-Groups=Team.Groups TeamId ="Team.Id" Athletes="Team.Athletes" />
+        </MudTabPanel>
+    </MudTabs>
+</MudStack>
+
+@code {
+    [Parameter] [EditorRequired] required public Team Team { get; set; }
+}

@@ -1,0 +1,126 @@
+﻿@using Models.DTO
+
+@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<MudStack Spacing="4">
+    <MudGrid>
+        <MudItem xs="12" md="4">
+            <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+                <MudTextField @bind-Value=NewGroupName
+                              Margin=Margin.Dense
+                              Variant="Variant.Outlined"
+                              Placeholder="Group Name" />
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Tertiary"
+                           OnClick="CreateNewGroup">
+                    Create
+                </MudButton>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+
+
+    <MudDropContainer T="AthleteGroupDropItem"
+                      Items="DropItems"
+                      ItemsSelector="((item, dropZone) => item.Identifier == dropZone)"
+                      ItemDropped="ItemUpdated">
+        <ChildContent>
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    <MudText>Unassigned Athletes</MudText>
+                    <MudDropZone T="AthleteGroupDropItem"
+                                 Identifier="@AthleteGroupDropItem.UnassignedGroup"
+                                 Class="rounded-lg mud-alert-text-normal pl-3 pb-4 pt-2 flex-grow-1 d-flex flex-wrap"
+                                 AllowReorder />
+                </MudItem>
+
+
+                @foreach (var group in _Groups)
+                {
+                    <MudItem xs="12" md="3">
+                        <MudExpansionPanels Square=false>
+                            <MudExpansionPanel DisableGutters Dense Class="mud-background-gray" IsInitiallyExpanded>
+                                <TitleContent>
+                                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@group.Name</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" />
+                                    </MudStack>
+                                </TitleContent>
+                                <ChildContent>
+                                    <MudDropZone T="AthleteGroupDropItem"
+                                                 Identifier="@group.Id.ToString()"
+                                                 Class="rounded mud-background-gray pl-3 pb-8 pr-3 flex-grow-1"
+                                                 AllowReorder />
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </MudItem>
+                }
+            </MudGrid>
+        </ChildContent>
+        <ItemRenderer>
+            <MudPaper Class="pa-2" Style="z-indez:2000;">
+                <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <MudText>@context.Name</MudText>
+                    <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
+                </MudStack>
+            </MudPaper>
+        </ItemRenderer>
+    </MudDropContainer>
+</MudStack>
+
+
+<style>
+    .mud-expand-panel .mud-expand-panel-header {
+        padding: 2px 10px;
+    }
+
+    .mud-expand-panel {
+        border-radius: 12px;
+    }
+</style>
+
+@code {
+    [Parameter] public int TeamId { get; set; }
+    [Parameter] public List<TeamAthlete> Athletes { get; set; } = [];
+    [Parameter] public List<TeamGroup> Groups { get; set; } = [];
+    [Parameter] public EventCallback<List<TeamGroup>> GroupsChanged { get; set; }
+
+    private List<TeamGroup> _Groups = [];
+    private List<AthleteGroupDropItem> DropItems = [];
+    private string NewGroupName = "";
+
+    protected override void OnInitialized()
+    {
+        _Groups = Groups.ToList();
+        DropItems = Athletes.Select(ath => new AthleteGroupDropItem(ath, factory)).ToList();
+    }
+
+    private async Task CreateNewGroup()
+    {
+        try
+        {
+            var newGroup = await factory.CreateGroupInTeam(NewGroupName, TeamId);
+            _Groups.Add(newGroup);
+            await GroupsChanged.InvokeAsync(_Groups);
+            NewGroupName = "";
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task ItemUpdated(MudItemDropInfo<AthleteGroupDropItem> dropItem)
+    {
+        try
+        {
+            await dropItem.Item!.SaveGroupChange(dropItem.DropzoneIdentifier);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+}

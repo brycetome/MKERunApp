@@ -7,5 +7,8 @@
 
         public Team Team { get; set; } = default!;
         public ApplicationUser User { get; set; } = default!;
+
+        public int? GroupId { get; set; }
+        public TeamGroup? Group { get; set; } = default!;
     }
 }

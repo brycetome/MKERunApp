@@ -5,6 +5,7 @@ namespace Models
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
+        public DbSet<TeamAthlete> TeamAthlete { get; set; }
         public DbSet<Team> Team { get; set; }
         public DbSet<TeamInvitation> TeamInvitation { get; set; }
 
@@ -23,6 +24,23 @@ namespace Models
                 .HasOne(at => at.Team)
                 .WithMany(t => t.Athletes)
                 .HasForeignKey(at => at.TeamId);
+
+            modelBuilder.Entity<Team>()
+                .HasMany(team => team.Groups)
+                .WithOne(group => group.Team)
+                .HasForeignKey(grop => grop.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TeamGroup>()
+                .HasMany(group => group.Athletes)
+                .WithOne(ath => ath.Group)
+                .HasForeignKey(ath => ath.GroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Activity>()
+                .HasOne(act => act.ActivityType)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
 
             base.OnModelCreating(modelBuilder);
         }
