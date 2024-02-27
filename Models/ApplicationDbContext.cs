@@ -36,6 +36,11 @@ namespace Models
                 .HasForeignKey(ath => ath.GroupId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Activity>()
+                .HasOne(act => act.ActivityType)
+                .WithMany()
+                .OnDelete(DeleteBehavior.SetNull);
+
             base.OnModelCreating(modelBuilder);
         }
     }

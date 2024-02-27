@@ -1,6 +1,9 @@
 ﻿@page "/CoachedTeams"
 @using MKERunApp.Components.Coach
 
+@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+
 <AuthorizeView>
     <MudGrid>
         <MudItem xs="12 "sm="6" md="5" lg="3" xl="2">
@@ -11,6 +14,7 @@
                 </MudPaper>
             </MudStack>
         </MudItem>
+        
         <MudItem xs="12 " sm="6" md="5" lg="3" xl="2">
             @if (SelectedTeam != null)
             {
@@ -19,14 +23,28 @@
                 </MudPaper>
             }
         </MudItem>
+
+        @if (SelectedTeam != null)
+        {
+            <MudItem md="12">
+                <TeamTabs Team="SelectedTeam" />
+            </MudItem>
+        }
     </MudGrid>
 </AuthorizeView>
 
 @code {
     private Team? SelectedTeam;
 
-    private void SelectedTeamChanged(Team team)
+    private async Task SelectedTeamChanged(Team team)
     {
-        SelectedTeam = team;
+        try
+        {
+            SelectedTeam = await factory.LoadTeam(team.Id);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
     }
 }

@@ -1,0 +1,61 @@
+﻿@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<MudStack Spacing="6">
+    <MudGrid>
+        @foreach (var group in _Groups)
+        {
+            <MudItem md="3">
+                <MudPaper Class="pa-1 pl-3">
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudText>@group.Name</MudText>
+                        <MudSpacer />
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" />
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+
+
+    <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+        <MudTextField @bind-Value=NewGroupName
+                      Margin=Margin.Dense
+                      Variant="Variant.Outlined"
+                      Placeholder="Group Name"/>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Tertiary"
+                   OnClick="CreateNewGroup">
+            Create
+        </MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter] public int TeamId { get; set; }
+    [Parameter] public List<TeamGroup> Groups { get; set; } = [];
+    [Parameter] public EventCallback<List<TeamGroup>> GroupsChanged { get; set; }
+
+    private List<TeamGroup> _Groups = [];
+    private string NewGroupName = "";
+
+    protected override void OnInitialized()
+    {
+        _Groups = Groups.ToList();
+    }
+
+    private async Task CreateNewGroup()
+    {
+        try
+        {
+            var newGroup = await factory.CreateGroupInTeam(NewGroupName, TeamId);
+            _Groups.Add(newGroup);
+            await GroupsChanged.InvokeAsync(_Groups);
+            NewGroupName = "";
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+}
