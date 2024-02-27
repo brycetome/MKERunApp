@@ -14,9 +14,11 @@ namespace Models.AccessServices
             using var ctx = factory.CreateDbContext();
             var team = await ctx.Team
                 .Include(t => t.Athletes)
+                .ThenInclude(ath => ath.User)
                 .Include(t => t.Groups)
                 .FirstOrDefaultAsync(t => t.Id == teamId)
                 ?? throw new NullReferenceException("Could not find the team.");
+
             await ctx.DisposeAsync();
             return team;
         }

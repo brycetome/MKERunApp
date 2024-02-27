@@ -3,7 +3,7 @@
 <MudStack>
     <MudTabs Rounded PanelClass="mt-4">
         <MudTabPanel Text="Groups">
-            <ManageTeamGroups TeamId="Team.Id" @bind-Groups=Team.Groups/>
+            <ManageTeamGroups @bind-Groups=Team.Groups TeamId ="Team.Id" Athletes="Team.Athletes" />
         </MudTabPanel>
     </MudTabs>
 
