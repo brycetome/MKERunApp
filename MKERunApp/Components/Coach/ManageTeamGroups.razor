@@ -39,22 +39,24 @@
                 @foreach (var group in _Groups)
                 {
                     <MudItem xs="12" md="3">
-                        <MudExpansionPanels Square=false>
-                            <MudExpansionPanel DisableGutters Dense Class="mud-background-gray" IsInitiallyExpanded>
-                                <TitleContent>
-                                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                        <MudText>@group.Name</MudText>
-                                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" />
-                                    </MudStack>
-                                </TitleContent>
-                                <ChildContent>
-                                    <MudDropZone T="AthleteGroupDropItem"
-                                                 Identifier="@group.Id.ToString()"
-                                                 Class="rounded mud-background-gray pl-3 pb-8 pr-3 flex-grow-1"
-                                                 AllowReorder />
-                                </ChildContent>
-                            </MudExpansionPanel>
-                        </MudExpansionPanels>
+                        <MudDropZone T="AthleteGroupDropItem"
+                                     Identifier="@group.Id.ToString()"
+                                     OnlyZone>
+                            <MudExpansionPanels Square=false>
+                                <MudExpansionPanel DisableGutters Dense Class="mud-background-gray" IsInitiallyExpanded>
+                                    <TitleContent>
+                                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                            <MudText>@group.Name</MudText>
+                                            <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" />
+                                        </MudStack>
+                                    </TitleContent>
+                                    <ChildContent>
+                                        @* Duplicate drop zones is a bit of hack to smooth out dropping into panel headers *@
+                                        <MudDropZone T="AthleteGroupDropItem" Identifier="@group.Id.ToString()" Class="rounded mud-background-gray pl-3 pb-8 pr-3 flex-grow-1" />
+                                    </ChildContent>
+                                </MudExpansionPanel>
+                            </MudExpansionPanels>
+                        </MudDropZone>
                     </MudItem>
                 }
             </MudGrid>
