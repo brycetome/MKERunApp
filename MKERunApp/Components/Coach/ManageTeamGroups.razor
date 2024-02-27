@@ -40,21 +40,28 @@
                 @foreach (var group in _Groups)
                 {
                     <MudItem xs="12" md="3">
-                        <MudDropZone T="AthleteGroupDropItem"
-                                     Identifier="@group.Id.ToString()"
-                                     Class="rounded mud-background-gray pl-3 pb-4 pr-3 flex-grow-1"
-                                     AllowReorder>
-                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
-                                <MudText>@group.Name</MudText>
-                                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" />
-                            </MudStack>
-                        </MudDropZone>
+                        <MudExpansionPanels Square=false>
+                            <MudExpansionPanel DisableGutters Dense Class="mud-background-gray" IsInitiallyExpanded>
+                                <TitleContent>
+                                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                                        <MudText>@group.Name</MudText>
+                                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" />
+                                    </MudStack>
+                                </TitleContent>
+                                <ChildContent>
+                                    <MudDropZone T="AthleteGroupDropItem"
+                                                 Identifier="@group.Id.ToString()"
+                                                 Class="rounded mud-background-gray pl-3 pb-8 pr-3 flex-grow-1"
+                                                 AllowReorder />
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
                     </MudItem>
                 }
             </MudGrid>
         </ChildContent>
         <ItemRenderer>
-            <MudPaper Class="pa-2">
+            <MudPaper Class="pa-2" Style="z-indez:2000;">
                 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                     <MudText>@context.Name</MudText>
                     <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
@@ -63,6 +70,17 @@
         </ItemRenderer>
     </MudDropContainer>
 </MudStack>
+
+
+<style>
+    .mud-expand-panel .mud-expand-panel-header {
+        padding: 2px 10px;
+    }
+
+    .mud-expand-panel {
+        border-radius: 12px;
+    }
+</style>
 
 @code {
     [Parameter] public int TeamId { get; set; }
