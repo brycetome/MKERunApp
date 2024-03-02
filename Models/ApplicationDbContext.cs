@@ -7,6 +7,8 @@ namespace Models
     {
         public DbSet<TeamAthlete> TeamAthlete { get; set; }
         public DbSet<Team> Team { get; set; }
+
+        public DbSet<TeamGroup> TeamGroup { get; set; }
         public DbSet<TeamInvitation> TeamInvitation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -39,14 +39,13 @@
             }
             @for (int i = 1; i <= monthEnd.Day; i++)
             {
+                var dayDate = new DateTime(monthStart.Year, monthStart.Month, i);
                 var dayActivities =
-                _activities.Where(n => n.DayAndTime.Day == new DateTime(monthStart.Year, monthStart.Month, i).Day);
-
-                var day = i;
+                _activities.Where(n => n.DayAndTime.Day == dayDate.Day);
 
 
                 <div class="calendar-box mud-background">
-                    <CalendarDay Day="@day.ToString()" Activities="dayActivities" />
+                    <CalendarDay Day="@dayDate" Activities="dayActivities" Groups="Groups" />
                 </div>
             }
         </section>
@@ -56,7 +55,6 @@
 
 @code {
     [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
-    [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
 
 
     public record CalendarItem(DateTime Date, string Name);
@@ -74,7 +72,11 @@
     protected override void OnInitialized()
     {
         CreateMonth();
-        _activities = Activities.ToList();
+        _activities = Groups
+            .SelectMany(g => g.Activities)
+            .GroupBy(x => x.Id)
+            .Select(g => g.First())
+            .ToList();
     }
 
     private void CreateMonth()

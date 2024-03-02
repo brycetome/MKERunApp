@@ -1,5 +1,80 @@
-﻿<h3>ActivityForm</h3>
+﻿@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<MudForm @ref="form">
+    <MudStack>
+        <MudNumericField @bind-Value="Minutes"
+                         T="int"
+                         Label="Minutes"
+                         Required
+                         RequiredError="Minutes is required." />
+
+        @foreach (var group in Groups)
+        {
+            <MudCheckBox T="bool"
+                         Value="SelectedGroups.Contains(group)"
+                         ValueChanged="_ => ToggleSelectedGroup(group)"
+                         Label="@group.Name"
+                         Dense
+                         Size="Size.Small"
+                         Color="Color.Primary" />
+        }
+
+        <MudButton Color="Color.Primary"
+                   OnClick="ClickSubmit">
+            Submit
+        </MudButton>
+    </MudStack>
+</MudForm>
 
 @code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public EventCallback<bool> ShowChanged { get; set; }
 
+
+    [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+    [Parameter] public DateTime Date { get; set; }
+
+    private MudForm? form;
+    private int Minutes;
+    private List<TeamGroup> SelectedGroups = [];
+
+    private async Task ClickSubmit()
+    {
+        form?.Validate();
+        if (form?.IsValid ?? false)
+        {
+            var newActivity = new Activity()
+                {
+                    DayAndTime = Date.ToUniversalTime(),
+                    DurationSeconds = Minutes * 60
+                };
+            try
+            {
+                using var ctx = factory.CreateDbContext();
+
+                foreach (var group in SelectedGroups)
+                {
+                    var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
+                    loadedGroup.Activities.Add(newActivity);
+                }
+
+                await ctx.SaveChangesAsync();
+                await ctx.DisposeAsync();
+                await ShowChanged.InvokeAsync(false);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add("Failed to save the activity", Severity.Error);
+            }
+        }
+    }
+
+    private void ToggleSelectedGroup(TeamGroup group)
+    {
+        if (SelectedGroups.Contains(group))
+            SelectedGroups.Remove(group);
+        else
+            SelectedGroups.Add(group);
+    }
 }
