@@ -1,0 +1,101 @@
+﻿<style>
+    .section-display {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .calendar-box {
+        border-radius: 12px;
+        border-collapse: collapse;
+        margin: 1px;
+        padding: 2px;
+        padding-left: 8px;
+        min-height: 100px;
+    }
+</style>
+
+<MudPaper>
+    <MudStack Row AlignItems="AlignItems.Center" Class="pa-4">
+        <MudIconButton OnClick="() => { monthsAway--; CreateMonth(); }"
+                       Icon="@Icons.Material.Filled.NavigateBefore"
+                       Size="Size.Small"
+                       Color="Color.Primary" />
+
+        <MudIconButton OnClick="() => { monthsAway++; CreateMonth(); }"
+                       Icon="@Icons.Material.Filled.NavigateNext"
+                       Size="Size.Small"
+                       Color="Color.Primary" />
+
+        <MudText><b>@monthStart.ToString("MMMM"), @monthStart.ToString("yyyy")</b></MudText>
+    </MudStack>
+
+    <section class="section-display px-4 pb-4">
+        @foreach (var weekday in GetDaysOfWeek())
+        {
+            <MudText Class="py-2" Align="Align.Center">@weekday</MudText>
+        }
+        @for (int i = 0; i < numDummyColumn; i++)
+        {
+            <div></div>
+        }
+        @for (int i = 1; i <= monthEnd.Day; i++)
+        {
+            var calendarItem =
+            items.FirstOrDefault(n => n.Date == new DateTime(year, month, i));
+
+            var day = i;
+
+            <div class="calendar-box mud-background">
+                <MudStack>
+                    <MudText>@day</MudText>
+                    @if (calendarItem != null)
+                    {
+                        <p>@calendarItem.Name</p>
+                    }
+                </MudStack>
+            </div>
+        }
+    </section>
+</MudPaper>
+
+@code {
+    public record CalendarItem(DateTime Date, string Name);
+
+    DateTime monthStart;
+    DateTime monthEnd;
+    int monthsAway = 0;
+    int numDummyColumn = 0;
+    int year = 2020;
+    int month = 0;
+    List<CalendarItem> items = new List<CalendarItem>();
+
+
+    protected override void OnInitialized()
+    {
+        CreateMonth();
+    }
+
+    private void CreateMonth()
+    {
+        var tempDate = DateTime.Now.AddMonths(monthsAway);
+        month = tempDate.Month;
+        year = tempDate.Year;
+
+        monthStart = new DateTime(year, month, 1);
+        monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+        numDummyColumn = (int)monthStart.DayOfWeek - 1; // -1 for monday start of week
+    }
+
+    private List<string> GetDaysOfWeek()
+    {
+        List<string> daysOfWeek = new List<string>();
+        for (int i = 0; i < 7; i++)
+        {
+            // Adjust the index to start from Monday
+            int adjustedIndex = (i + 1) % 7;
+            daysOfWeek.Add(((DayOfWeek)adjustedIndex).ToString());
+        }
+        return daysOfWeek;
+    }
+}
