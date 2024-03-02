@@ -26,4 +26,8 @@
     <ProjectReference Include="..\ServerMigrations\ServerMigrations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Background\" />
+  </ItemGroup>
+
 </Project>
