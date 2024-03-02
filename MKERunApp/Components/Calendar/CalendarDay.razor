@@ -6,22 +6,23 @@
     }
 </style>
 
-<MudButton @ondblclick="() => OpenNewActivity = !OpenNewActivity" FullWidth Style="height:100%">
-    <MudStack Spacing="1" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start" Style="height:100%">
+<MudButton OnClick="() => OpenNewActivity = !OpenNewActivity" FullWidth Style="height:100%">
+    <MudStack Spacing="1" AlignItems="AlignItems.Start" Style="height:100%">
         <MudText>@Day.Day</MudText>
-        @foreach (Activity activity in Activities)
-        {
-            <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
-                <MudText Typo="Typo.caption">
-                    @foreach (var groupName in activity.Groups.Select(g => g.Name))
-                    {
-                        @($"{groupName}, ")
-                    }
-                </MudText>
-                <MudText Typo="Typo.caption">@($"{activity.DurationSeconds / 60}min")</MudText>
-            </MudStack>
-        }
-        <div style="height:100%"/>
+        <MudStack Spacing="0" Style="width:100%">
+            @foreach (Activity activity in Activities)
+            {
+                <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
+                    <MudText Typo="Typo.caption">
+                        @foreach (var groupName in activity.Groups.Select(g => g.Name))
+                        {
+                            @($"{groupName}, ")
+                        }
+                    </MudText>
+                    <MudText Typo="Typo.caption">@($"{activity.DurationSeconds / 60}min")</MudText>
+                </MudStack>
+            }
+        </MudStack>
     </MudStack>
 </MudButton>
 
