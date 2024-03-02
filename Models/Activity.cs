@@ -6,5 +6,7 @@
         public DateTime DayAndTime { get; set; }
         public ActivityType? ActivityType { get; set; }
         public double DurationSeconds { get; set; }
+
+        public List<TeamGroup> Groups { get; set; } = [];
     }
 }

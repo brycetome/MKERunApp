@@ -37,6 +37,10 @@ namespace Models
                 .HasForeignKey(ath => ath.GroupId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<TeamGroup>()
+                .HasMany(group => group.Activities)
+                .WithMany(activity => activity.Groups);
+
             modelBuilder.Entity<Activity>()
                 .HasOne(act => act.ActivityType)
                 .WithMany()

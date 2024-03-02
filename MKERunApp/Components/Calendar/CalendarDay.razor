@@ -1,0 +1,38 @@
+﻿<style>
+    .mud-button-label
+    {
+        height: 100%;
+        display: block;
+    }
+</style>
+
+<MudButton @ondblclick="() => OpenNewActivity = !OpenNewActivity" FullWidth Style="height:100%">
+    <MudStack Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start" Style="height:100%">
+        <MudText>@Day</MudText>
+        @foreach (Activity activity in Activities)
+        {
+            <MudStack Row>
+                <MudText Typo="Typo.caption">
+                    @foreach (var groupName in activity.Groups.Select(g => g.Name))
+                    {
+                        @($"{groupName}, ")
+                    }
+                </MudText>
+                <MudText Typo="Typo.caption">@activity.DurationSeconds</MudText>
+            </MudStack>
+        }
+        <div style="height:100%"/>
+    </MudStack>
+</MudButton>
+
+<MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
+    <MudPaper Class="pa-2">
+        <ActivityForm />
+    </MudPaper>
+</MudPopover>
+
+@code {
+    [Parameter] public string Day { get; set; } = "";
+    [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
+    private bool OpenNewActivity = false;
+}
