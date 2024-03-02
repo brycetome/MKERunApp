@@ -14,10 +14,7 @@
             {
                 <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
                     <MudText Typo="Typo.caption">
-                        @foreach (var groupName in activity.Groups.Select(g => g.Name))
-                        {
-                            @($"{groupName}, ")
-                        }
+                        @string.Join(", ", activity.Groups.Select(g => g.Name))
                     </MudText>
                     <MudText Typo="Typo.caption">@($"{activity.DurationSeconds / 60}min")</MudText>
                 </MudStack>
