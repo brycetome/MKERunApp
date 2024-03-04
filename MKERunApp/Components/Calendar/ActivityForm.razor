@@ -45,7 +45,7 @@
                 await TodaysActivities.AddActivityWithMinutes(Minutes);
                 await ShowChanged.InvokeAsync(false);
             }
-            catch (Exception ex)
+            catch
             {
                 Snackbar.Add("Failed to save the activity", Severity.Error);
             }
