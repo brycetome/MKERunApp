@@ -1,0 +1,90 @@
+﻿@inject IDbContextFactory<ApplicationDbContext> factory
+
+<style>
+    .section-display {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .calendar-box {
+        border-radius: 12px;
+        border-collapse: collapse;
+        margin: 1px;
+        min-height: 100px;
+    }
+</style>
+
+<MudStack>
+    <MudPaper>
+        <MudStack Row AlignItems="AlignItems.Center" Class="pa-4">
+            <MudIconButton OnClick="() => { monthsAway--; CreateMonth(); }"
+                           Icon="@Icons.Material.Filled.NavigateBefore"
+                           Size="Size.Small"
+                           Color="Color.Primary" />
+
+            <MudIconButton OnClick="() => { monthsAway++; CreateMonth(); }"
+                           Icon="@Icons.Material.Filled.NavigateNext"
+                           Size="Size.Small"
+                           Color="Color.Primary" />
+
+            <MudText><b>@monthStart.ToString("MMMM") @monthStart.ToString("yyyy")</b></MudText>
+        </MudStack>
+
+        <section class="section-display px-4 pb-4">
+            @foreach (var weekday in GetDaysOfWeek())
+            {
+                <MudText Class="py-2" Align="Align.Center">@weekday</MudText>
+            }
+            @for (int i = 0; i < emptyDaysFromPastMonth; i++)
+            {
+                <div/>
+            }
+            @for (int i = 1; i <= monthEnd.Day; i++)
+            {
+                var dayDate = new DateTime(monthStart.Year, monthStart.Month, i);
+
+
+                <div class="calendar-box mud-background">
+                    <CalendarDay TodaysActivities="new CalendarDayActivities(Groups, dayDate, factory)" />
+                </div>
+            }
+        </section>
+    </MudPaper>
+</MudStack>
+
+
+@code {
+    [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+
+    DateTime monthStart;
+    DateTime monthEnd;
+    int monthsAway = 0;
+    int emptyDaysFromPastMonth = 0;
+
+    protected override void OnInitialized()
+    {
+        CreateMonth();
+    }
+
+    public static List<string> GetDaysOfWeek()
+    {
+        List<string> daysOfWeek = new List<string>();
+        for (int i = 0; i < 7; i++)
+        {
+            // Adjust the index to start from Monday
+            int adjustedIndex = (i + 1) % 7;
+            daysOfWeek.Add(((DayOfWeek)adjustedIndex).ToString());
+        }
+        return daysOfWeek;
+    }
+
+    private void CreateMonth()
+    {
+        var tempDate = DateTime.Now.AddMonths(monthsAway);
+
+        monthStart = new DateTime(tempDate.Year, tempDate.Month, 1);
+        monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+        emptyDaysFromPastMonth = (int)monthStart.DayOfWeek - 1; // -1 for monday start of week
+    }
+}

@@ -7,6 +7,7 @@ namespace Models
     {
         public DbSet<TeamAthlete> TeamAthlete { get; set; }
         public DbSet<Team> Team { get; set; }
+        public DbSet<TeamGroup> TeamGroup { get; set; }
         public DbSet<TeamInvitation> TeamInvitation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +37,10 @@ namespace Models
                 .WithOne(ath => ath.Group)
                 .HasForeignKey(ath => ath.GroupId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<TeamGroup>()
+                .HasMany(group => group.Activities)
+                .WithMany(activity => activity.Groups);
 
             modelBuilder.Entity<Activity>()
                 .HasOne(act => act.ActivityType)

@@ -5,6 +5,9 @@ using MKERunApp.Components;
 using MKERunApp.Components.Account;
 using Models;
 using MudBlazor.Services;
+using Azure.Identity;
+using Azure.Core;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +31,27 @@ builder.Services.AddAuthentication(options =>
 
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
+
+if (builder.Environment.IsProduction())
+{
+    var sqlServerTokenProvider = new DefaultAzureCredential();
+
+    AccessToken accessToken = await sqlServerTokenProvider.GetTokenAsync(
+    new TokenRequestContext(scopes:
+    [
+        "https://ossrdbms-aad.database.windows.net/.default"
+    ]));
+    connectionString = $"{Environment.GetEnvironmentVariable("AZURE_POSTGRESQL_CONNECTIONSTRING")};Password={accessToken.Token}";
+    using (var connection = new NpgsqlConnection(connectionString))
+    {
+        Console.WriteLine("Opening connection using access token...");
+        connection.Open();
+    }
+}
+
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(connectionString, x => x.MigrationsAssembly(builder.Configuration["Migrations_Folder"]));
+    options.UseNpgsql(connectionString, x => x.MigrationsAssembly("ServerMigrations"));
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

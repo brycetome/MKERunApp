@@ -22,6 +22,21 @@ namespace ServerMigrations.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ActivityTeamGroup", b =>
+                {
+                    b.Property<int>("ActivitiesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GroupsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ActivitiesId", "GroupsId");
+
+                    b.HasIndex("GroupsId");
+
+                    b.ToTable("ActivityTeamGroup");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -154,6 +169,51 @@ namespace ServerMigrations.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ActivityTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DayAndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("DurationSeconds")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityTypeId");
+
+                    b.ToTable("Activity");
+                });
+
+            modelBuilder.Entity("Models.ActivityType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ActivityType");
+                });
+
             modelBuilder.Entity("Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -248,11 +308,38 @@ namespace ServerMigrations.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("integer");
+
                     b.HasKey("UserId", "TeamId");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("TeamId");
 
                     b.ToTable("TeamAthlete");
+                });
+
+            modelBuilder.Entity("Models.TeamGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("TeamGroup");
                 });
 
             modelBuilder.Entity("Models.TeamInvitation", b =>
@@ -276,6 +363,21 @@ namespace ServerMigrations.Migrations
                     b.HasIndex("TeamId");
 
                     b.ToTable("TeamInvitation");
+                });
+
+            modelBuilder.Entity("ActivityTeamGroup", b =>
+                {
+                    b.HasOne("Models.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivitiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.TeamGroup", null)
+                        .WithMany()
+                        .HasForeignKey("GroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -329,6 +431,16 @@ namespace ServerMigrations.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Models.Activity", b =>
+                {
+                    b.HasOne("Models.ActivityType", "ActivityType")
+                        .WithMany()
+                        .HasForeignKey("ActivityTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ActivityType");
+                });
+
             modelBuilder.Entity("Models.Team", b =>
                 {
                     b.HasOne("Models.ApplicationUser", null)
@@ -338,6 +450,11 @@ namespace ServerMigrations.Migrations
 
             modelBuilder.Entity("Models.TeamAthlete", b =>
                 {
+                    b.HasOne("Models.TeamGroup", "Group")
+                        .WithMany("Athletes")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Models.Team", "Team")
                         .WithMany("Athletes")
                         .HasForeignKey("TeamId")
@@ -350,9 +467,22 @@ namespace ServerMigrations.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Group");
+
                     b.Navigation("Team");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Models.TeamGroup", b =>
+                {
+                    b.HasOne("Models.Team", "Team")
+                        .WithMany("Groups")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Models.TeamInvitation", b =>
@@ -380,6 +510,13 @@ namespace ServerMigrations.Migrations
                 });
 
             modelBuilder.Entity("Models.Team", b =>
+                {
+                    b.Navigation("Athletes");
+
+                    b.Navigation("Groups");
+                });
+
+            modelBuilder.Entity("Models.TeamGroup", b =>
                 {
                     b.Navigation("Athletes");
                 });

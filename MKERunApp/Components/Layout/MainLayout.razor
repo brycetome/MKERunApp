@@ -6,21 +6,23 @@
 <MudSnackbarProvider />
 <MudPopoverProvider />
 
-<MudLayout Style="height:100vh">
-    <MudHidden Breakpoint="Breakpoint.Xs">
-        <NavMenuDesktop />
-    </MudHidden>
+<div style="background-image: url('/Background/TrackBackgroundLighter.svg');background-size: cover; background-attachment: fixed;">
+    <MudLayout Style="height:100vh">
+        <MudHidden Breakpoint="Breakpoint.Xs">
+            <NavMenuDesktop />
+        </MudHidden>
 
-    <MudHidden Breakpoint="Breakpoint.SmAndUp">
-        <NavMenuMobile />
-    </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <NavMenuMobile />
+        </MudHidden>
 
-    <MudMainContent Class="pt-2">
-        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+        <MudMainContent Class="pt-2">
+            <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
                 @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+            </MudContainer>
+        </MudMainContent>
+    </MudLayout>
+</div>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.

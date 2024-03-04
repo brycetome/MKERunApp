@@ -1,7 +1,12 @@
 ﻿@using MKERunApp.Components.Coach
+@using MKERunApp.Components.Calendar
 
 <MudStack>
-    <MudTabs Rounded PanelClass="mt-4">
+    <MudTabs Rounded PanelClass="mt-4" KeepPanelsAlive>
+        <MudTabPanel Text="Calender">
+            <Calendar Groups="Team.Groups" />
+        </MudTabPanel>
+
         <MudTabPanel Text="Groups">
             <ManageTeamGroups @bind-Groups=Team.Groups TeamId ="Team.Id" Athletes="Team.Athletes" />
         </MudTabPanel>
