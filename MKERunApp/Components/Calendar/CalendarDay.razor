@@ -6,11 +6,11 @@
     }
 </style>
 
-<MudButton OnClick="() => OpenNewActivity = !OpenNewActivity" FullWidth Style="height:100%">
+<MudButton OnClick="ClickedDay" FullWidth Style="height:100%">
     <MudStack Spacing="1" AlignItems="AlignItems.Start" Style="height:100%">
-        <MudText>@Day.Day</MudText>
+        <MudText>@TodaysActivities.GetDay.Day</MudText>
         <MudStack Spacing="0" Style="width:100%">
-            @foreach (Activity activity in Activities)
+            @foreach (Activity activity in TodaysActivities.GetActivities)
             {
                 <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
                     <MudText Typo="Typo.caption">
@@ -25,13 +25,16 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm @bind-Show=OpenNewActivity Date="Day" Groups="Groups" />
+        <ActivityForm @bind-Show=OpenNewActivity TodaysActivities="TodaysActivities"/>
     </MudPaper>
 </MudPopover>
 
 @code {
-    [Parameter] public DateTime Day { get; set; }
-    [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
-    [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+    [Parameter][EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
     private bool OpenNewActivity = false;
+
+    private void ClickedDay()
+    {
+        OpenNewActivity = !OpenNewActivity;
+    }
 }
