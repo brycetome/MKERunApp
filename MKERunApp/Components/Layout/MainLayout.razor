@@ -6,8 +6,19 @@
 <MudSnackbarProvider />
 <MudPopoverProvider />
 
-<div style="background-image: url('/Background/TrackBackgroundLighter.svg');background-size: cover; background-attachment: fixed;">
-    <MudLayout Style="height:100vh">
+<style>
+    html,
+    body,
+    body > header {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+
+<div style="background-image: url('/Background/TrackBackgroundLighter.svg');background-size: cover; background-attachment: fixed;height:100%">
+    <MudLayout>
         <MudHidden Breakpoint="Breakpoint.Xs">
             <NavMenuDesktop />
         </MudHidden>
