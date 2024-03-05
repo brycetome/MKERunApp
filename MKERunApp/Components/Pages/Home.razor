@@ -5,5 +5,10 @@
 <PageTitle>Home</PageTitle>
 
 <AuthorizeView>
-    <TeamView />
+    <Authorized>
+        <TeamView />
+    </Authorized>
+    <NotAuthorized>
+        <MudText>Click the person Icon to log in or register an account.</MudText>
+    </NotAuthorized>
 </AuthorizeView>

@@ -3,21 +3,30 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+<style>
+    .mud-expand-panel-header {
+        padding-left: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+</style>
 
-<AuthorizeView>
-    <Authorized>
-        <MudStack Spacing="4">
-            <MudGrid>
-                <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
-                    <MudPaper Class="pa-2" Style="width:100%">
-                        <MudStack Row AlignItems="AlignItems.Center">
-                            <MudText Typo="Typo.h4"><b>Teams</b></MudText>
-                            <TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
-                        </MudStack>
-                    </MudPaper>
-                </MudItem>
-            </MudGrid>
+<MudStack Spacing="4">
+    <MudGrid>
+        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+            <MudPaper Class="pa-2" Style="width:100%">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.h4"><b>Teams</b></MudText>
+                    <TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 
+    <MudText Typo="Typo.h3">Today</MudText>
+
+    <MudGrid>
+        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
             @if (DayActivities != null && Athlete?.Group != null)
             {
                 <MudExpansionPanels MultiExpansion>
@@ -44,14 +53,9 @@
                     }
                 </MudExpansionPanels>
             }
-        </MudStack>
-
-    </Authorized>
-
-    <NotAuthorized>
-        <MudText>Click the person Icon to login or regiester an account.</MudText>
-    </NotAuthorized>
-</AuthorizeView>
+        </MudItem>
+    </MudGrid>
+</MudStack>
 
 
 @code {
