@@ -3,26 +3,84 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
+
+<AuthorizeView>
+    <Authorized>
+        <MudStack Spacing="4">
+            <MudGrid>
+                <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+                    <MudPaper Class="pa-2" Style="width:100%">
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <MudText Typo="Typo.h4"><b>Teams</b></MudText>
+                            <TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+
+            @if (DayActivities != null && Athlete?.Group != null)
+            {
+                <MudExpansionPanels MultiExpansion>
+                    @foreach (Activity act in DayActivities.GetActivitiesForGroup(Athlete.Group))
+                    {
+                        <MudExpansionPanel Dense Style="background: #c9a853">
+                            <TitleContent>
+                                <MudStack Row AlignItems="AlignItems.Center">
+                                    <IconText Icon="@Icons.Material.Filled.DirectionsRun"
+                                              Text="Training Run"
+                                              SubText="@($"Group: {Athlete.Group.Name}")" />
+
+                                    <MudStack Row
+                                              Class="pr-10 py-2"
+                                              Spacing="0"
+                                              Justify="Justify.FlexEnd"
+                                              AlignItems="AlignItems.Baseline">
+                                        <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
+                                        <MudText Typo="Typo.body1">min</MudText>
+                                    </MudStack>
+                                </MudStack>
+                            </TitleContent>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            }
+        </MudStack>
+
+    </Authorized>
+
+    <NotAuthorized>
+        <MudText>Click the person Icon to login or regiester an account.</MudText>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {
     private IEnumerable<Team> Teams = [];
     private Team? SelectedTeam;
+    private TeamAthlete? Athlete;
+    private IEnumerable<Activity> Activities = [];
+    private CalendarDayActivities? DayActivities;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            Teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider))
-                .AthleteTeams
-                .Select(t => t.Team);
-            SelectedTeam = Teams.FirstOrDefault();
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            Teams = user.AthleteTeams.Select(at => at.Team);
+            Athlete = user.AthleteTeams.FirstOrDefault();
+            SelectedTeam = Athlete?.Team;
+            if (user.AthleteTeams.FirstOrDefault() is TeamAthlete team)
+                await ChangeTeam(team);
         }
         catch
         {
             Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
         }
         StateHasChanged();
+    }
+
+    private async Task ChangeTeam(TeamAthlete team)
+    {
+        DayActivities = await CalendarDayActivities.CreateDayFromTeam(factory, team.Team);
     }
 }
