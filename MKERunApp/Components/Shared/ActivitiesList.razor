@@ -1,4 +1,12 @@
-﻿<MudExpansionPanels MultiExpansion Elevation="25">
+﻿<style>
+    .mud-expand-panel-header {
+        padding-left: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+</style>
+
+<MudExpansionPanels MultiExpansion Elevation="25">
     @foreach (Activity act in Activities)
     {
         <MudExpansionPanel Dense Style="background: #c9a853">

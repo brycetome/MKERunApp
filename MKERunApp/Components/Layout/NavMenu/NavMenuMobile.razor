@@ -10,16 +10,9 @@
             <MudButton DisableRipple
                        FullWidth
                        DisableElevation
-                       Style="IconButtonStlye"
                        Variant="Variant.Filled"
                        StartIcon="@linkInfo.Icon"
                        Href="@linkInfo.Link" />
         }
     </MudStack>
 </MudDrawer>
-
-
-@code {
-    private static readonly float ButtonWidth = (MKERunAppLink.NavLinks.Length / 3) * 100;
-    private string IconButtonStlye = $"width:{ButtonWidth}%;" + "height:100%";
-}

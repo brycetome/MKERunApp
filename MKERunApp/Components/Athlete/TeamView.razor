@@ -4,14 +4,6 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<style>
-    .mud-expand-panel-header {
-        padding-left: 0 !important;
-        padding-bottom: 0 !important;
-        padding-top: 0 !important;
-    }
-</style>
-
 <MudStack Spacing="4">
     <MudGrid>
         <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
@@ -46,7 +38,6 @@
     private IEnumerable<Team> Teams = [];
     private Team? SelectedTeam;
     private TeamAthlete? Athlete;
-    private IEnumerable<Activity> Activities = [];
     private CalendarDayActivities? DayActivities;
 
     protected override async Task OnInitializedAsync()

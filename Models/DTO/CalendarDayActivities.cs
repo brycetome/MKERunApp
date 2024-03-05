@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace Models.DTO
             day = Day;
             activities = Groups
                  .SelectMany(g => g.Activities)
-                 .Where(act => act.DayAndTime.Date == day.Date)
+                 .Where(act => act.DayAndTime.Date == day.Date.ToUniversalTime())
                  .GroupBy(x => x.Id)
                  .Select(g => g.First())
                  .ToList();
