@@ -14,6 +14,7 @@ namespace MKERunApp.Components.Layout.NavMenu
         [
             new MKERunAppLink("/", Icons.Material.Filled.Home),
             new MKERunAppLink("/CoachedTeams", Icons.Material.Filled.Sports),
+            new MKERunAppLink("/Account/Login", Icons.Material.Filled.AccountCircle)
         ];
     }
 }

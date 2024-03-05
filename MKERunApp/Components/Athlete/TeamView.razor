@@ -1,4 +1,5 @@
-﻿@inject ISnackbar Snackbar
+﻿@using MKERunApp.Components.Notifications
+@inject ISnackbar Snackbar
 @inject IDbContextFactory<ApplicationDbContext> factory
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -23,13 +24,18 @@
         </MudItem>
     </MudGrid>
 
-    <MudText Typo="Typo.h3">Today</MudText>
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
+        <MudText Typo="Typo.h3">Today</MudText>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <NotifactionsBell />
+        </MudHidden>
+    </MudStack>
 
     <MudGrid>
         <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
             @if (DayActivities != null && Athlete?.Group != null)
             {
-                <MudExpansionPanels MultiExpansion>
+                <MudExpansionPanels MultiExpansion Elevation="25">
                     @foreach (Activity act in DayActivities.GetActivitiesForGroup(Athlete.Group))
                     {
                         <MudExpansionPanel Dense Style="background: #c9a853">

@@ -10,25 +10,5 @@
         }
     </MudNavMenu>
     <MudSpacer />
-    <AuthorizeView>
-        <div style="display:inline-block">
-            <MudStack AlignItems="AlignItems.Center" Class="mb-2">
-                <MudFab StartIcon="@Icons.Material.Outlined.Notifications" Size="Size.Small" OnClick="ClickBell" />
-            </MudStack>
-            <MudPopover AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.BottomLeft" Open=OpenNotifications Fixed>
-                <MudPaper Class="pa-2">
-                    <Notifcations @bind-IsShowing=OpenNotifications />
-                </MudPaper>
-            </MudPopover>
-        </div>
-    </AuthorizeView>
+    <NotifactionsBell />
 </MudDrawer>
-
-@code {
-    private bool OpenNotifications;
-
-    private void ClickBell()
-    {
-        OpenNotifications = !OpenNotifications;
-    }
-}

@@ -7,15 +7,17 @@
     <MudStack Row Justify="Justify.SpaceAround" Spacing="0">
         @foreach (var linkInfo in MKERunAppLink.NavLinks)
         {
-            <MudIconButton DisableRipple
-                           DisableElevation
-                           Style="IconButtonStlye"
-                           Variant="Variant.Filled"
-                           Icon="@linkInfo.Icon"
-                           Href="@linkInfo.Link" />
+            <MudButton DisableRipple
+                       FullWidth
+                       DisableElevation
+                       Style="IconButtonStlye"
+                       Variant="Variant.Filled"
+                       StartIcon="@linkInfo.Icon"
+                       Href="@linkInfo.Link" />
         }
     </MudStack>
 </MudDrawer>
+
 
 @code {
     private static readonly float ButtonWidth = (MKERunAppLink.NavLinks.Length / 3) * 100;
