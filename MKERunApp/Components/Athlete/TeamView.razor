@@ -35,29 +35,7 @@
         <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
             @if (DayActivities != null && Athlete?.Group != null)
             {
-                <MudExpansionPanels MultiExpansion Elevation="25">
-                    @foreach (Activity act in DayActivities.GetActivitiesForGroup(Athlete.Group))
-                    {
-                        <MudExpansionPanel Dense Style="background: #c9a853">
-                            <TitleContent>
-                                <MudStack Row AlignItems="AlignItems.Center">
-                                    <IconText Icon="@Icons.Material.Filled.DirectionsRun"
-                                              Text="Training Run"
-                                              SubText="@($"Group: {Athlete.Group.Name}")" />
-
-                                    <MudStack Row
-                                              Class="pr-10 py-2"
-                                              Spacing="0"
-                                              Justify="Justify.FlexEnd"
-                                              AlignItems="AlignItems.Baseline">
-                                        <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
-                                        <MudText Typo="Typo.body1">min</MudText>
-                                    </MudStack>
-                                </MudStack>
-                            </TitleContent>
-                        </MudExpansionPanel>
-                    }
-                </MudExpansionPanels>
+                <ActivitiesList Activities="DayActivities.GetActivitiesForGroup(Athlete.Group)" GroupName="@Athlete.Group.Name" />
             }
         </MudItem>
     </MudGrid>
