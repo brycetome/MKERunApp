@@ -1,0 +1,23 @@
+﻿<MudSelect @bind-Value=_selectedTeam
+           T="Team"
+           Dense
+           Margin="Margin.Dense"
+           Variant="Variant.Outlined"
+           Placeholder="Select Team">
+    @foreach (Team team in Teams)
+    {
+        <MudSelectItem Value="team" />
+    }
+</MudSelect>
+
+@code {
+    [Parameter] public IEnumerable<Team> Teams { get; set; } = [];
+    [Parameter] public Team? SelectedTeam { get; set; }
+    [Parameter] public EventCallback<Team?> SelectedTeamChanged { get; set; }
+
+    private Team? _selectedTeam
+    {
+        get => SelectedTeam;
+        set => SelectedTeamChanged.InvokeAsync(value);
+    }
+}

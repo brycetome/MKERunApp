@@ -3,23 +3,21 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@foreach (var team in teams)
-{
-    @team.Name
-}
+<TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
 
 
 @code {
-    private IEnumerable<Team> teams = [];
-
+    private IEnumerable<Team> Teams = [];
+    private Team? SelectedTeam;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider))
+            Teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider))
                 .AthleteTeams
                 .Select(t => t.Team);
+            SelectedTeam = Teams.FirstOrDefault();
         }
         catch
         {

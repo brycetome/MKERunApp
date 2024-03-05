@@ -4,17 +4,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudStack Row AlignItems="AlignItems.Center" Spacing="1">
-    <MudSelect T="Team"
-               Dense
-               Margin="Margin.Dense"
-               Variant="Variant.Outlined"
-               Placeholder="Select Team"
-               ValueChanged="SelectedTeamChanged">
-        @foreach (Team team in Teams)
-        {
-            <MudSelectItem Value="team" />
-        }
-    </MudSelect>
+    <TeamSelector Teams="Teams" SelectedTeam="SelectedTeam" SelectedTeamChanged="TeamChanged" />
 
     <div style="display:inline-block">
         <MudFab StartIcon="@Icons.Material.Filled.Add"
@@ -33,6 +23,7 @@
 </MudStack>
 
 @code {
+    [Parameter] public Team? SelectedTeam { get; set; }
     [Parameter] public EventCallback<Team?> SelectedTeamChanged { get; set; }
 
     private List<Team> Teams = [];
