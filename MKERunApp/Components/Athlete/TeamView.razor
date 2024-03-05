@@ -1,30 +1,65 @@
-﻿@inject ISnackbar Snackbar
+﻿@using MKERunApp.Components.Notifications
+@inject ISnackbar Snackbar
 @inject IDbContextFactory<ApplicationDbContext> factory
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-@foreach (var team in teams)
-{
-    @team.Name
-}
+<MudStack Spacing="4">
+    <MudGrid>
+        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+            <MudPaper Class="pa-2" Style="width:100%">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.h4"><b>Teams</b></MudText>
+                    <TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
+        <MudText Typo="Typo.h3">Today</MudText>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <NotifactionsBell />
+        </MudHidden>
+    </MudStack>
+
+    <MudGrid>
+        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+            @if (DayActivities != null && Athlete?.Group != null)
+            {
+                <ActivitiesList Activities="DayActivities.GetActivitiesForGroup(Athlete.Group)" GroupName="@Athlete.Group.Name" />
+            }
+        </MudItem>
+    </MudGrid>
+</MudStack>
 
 
 @code {
-    private IEnumerable<Team> teams = [];
-
+    private IEnumerable<Team> Teams = [];
+    private Team? SelectedTeam;
+    private TeamAthlete? Athlete;
+    private CalendarDayActivities? DayActivities;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider))
-                .AthleteTeams
-                .Select(t => t.Team);
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            Teams = user.AthleteTeams.Select(at => at.Team);
+            Athlete = user.AthleteTeams.FirstOrDefault();
+            SelectedTeam = Athlete?.Team;
+            if (user.AthleteTeams.FirstOrDefault() is TeamAthlete team)
+                await ChangeTeam(team);
         }
         catch
         {
             Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
         }
         StateHasChanged();
+    }
+
+    private async Task ChangeTeam(TeamAthlete team)
+    {
+        DayActivities = await CalendarDayActivities.CreateDayFromTeam(factory, team.Team);
     }
 }

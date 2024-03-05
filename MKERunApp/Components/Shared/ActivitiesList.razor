@@ -1,0 +1,36 @@
+﻿<style>
+    .mud-expand-panel-header {
+        padding-left: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+</style>
+
+<MudExpansionPanels MultiExpansion Elevation="25">
+    @foreach (Activity act in Activities)
+    {
+        <MudExpansionPanel Dense Style="background: #c9a853">
+            <TitleContent>
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <IconText Icon="@Icons.Material.Filled.DirectionsRun"
+                              Text="Training Run"
+                              SubText="@($"Group: {GroupName}")" />
+
+                    <MudStack Row
+                              Class="pr-10 py-2"
+                              Spacing="0"
+                              Justify="Justify.FlexEnd"
+                              AlignItems="AlignItems.Baseline">
+                        <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
+                        <MudText Typo="Typo.body1">min</MudText>
+                    </MudStack>
+                </MudStack>
+            </TitleContent>
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>
+
+@code {
+    [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
+    [Parameter] public string GroupName { get; set; } = "";
+}

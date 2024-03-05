@@ -26,6 +26,14 @@ namespace Models.AccessServices
                 .ThenInclude(inv => inv.Team)
                 .SingleOrDefaultAsync(u => u.Id == userId)
                 ?? throw new NullReferenceException("Failed to load the user.");
+
+            await ctx.Entry(User)
+                .Collection(user => user.AthleteTeams)
+                .Query()
+                .Include(at => at.Team)
+                .Include(at => at.Group)
+                .LoadAsync();
+
             return User;
         }
 
