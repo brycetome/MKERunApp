@@ -1,21 +1,14 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Models.DTO
 {
-    public class CalendarDayActivities
+    public class CalendarDayActivityViewModel
     {
         public IEnumerable<Activity> GetActivities => activities;
         public IEnumerable<TeamGroup> GetGroups => groups;
-        public IEnumerable<TeamGroup> GetSelectedGroups => selectedGroups;
+        public IEnumerable<TeamGroup> GetSelectedGroupsForm => selectedGroups;
         public DateTime GetDay => day;
+        public int MinutesForm { get; set; }
 
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
@@ -23,7 +16,7 @@ namespace Models.DTO
         private DateTime day;
         private readonly IDbContextFactory<ApplicationDbContext> factory;
 
-        public static async Task<CalendarDayActivities> CreateDayFromTeam(IDbContextFactory<ApplicationDbContext> Factory, Team Team)
+        public static async Task<CalendarDayActivityViewModel> CreateDayFromTeam(IDbContextFactory<ApplicationDbContext> Factory, Team Team)
         {
             using var ctx = Factory.CreateDbContext();
             var team = await ctx.Team
@@ -31,13 +24,13 @@ namespace Models.DTO
                 .FirstOrDefaultAsync(t => t.Id == Team.Id);
             await ctx.DisposeAsync();
             var today = DateTime.UtcNow;
-            var dayActivities = new CalendarDayActivities(team?.Groups ?? [], today, Factory);
+            var dayActivities = new CalendarDayActivityViewModel(team?.Groups ?? [], today, Factory);
             await dayActivities.ChangeDay(today);
             return dayActivities;
         }
 
 
-        public CalendarDayActivities(
+        public CalendarDayActivityViewModel(
             IEnumerable<TeamGroup> Groups,
             DateTime Day,
             IDbContextFactory<ApplicationDbContext> Factory)
@@ -46,7 +39,7 @@ namespace Models.DTO
             day = Day;
             activities = Groups
                  .SelectMany(g => g.Activities)
-                 .Where(act => act.DayAndTime.Date == day.Date.ToUniversalTime())
+                 .Where(act => act.DayAndTime.Date == day.Date)
                  .GroupBy(x => x.Id)
                  .Select(g => g.First())
                  .ToList();
@@ -90,12 +83,18 @@ namespace Models.DTO
                 selectedGroups.Add(group);
         }
 
-        public async Task AddActivityWithMinutes(int Minutes)
+        public void ResetSelectedGroups(IEnumerable<TeamGroup> groups)
+        {
+            selectedGroups.Clear();
+            selectedGroups.AddRange(this.groups.Where(g => groups.Any(g1 => g1.Id == g.Id)));
+        }
+
+        public async Task AddNewActivity()
         {
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = Minutes * 60
+                DurationSeconds = MinutesForm * 60
             };
 
             using var ctx = factory.CreateDbContext();
@@ -110,6 +109,34 @@ namespace Models.DTO
             await ctx.DisposeAsync();
             activities.Add(newActivity);
             selectedGroups.Clear();
+        }
+
+        public async Task<Activity> UpdateActivity(Activity activity)
+        {
+
+            using var ctx = factory.CreateDbContext();
+
+            var loadedActivity = await ctx.Activity
+                .Include(act => act.Groups)
+                .FirstOrDefaultAsync(act => act.Id == activity.Id)
+                ?? throw new NullReferenceException();
+
+            loadedActivity.DurationSeconds = MinutesForm * 60;
+            loadedActivity.Groups.Clear();
+
+            foreach (var group in selectedGroups)
+            {
+                var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
+                loadedActivity.Groups.Add(loadedGroup);
+            }
+
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+
+            activities.RemoveAll(act => act.Id == loadedActivity.Id);
+            activities.Add(loadedActivity);
+            selectedGroups.Clear();
+            return loadedActivity;
         }
     }
 }

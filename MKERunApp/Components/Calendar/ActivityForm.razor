@@ -2,17 +2,17 @@
 
 <MudForm @ref="form">
     <MudStack>
-        <MudNumericField @bind-Value="Minutes"
+        <MudNumericField @bind-Value="ViewModel.MinutesForm"
                          T="int"
                          Label="Minutes"
                          Required
                          RequiredError="Minutes is required." />
 
-        @foreach (var group in TodaysActivities.GetGroups)
+        @foreach (var group in ViewModel.GetGroups)
         {
             <MudCheckBox T="bool"
-                         Value="TodaysActivities.GetSelectedGroups.Contains(group)"
-                         ValueChanged="_ => TodaysActivities.ToggleSelectedGroup(group)"
+                         Value="ViewModel.GetSelectedGroupsForm.Contains(group)"
+                         ValueChanged="_ => ViewModel.ToggleSelectedGroup(group)"
                          Label="@group.Name"
                          Dense
                          Size="Size.Small"
@@ -29,20 +29,38 @@
 @code {
     [Parameter] public bool Show { get; set; }
     [Parameter] public EventCallback<bool> ShowChanged { get; set; }
+    [Parameter] public Activity? Activity { get; set; }
+    [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
-    [Parameter] [EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
+    [Parameter] [EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
 
     private MudForm? form;
-    private int Minutes;
+    private bool IsValid;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Activity is not null)
+        {
+            ViewModel.MinutesForm = (int)Activity.DurationSeconds / 60;
+            ViewModel.ResetSelectedGroups(Activity.Groups);
+        }
+    }
 
     private async Task ClickSubmit()
     {
         form?.Validate();
-        if (form?.IsValid ?? false)
+        if ((form?.IsValid ?? false) && ViewModel.GetSelectedGroupsForm.Count() > 0)
         {
             try
             {
-                await TodaysActivities.AddActivityWithMinutes(Minutes);
+                if (Activity != null)
+                {
+                    var loadedActivity = await ViewModel.UpdateActivity(Activity);
+                    await ActivityChanged.InvokeAsync(loadedActivity);
+                }
+
+                await ViewModel.AddNewActivity();
                 await ShowChanged.InvokeAsync(false);
             }
             catch
