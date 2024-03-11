@@ -31,7 +31,7 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm @bind-Show=OpenNewActivity ViewModel="TodaysActivities"/>
+        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="TodaysActivities"/>
     </MudPaper>
 </MudPopover>
 @code {
@@ -41,5 +41,10 @@
     private void ClickedDay()
     {
         OpenNewActivity = !OpenNewActivity;
+    }
+
+    private void ShowChanged()
+    {
+        StateHasChanged();
     }
 }
