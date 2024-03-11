@@ -1,6 +1,5 @@
 ﻿<style>
-    .mud-button-label
-    {
+    .mud-button-label {
         height: 100%;
         display: block;
     }
@@ -17,12 +16,14 @@
 
 <MudButton OnClick="ClickedDay" FullWidth Style="height:100%" DisableRipple>
     <MudStack Spacing="1" AlignItems="AlignItems.Start" Style="height:100%">
-        <MudText>@TodaysActivities.GetDay.Day</MudText>
+        <MudText>@ViewModel.GetDay.Day</MudText>
         <MudStack Spacing="0" Style="width:100%">
-            @foreach (Activity activity in TodaysActivities.GetActivities)
+            @foreach (Activity activity in ViewModel.GetActivities)
             {
                 <div @onclick:stopPropagation="true" style="width:100%">
-                    <ActivityCalendarDay Activity=activity ViewModel="TodaysActivities" />
+                    <ActivityCalendarDay Activity=activity
+                                         ActivityChanged="ShowChanged"
+                                         ViewModel="ViewModel" />
                 </div>
             }
         </MudStack>
@@ -31,15 +32,16 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="TodaysActivities"/>
+        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="ViewModel" />
     </MudPaper>
 </MudPopover>
 @code {
-    [Parameter][EditorRequired] public required CalendarDayActivityViewModel TodaysActivities { get; set; }
+    [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
     private bool OpenNewActivity = false;
 
     private void ClickedDay()
     {
+        ViewModel.ResetForm();
         OpenNewActivity = !OpenNewActivity;
     }
 
