@@ -38,7 +38,7 @@
     private IEnumerable<Team> Teams = [];
     private Team? SelectedTeam;
     private TeamAthlete? Athlete;
-    private CalendarDayActivities? DayActivities;
+    private CalendarDayActivityViewModel? DayActivities;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,6 +60,6 @@
 
     private async Task ChangeTeam(TeamAthlete team)
     {
-        DayActivities = await CalendarDayActivities.CreateDayFromTeam(factory, team.Team);
+        DayActivities = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team.Team);
     }
 }

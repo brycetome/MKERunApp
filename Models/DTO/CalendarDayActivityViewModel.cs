@@ -1,16 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Models.DTO
 {
-    public class CalendarDayActivities
+    public class CalendarDayActivityViewModel
     {
         public IEnumerable<Activity> GetActivities => activities;
         public IEnumerable<TeamGroup> GetGroups => groups;
@@ -24,7 +16,7 @@ namespace Models.DTO
         private DateTime day;
         private readonly IDbContextFactory<ApplicationDbContext> factory;
 
-        public static async Task<CalendarDayActivities> CreateDayFromTeam(IDbContextFactory<ApplicationDbContext> Factory, Team Team)
+        public static async Task<CalendarDayActivityViewModel> CreateDayFromTeam(IDbContextFactory<ApplicationDbContext> Factory, Team Team)
         {
             using var ctx = Factory.CreateDbContext();
             var team = await ctx.Team
@@ -32,13 +24,13 @@ namespace Models.DTO
                 .FirstOrDefaultAsync(t => t.Id == Team.Id);
             await ctx.DisposeAsync();
             var today = DateTime.UtcNow;
-            var dayActivities = new CalendarDayActivities(team?.Groups ?? [], today, Factory);
+            var dayActivities = new CalendarDayActivityViewModel(team?.Groups ?? [], today, Factory);
             await dayActivities.ChangeDay(today);
             return dayActivities;
         }
 
 
-        public CalendarDayActivities(
+        public CalendarDayActivityViewModel(
             IEnumerable<TeamGroup> Groups,
             DateTime Day,
             IDbContextFactory<ApplicationDbContext> Factory)

@@ -32,7 +32,7 @@
     [Parameter] public Activity? Activity { get; set; }
     [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
-    [Parameter] [EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
+    [Parameter] [EditorRequired] public required CalendarDayActivityViewModel TodaysActivities { get; set; }
 
     private MudForm? form;
     private bool IsValid;
