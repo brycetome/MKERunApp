@@ -2,17 +2,17 @@
 
 <MudForm @ref="form">
     <MudStack>
-        <MudNumericField @bind-Value="TodaysActivities.MinutesForm"
+        <MudNumericField @bind-Value="ViewModel.MinutesForm"
                          T="int"
                          Label="Minutes"
                          Required
                          RequiredError="Minutes is required." />
 
-        @foreach (var group in TodaysActivities.GetGroups)
+        @foreach (var group in ViewModel.GetGroups)
         {
             <MudCheckBox T="bool"
-                         Value="TodaysActivities.GetSelectedGroupsForm.Contains(group)"
-                         ValueChanged="_ => TodaysActivities.ToggleSelectedGroup(group)"
+                         Value="ViewModel.GetSelectedGroupsForm.Contains(group)"
+                         ValueChanged="_ => ViewModel.ToggleSelectedGroup(group)"
                          Label="@group.Name"
                          Dense
                          Size="Size.Small"
@@ -32,7 +32,7 @@
     [Parameter] public Activity? Activity { get; set; }
     [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
-    [Parameter] [EditorRequired] public required CalendarDayActivityViewModel TodaysActivities { get; set; }
+    [Parameter] [EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
 
     private MudForm? form;
     private bool IsValid;
@@ -42,25 +42,25 @@
         base.OnInitialized();
         if (Activity is not null)
         {
-            TodaysActivities.MinutesForm = (int)Activity.DurationSeconds / 60;
-            TodaysActivities.ResetSelectedGroups(Activity.Groups);
+            ViewModel.MinutesForm = (int)Activity.DurationSeconds / 60;
+            ViewModel.ResetSelectedGroups(Activity.Groups);
         }
     }
 
     private async Task ClickSubmit()
     {
         form?.Validate();
-        if ((form?.IsValid ?? false) && TodaysActivities.GetSelectedGroupsForm.Count() > 0)
+        if ((form?.IsValid ?? false) && ViewModel.GetSelectedGroupsForm.Count() > 0)
         {
             try
             {
                 if (Activity != null)
                 {
-                    var loadedActivity = await TodaysActivities.UpdateActivity(Activity);
+                    var loadedActivity = await ViewModel.UpdateActivity(Activity);
                     await ActivityChanged.InvokeAsync(loadedActivity);
                 }
 
-                await TodaysActivities.AddNewActivity();
+                await ViewModel.AddNewActivity();
                 await ShowChanged.InvokeAsync(false);
             }
             catch

@@ -22,7 +22,7 @@
             @foreach (Activity activity in TodaysActivities.GetActivities)
             {
                 <div @onclick:stopPropagation="true" style="width:100%">
-                    <ActivityCalendarDay Activity=activity TodaysActivities="TodaysActivities" />
+                    <ActivityCalendarDay Activity=activity ViewModel="TodaysActivities" />
                 </div>
             }
         </MudStack>
@@ -31,7 +31,7 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm @bind-Show=OpenNewActivity TodaysActivities="TodaysActivities"/>
+        <ActivityForm @bind-Show=OpenNewActivity ViewModel="TodaysActivities"/>
     </MudPaper>
 </MudPopover>
 @code {
