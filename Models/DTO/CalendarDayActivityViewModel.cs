@@ -138,5 +138,23 @@ namespace Models.DTO
             selectedGroups.Clear();
             return loadedActivity;
         }
+
+        public async Task DeleteActivity(Activity activity)
+        {
+            using var ctx = factory.CreateDbContext();
+            var loadedActivity = await ctx.Activity.FindAsync(activity.Id)
+                ?? throw new NullReferenceException();
+            ctx.Activity.Remove(loadedActivity);
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+            activities.RemoveAll(act => act.Id == loadedActivity.Id);
+            ResetForm();
+        }
+
+        private void ResetForm()
+        {
+            selectedGroups.Clear();
+            MinutesForm = 0;
+        }
     }
 }

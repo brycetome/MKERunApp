@@ -1,6 +1,5 @@
 ﻿<style>
-    .mud-button-label
-    {
+    .mud-button-label {
         height: 100%;
         display: block;
     }
@@ -22,7 +21,9 @@
             @foreach (Activity activity in TodaysActivities.GetActivities)
             {
                 <div @onclick:stopPropagation="true" style="width:100%">
-                    <ActivityCalendarDay Activity=activity ViewModel="TodaysActivities" />
+                    <ActivityCalendarDay Activity=activity
+                                         ActivityChanged="ShowChanged"
+                                         ViewModel="TodaysActivities" />
                 </div>
             }
         </MudStack>
@@ -31,7 +32,7 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="TodaysActivities"/>
+        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="TodaysActivities" />
     </MudPaper>
 </MudPopover>
 @code {

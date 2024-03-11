@@ -1,7 +1,7 @@
 ﻿@inject ISnackbar Snackbar
 
 <MudForm @ref="form">
-    <MudStack>
+    <MudStack Spacing="2">
         <MudNumericField @bind-Value="ViewModel.MinutesForm"
                          T="int"
                          Label="Minutes"
@@ -20,9 +20,19 @@
         }
 
         <MudButton Color="Color.Primary"
-                   OnClick="ClickSubmit">
+                   OnClick="ClickSubmit"
+                   Variant="Variant.Filled">
             Submit
         </MudButton>
+
+        @if (Activity != null)
+        {
+            <MudButton Color=Color.Secondary
+                       OnClick="ClickDelete"
+                       Variant="Variant.Filled">
+                Delete
+            </MudButton>
+        }
     </MudStack>
 </MudForm>
 
@@ -32,7 +42,7 @@
     [Parameter] public Activity? Activity { get; set; }
     [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
-    [Parameter] [EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
+    [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
 
     private MudForm? form;
     private bool IsValid;
@@ -59,14 +69,35 @@
                     var loadedActivity = await ViewModel.UpdateActivity(Activity);
                     await ActivityChanged.InvokeAsync(loadedActivity);
                 }
+                else
+                {
+                    await ViewModel.AddNewActivity();
+                }
 
-                await ViewModel.AddNewActivity();
                 await ShowChanged.InvokeAsync(false);
             }
             catch
             {
                 Snackbar.Add("Failed to save the activity", Severity.Error);
             }
+        }
+    }
+
+    private async Task ClickDelete()
+    {
+        try
+        {
+            if (Activity != null)
+                await ViewModel.DeleteActivity(Activity);
+            else
+                throw new NullReferenceException();
+            Snackbar.Add("Successfuly deleted the activity.", Severity.Success);
+            await ShowChanged.InvokeAsync(false);
+            await ActivityChanged.InvokeAsync(null);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to delete the activity.", Severity.Error);
         }
     }
 }

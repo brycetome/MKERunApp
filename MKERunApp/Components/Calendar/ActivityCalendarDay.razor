@@ -9,17 +9,28 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm @bind-Show=OpenActivity @bind-Activity=Activity ViewModel="ViewModel" />
+        <ActivityForm Show=OpenActivity
+            ShowChanged=ShowChanged
+            Activity=Activity
+            ActivityChanged="ActivityChanged"
+            ViewModel="ViewModel" />
     </MudPaper>
 </MudPopover>
 
 @code {
     [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
     [Parameter][EditorRequired] public required Activity Activity { get; set; }
+    [Parameter] public EventCallback<Activity> ActivityChanged { get; set; }
     private bool OpenActivity = false;
 
     private void ClickedActivity()
     {
         OpenActivity = !OpenActivity;
+    }
+
+    private void ShowChanged()
+    {
+        OpenActivity = false;
+        StateHasChanged();
     }
 }
