@@ -151,7 +151,7 @@ namespace Models.DTO
             ResetForm();
         }
 
-        private void ResetForm()
+        public void ResetForm()
         {
             selectedGroups.Clear();
             MinutesForm = 0;
