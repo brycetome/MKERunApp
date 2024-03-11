@@ -2,7 +2,7 @@
 
 <MudForm @ref="form">
     <MudStack>
-        <MudNumericField @bind-Value="Minutes"
+        <MudNumericField @bind-Value="TodaysActivities.MinutesForm"
                          T="int"
                          Label="Minutes"
                          Required
@@ -11,7 +11,7 @@
         @foreach (var group in TodaysActivities.GetGroups)
         {
             <MudCheckBox T="bool"
-                         Value="TodaysActivities.GetSelectedGroups.Contains(group)"
+                         Value="TodaysActivities.GetSelectedGroupsForm.Contains(group)"
                          ValueChanged="_ => TodaysActivities.ToggleSelectedGroup(group)"
                          Label="@group.Name"
                          Dense
@@ -35,7 +35,6 @@
     [Parameter] [EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
 
     private MudForm? form;
-    private int Minutes;
     private bool IsValid;
 
     protected override void OnInitialized()
@@ -43,7 +42,7 @@
         base.OnInitialized();
         if (Activity is not null)
         {
-            Minutes = (int)Activity.DurationSeconds / 60;
+            TodaysActivities.MinutesForm = (int)Activity.DurationSeconds / 60;
             TodaysActivities.ResetSelectedGroups(Activity.Groups);
         }
     }
@@ -51,17 +50,17 @@
     private async Task ClickSubmit()
     {
         form?.Validate();
-        if ((form?.IsValid ?? false) && TodaysActivities.GetSelectedGroups.Count() > 0)
+        if ((form?.IsValid ?? false) && TodaysActivities.GetSelectedGroupsForm.Count() > 0)
         {
             try
             {
                 if (Activity != null)
                 {
-                    var loadedActivity = await TodaysActivities.UpdateActivity(Activity, Minutes);
+                    var loadedActivity = await TodaysActivities.UpdateActivity(Activity);
                     await ActivityChanged.InvokeAsync(loadedActivity);
                 }
 
-                await TodaysActivities.AddActivityWithMinutes(Minutes);
+                await TodaysActivities.AddNewActivity();
                 await ShowChanged.InvokeAsync(false);
             }
             catch

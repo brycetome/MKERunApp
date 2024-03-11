@@ -14,8 +14,9 @@ namespace Models.DTO
     {
         public IEnumerable<Activity> GetActivities => activities;
         public IEnumerable<TeamGroup> GetGroups => groups;
-        public IEnumerable<TeamGroup> GetSelectedGroups => selectedGroups;
+        public IEnumerable<TeamGroup> GetSelectedGroupsForm => selectedGroups;
         public DateTime GetDay => day;
+        public int MinutesForm { get; set; }
 
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
@@ -96,12 +97,12 @@ namespace Models.DTO
             selectedGroups.AddRange(this.groups.Where(g => groups.Any(g1 => g1.Id == g.Id)));
         }
 
-        public async Task AddActivityWithMinutes(int Minutes)
+        public async Task AddNewActivity()
         {
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = Minutes * 60
+                DurationSeconds = MinutesForm * 60
             };
 
             using var ctx = factory.CreateDbContext();
@@ -118,7 +119,7 @@ namespace Models.DTO
             selectedGroups.Clear();
         }
 
-        public async Task<Activity> UpdateActivity(Activity activity, int Minutes)
+        public async Task<Activity> UpdateActivity(Activity activity)
         {
 
             using var ctx = factory.CreateDbContext();
@@ -128,7 +129,7 @@ namespace Models.DTO
                 .FirstOrDefaultAsync(act => act.Id == activity.Id)
                 ?? throw new NullReferenceException();
 
-            loadedActivity.DurationSeconds = Minutes * 60;
+            loadedActivity.DurationSeconds = MinutesForm * 60;
             loadedActivity.Groups.Clear();
 
             foreach (var group in selectedGroups)
