@@ -4,20 +4,26 @@
         height: 100%;
         display: block;
     }
+
+    .mud-chip > .mud-chip-content {
+        width: 100%;
+    }
+
+    .mud-chip {
+        margin: 2px;
+        width: 100%;
+    }
 </style>
 
-<MudButton OnClick="ClickedDay" FullWidth Style="height:100%">
+<MudButton OnClick="ClickedDay" FullWidth Style="height:100%" DisableRipple>
     <MudStack Spacing="1" AlignItems="AlignItems.Start" Style="height:100%">
         <MudText>@TodaysActivities.GetDay.Day</MudText>
         <MudStack Spacing="0" Style="width:100%">
             @foreach (Activity activity in TodaysActivities.GetActivities)
             {
-                <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
-                    <MudText Typo="Typo.caption">
-                        @string.Join(", ", activity.Groups.Select(g => g.Name))
-                    </MudText>
-                    <MudText Typo="Typo.caption">@($"{activity.DurationSeconds / 60}min")</MudText>
-                </MudStack>
+                <div @onclick:stopPropagation="true" style="width:100%">
+                    <ActivityCalendarDay Activity=activity TodaysActivities="TodaysActivities" />
+                </div>
             }
         </MudStack>
     </MudStack>
@@ -28,7 +34,6 @@
         <ActivityForm @bind-Show=OpenNewActivity TodaysActivities="TodaysActivities"/>
     </MudPaper>
 </MudPopover>
-
 @code {
     [Parameter][EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
     private bool OpenNewActivity = false;
@@ -36,5 +41,10 @@
     private void ClickedDay()
     {
         OpenNewActivity = !OpenNewActivity;
+    }
+
+    private void ClickedActivity(Activity activity)
+    {
+        
     }
 }

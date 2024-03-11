@@ -1,0 +1,27 @@
+﻿
+
+<MudChip OnClick="ClickedActivity">
+    <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
+        <MudText Typo="Typo.caption">
+            @string.Join(", ", Activity.Groups.Select(g => g.Name))
+        </MudText>
+        <MudText Typo="Typo.caption">@($"{Activity.DurationSeconds / 60}min")</MudText>
+    </MudStack>
+</MudChip>
+
+<MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
+    <MudPaper Class="pa-2">
+        <ActivityForm @bind-Show=OpenActivity @bind-Activity=Activity TodaysActivities="TodaysActivities" />
+    </MudPaper>
+</MudPopover>
+
+@code {
+    [Parameter][EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
+    [Parameter][EditorRequired] public required Activity Activity { get; set; }
+    private bool OpenActivity = false;
+
+    private void ClickedActivity()
+    {
+        OpenActivity = !OpenActivity;
+    }
+}

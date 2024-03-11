@@ -46,7 +46,7 @@ namespace Models.DTO
             day = Day;
             activities = Groups
                  .SelectMany(g => g.Activities)
-                 .Where(act => act.DayAndTime.Date == day.Date.ToUniversalTime())
+                 .Where(act => act.DayAndTime.Date == day.Date)
                  .GroupBy(x => x.Id)
                  .Select(g => g.First())
                  .ToList();
@@ -90,6 +90,12 @@ namespace Models.DTO
                 selectedGroups.Add(group);
         }
 
+        public void ResetSelectedGroups(IEnumerable<TeamGroup> groups)
+        {
+            selectedGroups.Clear();
+            selectedGroups.AddRange(this.groups.Where(g => groups.Any(g1 => g1.Id == g.Id)));
+        }
+
         public async Task AddActivityWithMinutes(int Minutes)
         {
             var newActivity = new Activity()
@@ -110,6 +116,34 @@ namespace Models.DTO
             await ctx.DisposeAsync();
             activities.Add(newActivity);
             selectedGroups.Clear();
+        }
+
+        public async Task<Activity> UpdateActivity(Activity activity, int Minutes)
+        {
+
+            using var ctx = factory.CreateDbContext();
+
+            var loadedActivity = await ctx.Activity
+                .Include(act => act.Groups)
+                .FirstOrDefaultAsync(act => act.Id == activity.Id)
+                ?? throw new NullReferenceException();
+
+            loadedActivity.DurationSeconds = Minutes * 60;
+            loadedActivity.Groups.Clear();
+
+            foreach (var group in selectedGroups)
+            {
+                var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
+                loadedActivity.Groups.Add(loadedGroup);
+            }
+
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+
+            activities.RemoveAll(act => act.Id == loadedActivity.Id);
+            activities.Add(loadedActivity);
+            selectedGroups.Clear();
+            return loadedActivity;
         }
     }
 }

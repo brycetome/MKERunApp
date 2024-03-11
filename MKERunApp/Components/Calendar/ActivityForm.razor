@@ -29,19 +29,38 @@
 @code {
     [Parameter] public bool Show { get; set; }
     [Parameter] public EventCallback<bool> ShowChanged { get; set; }
+    [Parameter] public Activity? Activity { get; set; }
+    [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
     [Parameter] [EditorRequired] public required CalendarDayActivities TodaysActivities { get; set; }
 
     private MudForm? form;
     private int Minutes;
+    private bool IsValid;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Activity is not null)
+        {
+            Minutes = (int)Activity.DurationSeconds / 60;
+            TodaysActivities.ResetSelectedGroups(Activity.Groups);
+        }
+    }
 
     private async Task ClickSubmit()
     {
         form?.Validate();
-        if (form?.IsValid ?? false)
+        if ((form?.IsValid ?? false) && TodaysActivities.GetSelectedGroups.Count() > 0)
         {
             try
             {
+                if (Activity != null)
+                {
+                    var loadedActivity = await TodaysActivities.UpdateActivity(Activity, Minutes);
+                    await ActivityChanged.InvokeAsync(loadedActivity);
+                }
+
                 await TodaysActivities.AddActivityWithMinutes(Minutes);
                 await ShowChanged.InvokeAsync(false);
             }
