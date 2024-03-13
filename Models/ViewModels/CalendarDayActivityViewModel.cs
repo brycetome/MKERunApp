@@ -89,7 +89,7 @@ namespace Models.DTO
             selectedGroups.AddRange(this.groups.Where(g => groups.Any(g1 => g1.Id == g.Id)));
         }
 
-        public async Task AddNewActivity()
+        public async Task<Activity> AddNewActivity()
         {
             var newActivity = new Activity()
             {
@@ -109,6 +109,7 @@ namespace Models.DTO
             await ctx.DisposeAsync();
             activities.Add(newActivity);
             selectedGroups.Clear();
+            return newActivity;
         }
 
         public async Task<Activity> UpdateActivity(Activity activity)
