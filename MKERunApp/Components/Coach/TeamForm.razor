@@ -19,19 +19,10 @@
 @code {
     [Parameter] public bool Show { get; set; }
     [Parameter] public EventCallback<bool> ShowChanged { get; set;}
+    [Parameter] public EventCallback<Team> TeamAdded { get; set; }
 
-    [Parameter] public List<Team> Teams { get; set; } = [];
-    [Parameter] public EventCallback<List<Team>> TeamsChanged { get; set; }
-
-    private List<Team> _Teams = [];
     private string TeamName = "";
     private MudForm? form;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _Teams = Teams.ToList();
-    }
 
     private async Task ClickSubmit()
     {
@@ -40,8 +31,8 @@
         {
             try
             {
-                _Teams.Add(await CreateNewTeam());
-                await TeamsChanged.InvokeAsync(_Teams);
+                var newTeam = await CreateNewTeam();
+                await TeamAdded.InvokeAsync(newTeam);
                 await ShowChanged.InvokeAsync(false);
                 Snackbar.Add("Added the new team.", Severity.Success);
             }

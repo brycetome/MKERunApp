@@ -16,7 +16,7 @@
 
         <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewTeamForm Fixed>
             <MudPaper Class="pa-2">
-                <TeamForm @bind-Show=OpenNewTeamForm @bind-Teams=Teams />
+                <TeamForm @bind-Show=OpenNewTeamForm TeamAdded="TeamAdded" />
             </MudPaper>
         </MudPopover>
     </div>
@@ -46,6 +46,12 @@
     private void PressNew()
     {
         OpenNewTeamForm = !OpenNewTeamForm;
+    }
+
+    private void TeamAdded(Team NewTeam)
+    {
+        Teams.Add(NewTeam);
+        TeamChanged(NewTeam);
     }
 
     private void TeamChanged(Team team)
