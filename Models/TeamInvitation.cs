@@ -8,9 +8,9 @@
 
         public TeamInvitation() { }
 
-        public TeamInvitation(Team team)
+        public TeamInvitation(int TeamId)
         {
-            TeamId = team.Id;
+            this.TeamId = TeamId;
         }
     }
 }

@@ -5,7 +5,7 @@
 
 <MudStack Spacing="4">
     <MudGrid>
-        <MudItem xs="12" md="4">
+        <MudItem xs="12" sm="6" md="6">
             <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
                 <MudTextField @bind-Value=NewGroupName
                               Margin=Margin.Dense
@@ -17,6 +17,10 @@
                     Create
                 </MudButton>
             </MudStack>
+        </MudItem>
+
+        <MudItem xs="12" sm="6" md="6" Class="d-flex justify-center align-center">
+            <InviteAthleteToTeam TeamId="TeamId" />
         </MudItem>
     </MudGrid>
 

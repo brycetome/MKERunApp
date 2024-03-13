@@ -5,7 +5,7 @@ namespace Models.AccessServices
 {
     public static class InvitationService
     {
-        public static async Task SendInvite(this UserManager<ApplicationUser> UserManager, Team team, string email)
+        public static async Task SendInvite(this UserManager<ApplicationUser> UserManager, int TeamId, string email)
         {
 
             var user = await UserManager.Users
@@ -13,10 +13,10 @@ namespace Models.AccessServices
                 .FirstOrDefaultAsync(u => u.Email == email)
                 ?? throw new NullReferenceException($"Could not find user email {email}.");
 
-            if (user.AthleteTeams.Any(at => at.TeamId == team.Id))
-                throw new Exception($"Athlete already has an invitation for {team.Name}.");
+            if (user.AthleteTeams.Any(at => at.TeamId == TeamId))
+                throw new Exception("Athlete already has an invitation for this team.");
 
-            var invitation = new TeamInvitation(team);
+            var invitation = new TeamInvitation(TeamId);
             user.Invitations.Add(invitation);
             var result = await UserManager.UpdateAsync(user);
 
