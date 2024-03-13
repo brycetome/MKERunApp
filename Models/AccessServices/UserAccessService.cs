@@ -45,7 +45,7 @@ namespace Models.AccessServices
             var newTeam = new Team(teamName);
             var user = await UserManager.GetUserAsync(UserClaim)
                 ?? throw new NullReferenceException("Failed to load user.");
-            user.CoachedTeams.Add(new Team(teamName));
+            user.CoachedTeams.Add(newTeam);
             var result = await UserManager.UpdateAsync(user);
             if (!result.Succeeded)
                 throw new Exception("Failed to add team.");
