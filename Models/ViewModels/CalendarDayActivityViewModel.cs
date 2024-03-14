@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Models.DTO
+namespace Models.ViewModels
 {
     public class CalendarDayActivityViewModel
     {
@@ -23,7 +23,8 @@ namespace Models.DTO
                 .Include(t => t.Groups)
                 .FirstOrDefaultAsync(t => t.Id == Team.Id);
             await ctx.DisposeAsync();
-            var today = DateTime.UtcNow;
+            // TODO: Use local browser time
+            var today = DateTime.UtcNow.AddHours(-5).ToUniversalTime();
             var dayActivities = new CalendarDayActivityViewModel(team?.Groups ?? [], today, Factory);
             await dayActivities.ChangeDay(today);
             return dayActivities;

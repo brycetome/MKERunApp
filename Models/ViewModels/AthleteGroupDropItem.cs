@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.DTO
+namespace Models.ViewModels
 {
     public class AthleteGroupDropItem(TeamAthlete athlete, IDbContextFactory<ApplicationDbContext> factory)
     {

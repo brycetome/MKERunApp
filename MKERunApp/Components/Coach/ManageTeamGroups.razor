@@ -1,6 +1,4 @@
-﻿@using Models.DTO
-
-@inject ISnackbar Snackbar
+﻿@inject ISnackbar Snackbar
 @inject IDbContextFactory<ApplicationDbContext> factory
 
 <MudStack Spacing="4">
@@ -25,14 +23,21 @@
     </MudGrid>
 
 
-    <MudDropContainer T="AthleteGroupDropItem"
+    <MudDropContainer @ref=_container
+                      T="AthleteGroupDropItem"
                       Items="DropItems"
                       ItemsSelector="((item, dropZone) => item.Identifier == dropZone)"
                       ItemDropped="ItemUpdated">
         <ChildContent>
             <MudGrid>
                 <MudItem xs="12" md="12">
-                    <MudText>Unassigned Athletes</MudText>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexStart" Spacing="0">
+                        <MudText>Unassigned Athletes</MudText>
+                        <MudIconButton Size="Size.Small"
+                                       Icon="@Icons.Material.Filled.Refresh"
+                                       Color="Color.Primary"
+                                       OnClick="RefreshAthletes" />
+                    </MudStack>
                     <MudDropZone T="AthleteGroupDropItem"
                                  Identifier="@AthleteGroupDropItem.UnassignedGroup"
                                  Class="rounded-lg mud-alert-text-normal pl-3 pb-4 pt-2 flex-grow-1 d-flex flex-wrap"
@@ -96,6 +101,7 @@
     private List<TeamGroup> _Groups = [];
     private List<AthleteGroupDropItem> DropItems = [];
     private string NewGroupName = "";
+    private MudDropContainer<AthleteGroupDropItem> _container;
 
     protected override void OnInitialized()
     {
@@ -115,6 +121,21 @@
         catch (Exception ex)
         {
             Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task RefreshAthletes()
+    {
+        try
+        {
+            var LoadedTeam = await factory.LoadTeam(TeamId);
+            DropItems = LoadedTeam.Athletes.Select(ath => new AthleteGroupDropItem(ath, factory)).ToList();
+            StateHasChanged();
+            _container.Refresh();
+        }
+        catch
+        {
+            Snackbar.Add("Failed to refresh the athletes.", Severity.Error);
         }
     }
 

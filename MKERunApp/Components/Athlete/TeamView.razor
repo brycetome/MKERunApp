@@ -10,7 +10,7 @@
             <MudPaper Class="pa-2" Style="width:100%">
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudText Typo="Typo.h4"><b>Teams</b></MudText>
-                    <TeamSelector @bind-SelectedTeam="SelectedTeam" Teams="Teams" />
+                    <TeamSelector SelectedTeam="SelectedTeam" SelectedTeamChanged=ChangeTeam Teams="Teams" />
                 </MudStack>
             </MudPaper>
         </MudItem>
@@ -27,7 +27,7 @@
         <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
             @if (DayActivities != null && Athlete?.Group != null)
             {
-                <ActivitiesList Activities="DayActivities.GetActivitiesForGroup(Athlete.Group)" GroupName="@Athlete.Group.Name" />
+                <ActivitiesList Activities="activities" GroupName="@Athlete.Group.Name" />
             }
         </MudItem>
     </MudGrid>
@@ -39,6 +39,7 @@
     private Team? SelectedTeam;
     private TeamAthlete? Athlete;
     private CalendarDayActivityViewModel? DayActivities;
+    private IEnumerable<Activity> activities = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,8 +49,8 @@
             Teams = user.AthleteTeams.Select(at => at.Team);
             Athlete = user.AthleteTeams.FirstOrDefault();
             SelectedTeam = Athlete?.Team;
-            if (user.AthleteTeams.FirstOrDefault() is TeamAthlete team)
-                await ChangeTeam(team);
+            if (user.AthleteTeams.FirstOrDefault() is TeamAthlete athTeam)
+                await ChangeTeam(athTeam.Team);
         }
         catch
         {
@@ -58,8 +59,20 @@
         StateHasChanged();
     }
 
-    private async Task ChangeTeam(TeamAthlete team)
+    private async Task ChangeTeam(Team? team)
     {
-        DayActivities = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team.Team);
+        SelectedTeam = team;
+        var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+        Teams = user.AthleteTeams.Select(at => at.Team);
+        Athlete = user.AthleteTeams.Where(athTeam => athTeam.TeamId == team.Id).FirstOrDefault();
+        try
+        {
+            DayActivities = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team);
+            activities = DayActivities.GetActivitiesForGroup(Athlete.Group);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the activities.", Severity.Error);
+        }
     }
 }
