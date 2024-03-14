@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.DTO.Notifications
+namespace Models.ViewModels.Notifications
 {
     public class InvitationNotification(
         TeamInvitation invite,

@@ -1,4 +1,4 @@
-﻿namespace Models.DTO.Notifications
+﻿namespace Models.ViewModels.Notifications
 {
     public abstract class AbstractNotification
     {

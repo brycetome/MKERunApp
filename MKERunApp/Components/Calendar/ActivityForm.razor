@@ -1,9 +1,25 @@
 ﻿@inject ISnackbar Snackbar
 
-<MudForm @ref="form">
+<style>
+    .overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 8px;
+    }
+</style>
+
+<MudIconButton Icon="@Icons.Material.Filled.Close"
+                Color="Color.Dark"
+                OnClick="Close"
+                Size="Size.Small"
+                Class="overlay"/>
+
+<MudForm @ref="form" Class="pt-2">
     <MudStack Spacing="1">
         <MudNumericField @bind-Value="ViewModel.MinutesForm"
                          T="int"
+                         Min="0"
                          Label="Minutes"
                          Required
                          RequiredError="Minutes is required." />
@@ -64,17 +80,12 @@
         {
             try
             {
+                Activity? act = null;
                 if (Activity != null)
-                {
-                    var loadedActivity = await ViewModel.UpdateActivity(Activity);
-                    await ActivityChanged.InvokeAsync(loadedActivity);
-                }
+                    act = await ViewModel.UpdateActivity(Activity);
                 else
-                {
-                    await ViewModel.AddNewActivity();
-                }
-
-                await ShowChanged.InvokeAsync(false);
+                    act = await ViewModel.AddNewActivity();
+                await ActivityChanged.InvokeAsync(act);
             }
             catch
             {
@@ -92,12 +103,17 @@
             else
                 throw new NullReferenceException();
             Snackbar.Add("Successfuly deleted the activity.", Severity.Success);
-            await ShowChanged.InvokeAsync(false);
+            await Close();
             await ActivityChanged.InvokeAsync(null);
         }
         catch
         {
             Snackbar.Add("Failed to delete the activity.", Severity.Error);
         }
+    }
+
+    private async Task Close()
+    {
+        await ShowChanged.InvokeAsync(false);
     }
 }

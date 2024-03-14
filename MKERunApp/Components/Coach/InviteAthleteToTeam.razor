@@ -1,11 +1,11 @@
 ﻿@inject ISnackbar Snackbar
 @inject UserManager<ApplicationUser> UserManager
 
-<MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+<MudStack Row Spacing="1" AlignItems="AlignItems.Center" Style="width:100%">
     <MudTextField @bind-Value=email
                   Margin=Margin.Dense
                   Variant="Variant.Outlined"
-                  Placeholder="email"/>
+                  Placeholder="Email"/>
     <MudButton Variant="Variant.Filled"
                Color="Color.Primary"
                OnClick="InviteEmail">
@@ -14,9 +14,7 @@
 </MudStack>
 
 @code {
-    [Parameter]
-    [EditorRequired]
-    required public Team Team { get; set; }
+    [Parameter] public int TeamId { get; set; }
 
     private string email = "";
 
@@ -24,8 +22,9 @@
     {
         try
         {
-            await UserManager.SendInvite(Team, email);
+            await UserManager.SendInvite(TeamId, email);
             Snackbar.Add("Invited the athelte.", Severity.Success);
+            email = "";
         }
         catch (Exception ex)
         {

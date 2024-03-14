@@ -32,7 +32,7 @@
 
 <MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
     <MudPaper Class="pa-2">
-        <ActivityForm Show=OpenNewActivity ShowChanged="(_) => ShowChanged()" ViewModel="ViewModel" />
+        <ActivityForm @bind-Show=OpenNewActivity ActivityChanged="(_) => ShowChanged()" ViewModel="ViewModel" />
     </MudPaper>
 </MudPopover>
 @code {
