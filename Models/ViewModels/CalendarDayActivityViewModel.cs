@@ -9,6 +9,7 @@ namespace Models.ViewModels
         public IEnumerable<TeamGroup> GetSelectedGroupsForm => selectedGroups;
         public DateTime GetDay => day;
         public int MinutesForm { get; set; }
+        public string Description { get; set; }
 
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
@@ -95,7 +96,8 @@ namespace Models.ViewModels
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = MinutesForm * 60
+                DurationSeconds = MinutesForm * 60,
+                Description = Description,
             };
 
             using var ctx = factory.CreateDbContext();
@@ -123,22 +125,24 @@ namespace Models.ViewModels
                 .FirstOrDefaultAsync(act => act.Id == activity.Id)
                 ?? throw new NullReferenceException();
 
-            loadedActivity.DurationSeconds = MinutesForm * 60;
-            loadedActivity.Groups.Clear();
+            activity.DurationSeconds = MinutesForm * 60;
+            activity.Groups.Clear();
+            activity.Description = Description;
 
             foreach (var group in selectedGroups)
             {
                 var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
-                loadedActivity.Groups.Add(loadedGroup);
+                activity.Groups.Add(loadedGroup);
             }
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
 
-            activities.RemoveAll(act => act.Id == loadedActivity.Id);
-            activities.Add(loadedActivity);
+            activities.RemoveAll(act => act.Id == activity.Id);
+            activities.Add(activity);
             selectedGroups.Clear();
-            return loadedActivity;
+            Description = "";
+            return activity;
         }
 
         public async Task DeleteActivity(Activity activity)
