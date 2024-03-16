@@ -103,7 +103,7 @@
             {
                 Activity? act = null;
                 if (Activity != null)
-                    act = await ViewModel.UpdateActivity(Activity);
+                    act = await ViewModel.UpdateActivity(Activity.Id);
                 else
                     act = await ViewModel.AddNewActivity();
                 await ActivityChanged.InvokeAsync(act);

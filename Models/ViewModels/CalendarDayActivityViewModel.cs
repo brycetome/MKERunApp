@@ -115,14 +115,14 @@ namespace Models.ViewModels
             return newActivity;
         }
 
-        public async Task<Activity> UpdateActivity(Activity activity)
+        public async Task<Activity> UpdateActivity(int ActivityId)
         {
 
             using var ctx = factory.CreateDbContext();
 
             var loadedActivity = await ctx.Activity
                 .Include(act => act.Groups)
-                .FirstOrDefaultAsync(act => act.Id == activity.Id)
+                .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
             loadedActivity.DurationSeconds = MinutesForm * 60;
@@ -140,7 +140,7 @@ namespace Models.ViewModels
 
             activities.RemoveAll(act => act.Id == loadedActivity.Id);
             activities.Add(loadedActivity);
-            return activity;
+            return loadedActivity;
         }
 
         public async Task DeleteActivity(Activity activity)
