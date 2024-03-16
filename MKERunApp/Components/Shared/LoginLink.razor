@@ -1,0 +1,17 @@
+﻿@inject NavigationManager NavMan
+
+<MudButton OnClick="OnClick"
+           Color="Color.Primary"
+           StartIcon="@Icons.Material.Filled.SwitchAccount"
+           Variant="Variant.Filled"
+           Size="Size.Large">
+    Login
+</MudButton>
+
+
+@code {
+    private void OnClick()
+    {
+        NavMan.NavigateTo("/Account/Login");
+    }
+}
