@@ -68,7 +68,7 @@
         {
             if (user is null || SelectedCoachTeam is null)
                 throw new NullReferenceException();
-            await factory.SetDefaultAthleteTeam(user, SelectedCoachTeam);
+            await factory.SetDefaultCoachedTeam(user, SelectedCoachTeam);
             Snackbar.Add("Set a new default team.", Severity.Success);
         }
         catch

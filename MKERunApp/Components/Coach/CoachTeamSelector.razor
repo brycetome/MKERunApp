@@ -33,7 +33,9 @@
     {
         try
         {
-            Teams = (await factory.LoadUser(UserManager, AuthenticationStateProvider)).CoachedTeams;
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            Teams = user.CoachedTeams;
+            await SelectedTeamChanged.InvokeAsync(Teams.FirstOrDefault(team => team.Id == user.DefaultCoachTeamId));
         }
         catch
         {
