@@ -7,22 +7,36 @@
         right: 0;
         padding: 8px;
     }
+
+    .bottom-activity-buttons {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
 </style>
 
 <MudIconButton Icon="@Icons.Material.Filled.Close"
-                Color="Color.Dark"
-                OnClick="Close"
-                Size="Size.Small"
-                Class="overlay"/>
+               Color="Color.Dark"
+               OnClick="Close"
+               Size="Size.Small"
+               Class="overlay" />
 
 <MudForm @ref="form" Class="pt-2">
     <MudStack Spacing="1">
-        <MudNumericField @bind-Value="ViewModel.MinutesForm"
-                         T="int"
-                         Min="0"
-                         Label="Minutes"
-                         Required
-                         RequiredError="Minutes is required." />
+        <MudStack Spacing="0">
+            <MudNumericField @bind-Value="ViewModel.MinutesForm"
+                             T="int"
+                             Min="0"
+                             Label="Minutes"
+                             Required
+                             Margin=Margin.Dense
+                             RequiredError="Minutes is required." />
+
+            <MudTextField @bind-Value="ViewModel.Description"
+                          Label="Description"
+                          AutoGrow
+                          Margin=Margin.Dense />
+        </MudStack>
+
 
         @foreach (var group in ViewModel.GetGroups)
         {
@@ -35,20 +49,26 @@
                          Color="Color.Primary" />
         }
 
-        <MudButton Color="Color.Primary"
-                   OnClick="ClickSubmit"
-                   Variant="Variant.Filled">
-            Submit
-        </MudButton>
+        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.FlexEnd Spacing="0">
+            @if (Activity != null)
+            {
+                <MudIconButton Color=Color.Secondary
+                               Class="bottom-activity-buttons"
+                               OnClick="ClickDelete"
+                               Edge="Edge.Start"
+                               DisableRipple
+                               DisableElevation
+                               Icon="@Icons.Material.Outlined.Delete" />
+            }
 
-        @if (Activity != null)
-        {
-            <MudButton Color=Color.Secondary
-                       OnClick="ClickDelete"
-                       Variant="Variant.Filled">
-                Delete
-            </MudButton>
-        }
+            <MudIconButton Color="Color.Primary"
+                           Class="bottom-activity-buttons"
+                           Icon="@Icons.Material.Filled.Save"
+                           Edge="Edge.Start"
+                           DisableRipple
+                           DisableElevation
+                           OnClick="ClickSubmit" />
+        </MudStack>
     </MudStack>
 </MudForm>
 
@@ -70,6 +90,7 @@
         {
             ViewModel.MinutesForm = (int)Activity.DurationSeconds / 60;
             ViewModel.ResetSelectedGroups(Activity.Groups);
+            ViewModel.Description = Activity.Description;
         }
     }
 
@@ -82,7 +103,7 @@
             {
                 Activity? act = null;
                 if (Activity != null)
-                    act = await ViewModel.UpdateActivity(Activity);
+                    act = await ViewModel.UpdateActivity(Activity.Id);
                 else
                     act = await ViewModel.AddNewActivity();
                 await ActivityChanged.InvokeAsync(act);

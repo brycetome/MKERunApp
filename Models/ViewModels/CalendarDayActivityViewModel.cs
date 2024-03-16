@@ -9,6 +9,7 @@ namespace Models.ViewModels
         public IEnumerable<TeamGroup> GetSelectedGroupsForm => selectedGroups;
         public DateTime GetDay => day;
         public int MinutesForm { get; set; }
+        public string Description { get; set; }
 
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
@@ -95,7 +96,8 @@ namespace Models.ViewModels
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = MinutesForm * 60
+                DurationSeconds = MinutesForm * 60,
+                Description = Description,
             };
 
             using var ctx = factory.CreateDbContext();
@@ -113,18 +115,19 @@ namespace Models.ViewModels
             return newActivity;
         }
 
-        public async Task<Activity> UpdateActivity(Activity activity)
+        public async Task<Activity> UpdateActivity(int ActivityId)
         {
 
             using var ctx = factory.CreateDbContext();
 
             var loadedActivity = await ctx.Activity
                 .Include(act => act.Groups)
-                .FirstOrDefaultAsync(act => act.Id == activity.Id)
+                .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
             loadedActivity.DurationSeconds = MinutesForm * 60;
             loadedActivity.Groups.Clear();
+            loadedActivity.Description = Description;
 
             foreach (var group in selectedGroups)
             {
@@ -137,7 +140,6 @@ namespace Models.ViewModels
 
             activities.RemoveAll(act => act.Id == loadedActivity.Id);
             activities.Add(loadedActivity);
-            selectedGroups.Clear();
             return loadedActivity;
         }
 
@@ -157,6 +159,7 @@ namespace Models.ViewModels
         {
             selectedGroups.Clear();
             MinutesForm = 0;
+            Description = "";
         }
     }
 }
