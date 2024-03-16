@@ -140,8 +140,7 @@ namespace Models.ViewModels
 
             activities.RemoveAll(act => act.Id == activity.Id);
             activities.Add(activity);
-            selectedGroups.Clear();
-            Description = "";
+            ResetForm();
             return activity;
         }
 
@@ -161,6 +160,7 @@ namespace Models.ViewModels
         {
             selectedGroups.Clear();
             MinutesForm = 0;
+            Description = "";
         }
     }
 }
