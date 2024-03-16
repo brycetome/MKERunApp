@@ -1,0 +1,89 @@
+﻿@page "/User"
+
+@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <MudPaper Class="pa-2">
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText>Athlete Teams</MudText>
+                <TeamSelector @bind-SelectedTeam="SelectedAthleteTeam" Teams="Teams" />
+                <MudButton OnClick="SetDefaultAthleteTeam"
+                           Variant="Variant.Filled"
+                           DisableElevation
+                           Color="Color.Primary">
+                    Set as Default
+                </MudButton>
+            </MudStack>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText>Coached Teams</MudText>
+                <TeamSelector @bind-SelectedTeam="SelectedCoachTeam" Teams="Teams" />
+                <MudButton OnClick="SetDefaultCoachTeam"
+                           Variant="Variant.Filled"
+                           DisableElevation
+                           Color="Color.Primary">
+                    Set as Default
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+
+    </Authorized>
+    <NotAuthorized>
+        <LoginLink />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private IEnumerable<Team> Teams = [];
+    private Team? SelectedAthleteTeam;
+    private Team? SelectedCoachTeam;
+    private ApplicationUser? user;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            Teams = user.AthleteTeams.Select(at => at.Team);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
+        }
+        StateHasChanged();
+    }
+
+    private async Task SetDefaultAthleteTeam()
+    {
+        try
+        {
+            if (user is null || SelectedAthleteTeam is null)
+                throw new NullReferenceException();
+            await factory.SetDefaultAthleteTeam(user, SelectedAthleteTeam);
+            Snackbar.Add("Set a new default team.", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to set the default team.", Severity.Error);
+        }
+    }
+
+    private async Task SetDefaultCoachTeam()
+    {
+        try
+        {
+            if (user is null || SelectedCoachTeam is null)
+                throw new NullReferenceException();
+            await factory.SetDefaultCoachedTeam(user, SelectedCoachTeam);
+            Snackbar.Add("Set a new default team.", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to set the default team.", Severity.Error);
+        }
+    }
+}

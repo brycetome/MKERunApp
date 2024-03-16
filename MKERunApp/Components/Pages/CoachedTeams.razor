@@ -5,35 +5,41 @@
 @inject IDbContextFactory<ApplicationDbContext> factory
 
 <AuthorizeView>
-    <MudGrid>
-        <MudItem xs="12 " sm="12" md="6" lg="4" xl="3">
-            <MudStack Row AlignItems="AlignItems.Center">
-                <MudText Typo="Typo.h4"><b>Coaching Teams</b></MudText>
-                <MudPaper Class="pa-2" Style="width:100%">
-                    <CoachTeamSelector SelectedTeam=SelectedTeam SelectedTeamChanged=SelectedTeamChanged />
-                </MudPaper>
-            </MudStack>
-        </MudItem>
-
-        @if (SelectedTeam != null)
-        {
-            <MudItem xs="12" md="12">
-                <TeamTabs Team="SelectedTeam" />
+    <Authorized>
+        <MudGrid>
+            <MudItem xs="12 " sm="12" md="6" lg="4" xl="3">
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.h4"><b>Coaching Teams</b></MudText>
+                    <MudPaper Class="pa-2" Style="width:100%">
+                        <CoachTeamSelector SelectedTeam=SelectedTeam SelectedTeamChanged=SelectedTeamChanged />
+                    </MudPaper>
+                </MudStack>
             </MudItem>
-        }
-    </MudGrid>
+
+            @if (SelectedTeam != null)
+            {
+                <MudItem xs="12" md="12">
+                    <TeamTabs Team="SelectedTeam" />
+                </MudItem>
+            }
+        </MudGrid>
+    </Authorized>
+    <NotAuthorized>
+        <LoginLink />
+    </NotAuthorized>
 </AuthorizeView>
 
 @code {
     private Team? SelectedTeam;
 
-    private async Task SelectedTeamChanged(Team team)
+    private async Task SelectedTeamChanged(Team? team)
     {
         try
         {
             SelectedTeam = null;
             StateHasChanged();
-            SelectedTeam = await factory.LoadTeam(team.Id);
+            if(team is not null)
+                SelectedTeam = await factory.LoadTeam(team.Id);
         }
         catch (Exception ex)
         {
