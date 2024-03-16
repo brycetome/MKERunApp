@@ -43,11 +43,6 @@ namespace Models
                 .HasMany(group => group.Activities)
                 .WithMany(activity => activity.Groups);
 
-            modelBuilder.Entity<Activity>()
-                .HasOne(act => act.ActivityType)
-                .WithMany()
-                .OnDelete(DeleteBehavior.SetNull);
-
             base.OnModelCreating(modelBuilder);
         }
     }
