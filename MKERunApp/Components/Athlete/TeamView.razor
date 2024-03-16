@@ -47,10 +47,10 @@
         {
             var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
             Teams = user.AthleteTeams.Select(at => at.Team);
-            Athlete = user.AthleteTeams.FirstOrDefault();
+            Athlete = user.AthleteTeams.FirstOrDefault(at => at.TeamId == user.DefaultAthelteTeamId);
             SelectedTeam = Athlete?.Team;
-            if (user.AthleteTeams.FirstOrDefault() is TeamAthlete athTeam)
-                await ChangeTeam(athTeam.Team);
+            if (SelectedTeam is Team team)
+                await ChangeTeam(team);
         }
         catch
         {

@@ -9,7 +9,9 @@ namespace Models
         public List<TeamInvitation> Invitations { get; set; } = [];
 
         public Team? DefaultAthelteTeam { get; set; }
+        public int? DefaultAthelteTeamId { get; set; }
         public Team? DefaultCoachTeam { get; set; }
+        public int? DefaultCoachTeamId { get; set; }
 
     }
 }
