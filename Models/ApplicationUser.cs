@@ -8,8 +8,8 @@ namespace Models
         public List<TeamAthlete> AthleteTeams { get; set; } = [];
         public List<TeamInvitation> Invitations { get; set; } = [];
 
-/*        public Team? DefaultAthelteTeam { get; set; }
-        public Team? DefaultCoachTeam { get; set; }*/
+        public Team? DefaultAthelteTeam { get; set; }
+        public Team? DefaultCoachTeam { get; set; }
 
     }
 }

@@ -51,5 +51,33 @@ namespace Models.AccessServices
                 throw new Exception("Failed to add team.");
             return newTeam;
         }
+
+        public static async Task SetDefaultCoachedTeam(
+            this IDbContextFactory<ApplicationDbContext> factory,
+            ApplicationUser User,
+            Team Team)
+        {
+            using var ctx = factory.CreateDbContext();
+
+            ctx.Attach(User);
+            User.DefaultCoachTeam = Team;
+
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+        }
+
+        public static async Task SetDefaultAthleteTeam(
+            this IDbContextFactory<ApplicationDbContext> factory,
+            ApplicationUser User,
+            Team Team)
+        {
+            using var ctx = factory.CreateDbContext();
+
+            ctx.Attach(User);
+            User.DefaultAthelteTeam = Team;
+
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+        }
     }
 }
