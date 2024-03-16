@@ -15,17 +15,24 @@
                     <IconText Icon="@Icons.Material.Filled.DirectionsRun"
                               Text="Training Run"
                               SubText="@($"Group: {GroupName}")" />
-
-                    <MudStack Row
-                              Class="pr-10 py-2"
-                              Spacing="0"
-                              Justify="Justify.FlexEnd"
-                              AlignItems="AlignItems.Baseline">
-                        <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
-                        <MudText Typo="Typo.body1">min</MudText>
+                    <MudStack Spacing="0">
+                        <MudStack Row
+                                  Class="pr-10 py-2"
+                                  Spacing="0"
+                                  Justify="Justify.FlexEnd"
+                                  AlignItems="AlignItems.Baseline">
+                            <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
+                            <MudText Typo="Typo.body1">min</MudText>
+                        </MudStack>
                     </MudStack>
                 </MudStack>
             </TitleContent>
+            <ChildContent>
+                <MudDivider />
+                <MudField Variant="Variant.Filled" Label="Description" Class="pb-2">
+                    <MudText Typo="Typo.body1">@act.Description</MudText>
+                </MudField>
+            </ChildContent>
         </MudExpansionPanel>
     }
 </MudExpansionPanels>
