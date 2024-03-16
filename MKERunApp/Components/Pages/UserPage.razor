@@ -7,14 +7,19 @@
 
 <AuthorizeView>
     <Authorized>
-        <MudStack Row AlignItems="AlignItems.Center">
-            <MudText>Athlete Teams</MudText>
-            <TeamSelector @bind-SelectedTeam="SelectedAthleteTeam" Teams="Teams"/>
-        </MudStack>
-        <MudStack Row AlignItems="AlignItems.Center">
-            <MudText>Coached Teams</MudText>
-            <TeamSelector @bind-SelectedTeam="SelectedCoachTeam" Teams="Teams" />
-        </MudStack>
+        <MudPaper>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText>Athlete Teams</MudText>
+                <TeamSelector @bind-SelectedTeam="SelectedAthleteTeam" Teams="Teams" />
+                <MudButton OnClick="SetDefaultAthleteTeam" Variant="Variant.Filled">Set as Default</MudButton>
+            </MudStack>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudText>Coached Teams</MudText>
+                <TeamSelector @bind-SelectedTeam="SelectedCoachTeam" Teams="Teams" />
+                <MudButton OnClick="SetDefaultCoachTeam" Variant="Variant.Filled">Set as Default</MudButton>
+            </MudStack>
+        </MudPaper>
+
     </Authorized>
     <NotAuthorized>
         <LoginLink />
@@ -32,7 +37,7 @@
     {
         try
         {
-            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
             Teams = user.AthleteTeams.Select(at => at.Team);
         }
         catch
