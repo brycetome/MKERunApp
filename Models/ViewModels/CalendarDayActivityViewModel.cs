@@ -125,22 +125,21 @@ namespace Models.ViewModels
                 .FirstOrDefaultAsync(act => act.Id == activity.Id)
                 ?? throw new NullReferenceException();
 
-            activity.DurationSeconds = MinutesForm * 60;
-            activity.Groups.Clear();
-            activity.Description = Description;
+            loadedActivity.DurationSeconds = MinutesForm * 60;
+            loadedActivity.Groups.Clear();
+            loadedActivity.Description = Description;
 
             foreach (var group in selectedGroups)
             {
                 var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
-                activity.Groups.Add(loadedGroup);
+                loadedActivity.Groups.Add(loadedGroup);
             }
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
 
-            activities.RemoveAll(act => act.Id == activity.Id);
-            activities.Add(activity);
-            ResetForm();
+            activities.RemoveAll(act => act.Id == loadedActivity.Id);
+            activities.Add(loadedActivity);
             return activity;
         }
 
