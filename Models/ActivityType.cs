@@ -1,9 +1,58 @@
-﻿namespace Models
+﻿using MudBlazor;
+
+namespace Models
 {
-    public class ActivityType
+    public class ActivityType(ActivityType.WorkoutType type, string name, string icon)
     {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public string Icon { get; set; } = "";
+        public enum WorkoutType
+        {
+            None = 0,
+            Run = 1,
+            Bike = 2,
+            CrossTrain = 3,
+            Swim = 4,
+            WarmUp = 5,
+            CoolDown = 6,
+            Strength = 7,
+        }
+
+        public string Name => name;
+        public string Icon => icon;
+        public WorkoutType Type => type;
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public static IEnumerable<ActivityType> GetActivityTypes()
+        {
+            return ((WorkoutType[])Enum.GetValues(typeof(WorkoutType))).Select(GetActivityType);
+        }
+
+        public static ActivityType GetActivityType(WorkoutType type)
+        {
+            switch (type)
+            {
+                case WorkoutType.Run:
+                    return new ActivityType(WorkoutType.Run, "Run", Icons.Material.Filled.DirectionsRun);
+                case WorkoutType.Bike:
+                    return new ActivityType(WorkoutType.Bike, "Bike", Icons.Material.Filled.DirectionsBike);
+                case WorkoutType.CrossTrain:
+                    return new ActivityType(WorkoutType.CrossTrain, "Cross Train", Icons.Material.Filled.DirectionsBike);
+                case WorkoutType.Swim:
+                    return new ActivityType(WorkoutType.Swim, "Swim", Icons.Material.Filled.Pool);
+                case WorkoutType.WarmUp:
+                    return new ActivityType(WorkoutType.WarmUp, "Warm Up", Icons.Material.Filled.Whatshot);
+                case WorkoutType.CoolDown:
+                    return new ActivityType(WorkoutType.CoolDown, "Cool Down", Icons.Material.Filled.Thermostat);
+                case WorkoutType.Strength:
+                    return new ActivityType(WorkoutType.Strength, "Srength/Lift", Icons.Material.Filled.FitnessCenter);
+                default:
+                    break;
+            }
+            return new ActivityType(WorkoutType.None, "Activity", Icons.Material.Filled.RunCircle);
+        }
+
     }
 }

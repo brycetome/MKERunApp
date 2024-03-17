@@ -30,10 +30,8 @@
     </MudStack>
 </MudButton>
 
-<MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
-    <MudPaper Class="pa-2">
-        <ActivityForm @bind-Show=OpenNewActivity ActivityChanged="(_) => ShowChanged()" ViewModel="ViewModel" />
-    </MudPaper>
+<MudPopover AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" Open=OpenNewActivity Fixed>
+    <ActivityForm @bind-Show=OpenNewActivity ActivityChanged="(_) => ShowChanged()" ViewModel="ViewModel" />
 </MudPopover>
 @code {
     [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
@@ -41,7 +39,6 @@
 
     private void ClickedDay()
     {
-        ViewModel.ResetForm();
         OpenNewActivity = !OpenNewActivity;
     }
 

@@ -7,14 +7,12 @@
     </MudStack>
 </MudChip>
 
-<MudPopover AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
-    <MudPaper Class="pa-2">
-        <ActivityForm Show=OpenActivity
-            ShowChanged=ShowChanged
-            Activity=Activity
-            ActivityChanged="ActivityChanged"
-            ViewModel="ViewModel" />
-    </MudPaper>
+<MudPopover AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
+    <ActivityForm Show=OpenActivity
+                  ShowChanged=ShowChanged
+                  Activity=Activity
+                  ActivityChanged="ActivityChanged"
+                  ViewModel="ViewModel" />
 </MudPopover>
 
 @code {
