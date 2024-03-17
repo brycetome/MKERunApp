@@ -1,0 +1,24 @@
+﻿<MudSelect Value=ActivityType
+           ValueChanged="ActivityTypeChanged"
+           Dense
+           Margin="Margin.Dense"
+           AdornmentIcon="@Icon"
+           Label="Activity Type"
+           DisableUnderLine
+           Variant="Variant.Filled">
+    @foreach (var ActivityType in ActivityType.GetActivityTypes())
+    {
+        <MudSelectItem Value="ActivityType" Icon="@ActivityType.Icon">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="0" Justify="Justify.SpaceBetween">
+                <MudText>@ActivityType.Name</MudText>
+                <MudIcon Icon="@ActivityType.Icon" />
+            </MudStack>
+        </MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    [Parameter] public ActivityType? ActivityType { get; set; }
+    [Parameter] public EventCallback<ActivityType?> ActivityTypeChanged { get; set; }
+    [Parameter] public string Icon { get; set; } = "";
+}

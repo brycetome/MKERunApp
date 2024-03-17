@@ -1,0 +1,14 @@
+﻿<MudDropContainer T="WorkoutItem" Items="WorkoutItems" ItemsSelector="@((item,dropzone) => true)" Class="d-flex flex-wrap flex-grow-1">
+    <ChildContent>
+        <MudDropZone T="WorkoutItem" Identifier="">
+
+        </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private List<WorkoutItem> WorkoutItems = [];
+}
