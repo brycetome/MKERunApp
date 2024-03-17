@@ -6,14 +6,12 @@ namespace Models.ViewModels
     {
         public IEnumerable<Activity> GetActivities => activities;
         public IEnumerable<TeamGroup> GetGroups => groups;
-        public IEnumerable<TeamGroup> GetSelectedGroupsForm => selectedGroups;
+        
         public DateTime GetDay => day;
-        public int MinutesForm { get; set; }
-        public string Description { get; set; }
+
 
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
-        private readonly List<TeamGroup> selectedGroups = [];
         private DateTime day;
         private readonly IDbContextFactory<ApplicationDbContext> factory;
 
@@ -79,30 +77,20 @@ namespace Models.ViewModels
             await ctx.DisposeAsync();
         }
 
-        public void ToggleSelectedGroup(TeamGroup group)
-        {
-            if (!selectedGroups.Remove(group))
-                selectedGroups.Add(group);
-        }
-
-        public void ResetSelectedGroups(IEnumerable<TeamGroup> groups)
-        {
-            selectedGroups.Clear();
-            selectedGroups.AddRange(this.groups.Where(g => groups.Any(g1 => g1.Id == g.Id)));
-        }
-
-        public async Task<Activity> AddNewActivity()
+        public async Task<Activity> AddNewActivity(ActivityFormModel Form)
         {
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = MinutesForm * 60,
-                Description = Description,
+                DurationSeconds = Form.Minutes * 60,
+                Description = Form.Description,
+                WorkoutType = Form.SelectedActivityType?.Type,
+                IsWorkOut = Form.IsWorkOut,
             };
 
             using var ctx = factory.CreateDbContext();
 
-            foreach (var group in selectedGroups)
+            foreach (var group in Form.GetSelectedGroups)
             {
                 var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
                 loadedGroup.Activities.Add(newActivity);
@@ -111,11 +99,11 @@ namespace Models.ViewModels
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
             activities.Add(newActivity);
-            selectedGroups.Clear();
+            Form.ResetForm();
             return newActivity;
         }
 
-        public async Task<Activity> UpdateActivity(int ActivityId)
+        public async Task<Activity> UpdateActivity(int ActivityId, ActivityFormModel Form)
         {
 
             using var ctx = factory.CreateDbContext();
@@ -125,11 +113,13 @@ namespace Models.ViewModels
                 .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
-            loadedActivity.DurationSeconds = MinutesForm * 60;
+            loadedActivity.DurationSeconds = Form.Minutes * 60;
             loadedActivity.Groups.Clear();
-            loadedActivity.Description = Description;
+            loadedActivity.Description = Form.Description;
+            loadedActivity.WorkoutType = Form.SelectedActivityType?.Type;
+            loadedActivity.IsWorkOut = Form.IsWorkOut;
 
-            foreach (var group in selectedGroups)
+            foreach (var group in Form.GetSelectedGroups)
             {
                 var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
                 loadedActivity.Groups.Add(loadedGroup);
@@ -152,14 +142,6 @@ namespace Models.ViewModels
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
             activities.RemoveAll(act => act.Id == loadedActivity.Id);
-            ResetForm();
-        }
-
-        public void ResetForm()
-        {
-            selectedGroups.Clear();
-            MinutesForm = 0;
-            Description = "";
         }
     }
 }

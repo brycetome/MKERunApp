@@ -12,62 +12,107 @@
         padding-top: 0 !important;
         padding-bottom: 0 !important;
     }
+
+    .mud-input-filled {
+        border-radius: 12px !important;
+    }
+
+    .mud-input-label {
+        color: rgb(255, 255, 255, 0.65) !important;
+    }
 </style>
 
-<MudIconButton Icon="@Icons.Material.Filled.Close"
-               Color="Color.Dark"
-               OnClick="Close"
-               Size="Size.Small"
-               Class="overlay" />
 
-<MudForm @ref="form" Class="pt-2">
-    <MudStack Spacing="1">
-        <MudStack Spacing="0">
-            <MudNumericField @bind-Value="ViewModel.MinutesForm"
-                             T="int"
-                             Min="0"
-                             Label="Minutes"
-                             Required
-                             Margin=Margin.Dense
-                             RequiredError="Minutes is required." />
+<MudForm @ref="form">
+    <MudStack Spacing="2">
+        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
+            <MudText Class="pl-3"><b>@ViewModel.GetDay.ToShortDateString()</b></MudText>
 
-            <MudTextField @bind-Value="ViewModel.Description"
-                          Label="Description"
-                          AutoGrow
-                          Margin=Margin.Dense />
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           Color="Color.Dark"
+                           OnClick="Close"
+                           Size="Size.Small" />
         </MudStack>
 
 
-        @foreach (var group in ViewModel.GetGroups)
-        {
-            <MudCheckBox T="bool"
-                         Value="ViewModel.GetSelectedGroupsForm.Contains(group)"
-                         ValueChanged="_ => ViewModel.ToggleSelectedGroup(group)"
-                         Label="@group.Name"
-                         Dense
-                         Size="Size.Small"
-                         Color="Color.Primary" />
-        }
+        <MudNumericField @bind-Value="FormModel.Minutes"
+                         T="int"
+                         Min="0"
+                         Label="Time"
+                         Required
+                         AdornmentText="min"
+                         Adornment="Adornment.End"
+                         Margin=Margin.Dense
+                         Variant="Variant.Filled"
+                         DisableUnderLine
+                         RequiredError="Minutes is required." />
 
-        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.FlexEnd Spacing="0">
-            @if (Activity != null)
+        <MudTextField @bind-Value="FormModel.Description"
+                      Label="Description"
+                      AutoGrow
+                      DisableUnderLine
+                      Variant="Variant.Filled"
+                      Margin=Margin.Dense />
+
+        <MudSelect @bind-Value=FormModel.SelectedActivityType
+                   Dense
+                   Margin="Margin.Dense"
+                   AdornmentIcon="@FormModel.SelectedActivityType?.Icon"
+                   Label="Activity Type"
+                   DisableUnderLine
+                   Variant="Variant.Filled">
+            @foreach (var ActivityType in ActivityType.GetActivityTypes())
             {
-                <MudIconButton Color=Color.Secondary
+                <MudSelectItem Value="ActivityType" Icon="@ActivityType.Icon">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="0" Justify="Justify.SpaceBetween">
+                        <MudText>@ActivityType.Name</MudText>
+                        <MudIcon Icon="@ActivityType.Icon" />
+                    </MudStack>
+                </MudSelectItem>
+            }
+        </MudSelect>
+
+        <MudField Variant="Variant.Filled"
+                  Margin="Margin.Dense"
+                  DisableUnderLine
+                  Label="Groups">
+            @foreach (var group in ViewModel.GetGroups)
+            {
+                <MudCheckBox T="bool"
+                             Value="FormModel.GetSelectedGroups.Contains(group)"
+                             ValueChanged="_ => FormModel.ToggleSelectedGroup(group)"
+                             Label="@group.Name"
+                             Dense
+                             Size="Size.Small"
+                             Color="Color.Primary" />
+            }
+        </MudField>
+
+
+        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
+            <MudSwitch @bind-Value=FormModel.IsWorkOut Label="Workout" Color="Color.Primary" Class="pl-3" />
+
+
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
+                @if (Activity != null)
+                {
+                    <MudIconButton Color=Color.Secondary
+                                   Class="bottom-activity-buttons"
+                                   OnClick="ClickDelete"
+                                   Edge="Edge.Start"
+                                   DisableRipple
+                                   DisableElevation
+                                   Icon="@Icons.Material.Outlined.Delete" />
+                }
+
+                <MudIconButton Color="Color.Primary"
                                Class="bottom-activity-buttons"
-                               OnClick="ClickDelete"
+                               Icon="@Icons.Material.Filled.Save"
                                Edge="Edge.Start"
                                DisableRipple
                                DisableElevation
-                               Icon="@Icons.Material.Outlined.Delete" />
-            }
-
-            <MudIconButton Color="Color.Primary"
-                           Class="bottom-activity-buttons"
-                           Icon="@Icons.Material.Filled.Save"
-                           Edge="Edge.Start"
-                           DisableRipple
-                           DisableElevation
-                           OnClick="ClickSubmit" />
+                               OnClick="ClickSubmit" />
+            </MudStack>
         </MudStack>
     </MudStack>
 </MudForm>
@@ -80,6 +125,7 @@
 
     [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
 
+    private ActivityFormModel FormModel = new();
     private MudForm? form;
     private bool IsValid;
 
@@ -88,25 +134,24 @@
         base.OnInitialized();
         if (Activity is not null)
         {
-            ViewModel.MinutesForm = (int)Activity.DurationSeconds / 60;
-            ViewModel.ResetSelectedGroups(Activity.Groups);
-            ViewModel.Description = Activity.Description;
+            FormModel = new(Activity);
         }
     }
 
     private async Task ClickSubmit()
     {
         form?.Validate();
-        if ((form?.IsValid ?? false) && ViewModel.GetSelectedGroupsForm.Count() > 0)
+        if ((form?.IsValid ?? false) && FormModel != null && FormModel.GetSelectedGroups.Count() > 0)
         {
             try
             {
                 Activity? act = null;
                 if (Activity != null)
-                    act = await ViewModel.UpdateActivity(Activity.Id);
+                    act = await ViewModel.UpdateActivity(Activity.Id, FormModel);
                 else
-                    act = await ViewModel.AddNewActivity();
+                    act = await ViewModel.AddNewActivity(FormModel);
                 await ActivityChanged.InvokeAsync(act);
+                Snackbar.Add("Saved the activity", Severity.Success);
             }
             catch
             {
@@ -123,7 +168,7 @@
                 await ViewModel.DeleteActivity(Activity);
             else
                 throw new NullReferenceException();
-            Snackbar.Add("Successfuly deleted the activity.", Severity.Success);
+            Snackbar.Add("Deleted the activity.", Severity.Success);
             await Close();
             await ActivityChanged.InvokeAsync(null);
         }
