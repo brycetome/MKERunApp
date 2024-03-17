@@ -84,7 +84,7 @@ namespace Models.ViewModels
                 DayAndTime = day.ToUniversalTime(),
                 DurationSeconds = Form.Minutes * 60,
                 Description = Form.Description,
-                WorkoutType = Form.SelectedActivityType?.Type,
+                WorkoutType = Form.SelectedActivityType.Type,
                 IsWorkOut = Form.IsWorkOut,
             };
 
@@ -116,7 +116,7 @@ namespace Models.ViewModels
             loadedActivity.DurationSeconds = Form.Minutes * 60;
             loadedActivity.Groups.Clear();
             loadedActivity.Description = Form.Description;
-            loadedActivity.WorkoutType = Form.SelectedActivityType?.Type;
+            loadedActivity.WorkoutType = Form.SelectedActivityType.Type;
             loadedActivity.IsWorkOut = Form.IsWorkOut;
 
             foreach (var group in Form.GetSelectedGroups)

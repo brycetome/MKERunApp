@@ -9,11 +9,12 @@
 <MudExpansionPanels MultiExpansion Elevation="25">
     @foreach (Activity act in Activities)
     {
-        <MudExpansionPanel Dense Style="background: #c9a853">
+        var actType = ActivityType.GetActivityType(act.WorkoutType);
+        <MudExpansionPanel Dense Style="@(act.IsWorkOut ? $"background: #c9a853" : "")">
             <TitleContent>
                 <MudStack Row AlignItems="AlignItems.Center">
-                    <IconText Icon="@Icons.Material.Filled.DirectionsRun"
-                              Text="Training Run"
+                    <IconText Icon="@actType.Icon"
+                              Text="@actType.Name"
                               SubText="@($"Group: {GroupName}")" />
                     <MudStack Spacing="0">
                         <MudStack Row

@@ -8,7 +8,7 @@ namespace Models
         private readonly List<TeamGroup> selectedGroups = [];
         public IEnumerable<TeamGroup> GetSelectedGroups => selectedGroups;
 
-        public ActivityType? SelectedActivityType { get; set; } = ActivityType.GetActivityType(ActivityType.WorkoutType.Run);
+        public ActivityType SelectedActivityType { get; set; } = ActivityType.GetActivityType(ActivityType.WorkoutType.Run);
         public int Minutes { get; set; }
         public string Description { get; set; } = "";
         public bool IsWorkOut { get; set; }
