@@ -22,11 +22,9 @@
     }
 </style>
 
-<div style="position:absolute; top: @(offsetY)px; left: @(offsetX)px; border-color: black;width:300px;">
+<div style="position:absolute; top: @(offsetY)px; left: @(offsetX)px; black;width:300px;">
     <MudPaper Class="pa-2">
-
         <MudForm @ref="form">
-
             <MudStack Spacing="2">
                 <div draggable="true" @ondragend="OnDragEnd" @ondragstart="OnDragStart" style="cursor: move">
                     <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
@@ -42,7 +40,6 @@
                                        Style="padding: 8px;"/>
                     </MudStack>
                 </div>
-
 
                 <MudDivider />
 
@@ -180,7 +177,7 @@
                 await ActivityChanged.InvokeAsync(act);
                 Snackbar.Add("Saved the activity", Severity.Success);
             }
-            catch
+            catch (Exception ex)
             {
                 Snackbar.Add("Failed to save the activity", Severity.Error);
             }

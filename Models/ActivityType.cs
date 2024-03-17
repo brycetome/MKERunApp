@@ -6,14 +6,14 @@ namespace Models
     {
         public enum WorkoutType
         {
-            None,
-            Run,
-            Bike,
-            CrossTrain,
-            Swim,
-            WarmUp,
-            CoolDown,
-            Strength,
+            None = 0,
+            Run = 1,
+            Bike = 2,
+            CrossTrain = 3,
+            Swim = 4,
+            WarmUp = 5,
+            CoolDown = 6,
+            Strength = 7,
         }
 
         public string Name => name;

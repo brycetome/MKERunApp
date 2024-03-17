@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using static Models.ActivityType;
 
 namespace Models
 {
@@ -21,8 +20,18 @@ namespace Models
             selectedGroups.AddRange(activity.Groups);
             Description = activity.Description;
             IsWorkOut = activity.IsWorkOut;
-            if (activity.WorkoutType is ActivityType.WorkoutType type)
-                SelectedActivityType = ActivityType.GetActivityType(type);
+            if (activity.WorkoutType is WorkoutType type)
+                SelectedActivityType = GetActivityType(type);
+        }
+
+        public void ApplyForm(Activity activity)
+        {
+            activity.DurationSeconds = Minutes * 60;
+            activity.Description = Description;
+            activity.WorkoutType = SelectedActivityType.Type;
+            activity.IsWorkOut = IsWorkOut;
+            activity.Groups.Clear();
+            activity.Groups.AddRange(selectedGroups);
         }
 
         public void ToggleSelectedGroup(TeamGroup group)
@@ -36,7 +45,7 @@ namespace Models
             selectedGroups.Clear();
             Minutes = 0;
             Description = "";
-            SelectedActivityType = ActivityType.GetActivityType(ActivityType.WorkoutType.Run);
+            SelectedActivityType = GetActivityType(WorkoutType.Run);
             IsWorkOut = false;
         }
     }

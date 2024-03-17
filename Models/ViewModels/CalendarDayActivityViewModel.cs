@@ -9,7 +9,6 @@ namespace Models.ViewModels
         
         public DateTime GetDay => day;
 
-
         private List<Activity> activities;
         private readonly IEnumerable<TeamGroup> groups;
         private DateTime day;
@@ -82,11 +81,10 @@ namespace Models.ViewModels
             var newActivity = new Activity()
             {
                 DayAndTime = day.ToUniversalTime(),
-                DurationSeconds = Form.Minutes * 60,
-                Description = Form.Description,
-                WorkoutType = Form.SelectedActivityType.Type,
-                IsWorkOut = Form.IsWorkOut,
             };
+
+            Form.ApplyForm(newActivity);
+            newActivity.Groups.Clear();
 
             using var ctx = factory.CreateDbContext();
 
@@ -113,11 +111,8 @@ namespace Models.ViewModels
                 .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
-            loadedActivity.DurationSeconds = Form.Minutes * 60;
+            Form.ApplyForm(loadedActivity);
             loadedActivity.Groups.Clear();
-            loadedActivity.Description = Form.Description;
-            loadedActivity.WorkoutType = Form.SelectedActivityType.Type;
-            loadedActivity.IsWorkOut = Form.IsWorkOut;
 
             foreach (var group in Form.GetSelectedGroups)
             {
