@@ -5,7 +5,6 @@
         padding-top: 6px !important;
     }
 
-
     .reduce-padding-mini-btns {
         padding: 4px;
     }
@@ -29,7 +28,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Style="cursor:grab" />
                 <div style="width:125px;">
                     <ActivitySelector ActivityType=activityType
-                                      ActivityTypeChanged="WorkOutTypeChaned"
+                                      ActivityTypeChanged="WorkOutOptionChanged"
                                       ShowLabel=false />
                 </div>
 
@@ -40,6 +39,7 @@
                             <MudTextField Value=_timeValue
                                           Placeholder="__:__"
                                           ValueChanged="TimeValueChaned"
+                                          Mask="timeMask"
                                           T="string"
                                           Margin="Margin.Dense"
                                           Variant="Variant.Filled"
@@ -103,6 +103,12 @@
     [Parameter] public WorkoutType ActivityType { get; set; }
     [Parameter] public EventCallback<WorkoutType> ActivityTypeChanged { get; set; }
 
+
+    public PatternMask timeMask = new PatternMask("########")
+    {
+        MaskChars = new[] { new MaskChar('#', @"^[0-9:.]*$") }
+    };
+
     private ActivityType activityType = GetActivityType(WorkoutType.Run);
 
     private string _timeValue = "";
@@ -116,19 +122,19 @@
     {
         base.OnInitialized();
 
-
         DistanceInitializeIterator();
         DistanceAdornmentOptionsIterator?.MoveNext();
-        var nextMeasurement2 = DistanceAdornmentOptionsIterator?.Current;
-        while (nextMeasurement2 != DistanceMeasurement && (DistanceAdornmentOptionsIterator?.MoveNext() ?? false))
+        var nextMeasurement = DistanceAdornmentOptionsIterator?.Current;
+        while (nextMeasurement != DistanceMeasurement && (DistanceAdornmentOptionsIterator?.MoveNext() ?? false))
         {
             DistanceAdornmentOptionsIterator?.MoveNext();
-            nextMeasurement2 = DistanceAdornmentOptionsIterator?.Current;
+            nextMeasurement = DistanceAdornmentOptionsIterator?.Current;
         }
-        _timeValue = TimeValue;
 
+        _timeValue = TimeValue;
         _distanceMeasurement = DistanceMeasurement;
         _distanceValue = DistanceValue;
+
         activityType = GetActivityType(ActivityType);
     }
 
@@ -144,7 +150,7 @@
         await DistanceValueChanged.InvokeAsync(value);
     }
 
-    private async Task WorkOutTypeChaned(ActivityType activityType)
+    private async Task WorkOutOptionChanged(ActivityType activityType)
     {
         await ActivityTypeChanged.InvokeAsync(activityType.Type);
         this.activityType = activityType;

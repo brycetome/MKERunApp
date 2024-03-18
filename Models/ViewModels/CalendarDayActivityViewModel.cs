@@ -128,6 +128,7 @@ namespace Models.ViewModels
             using var ctx2 = factory.CreateDbContext();
             loadedActivity = await ctx2.Activity
                 .Include(act => act.WorkoutItems)
+                .Include(act => act.Groups)
                 .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
