@@ -1,0 +1,60 @@
+﻿@using MudBlazor.Utilities
+
+<style>
+    .overlay {
+        position: absolute;
+        top: 0;
+        right: 2px;
+        padding: 0;
+    }
+
+        .overlay .mud-icon-button {
+            padding: 4px;
+        }
+
+</style>
+
+<MudDropContainer @ref=_container
+                  T="WorkoutItem"
+                  Items="WorkoutItems.OrderBy(item => item.Order)"
+                  ItemsSelector="@((item,dropzone) => true)"
+                  Class="d-flex flex-wrap flex-grow-1 pb-2"
+                  ItemDropped="ItemUpdated">
+    <ChildContent>
+        <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%" />
+    </ChildContent>
+    <ItemRenderer>
+        <WorkoutItemCard @bind-ActivityType="context.WorkoutType"
+                         @bind-TimeValue="context.Time"
+                         @bind-DistanceValue="context.Distance"
+                         @bind-DistanceMeasurement="context.DistanceMeasurment"
+                         OnDelete="() => ClickDelete(context)" />
+    </ItemRenderer>
+</MudDropContainer>
+
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Class="overlay">
+    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="ClickAdd" Size="Size.Medium" />
+</MudStack>
+
+@code {
+    [Parameter] public List<WorkoutItem> WorkoutItems { get; set; } = [];
+
+    private MudDropContainer<WorkoutItem>? _container;
+
+    private void ItemUpdated(MudItemDropInfo<WorkoutItem> dropItem)
+    {
+        WorkoutItems.UpdateOrder(dropItem, item => item.Order);
+    }
+
+    private void ClickAdd()
+    {
+        WorkoutItems.Add(new WorkoutItem());
+        _container?.Refresh();
+    }
+
+    private void ClickDelete(WorkoutItem item)
+    {
+        WorkoutItems.Remove(item);
+        _container?.Refresh();
+    }
+}

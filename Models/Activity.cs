@@ -11,5 +11,6 @@ namespace Models
         public string Description { get; set; } = "";
         public bool IsWorkOut { get; set; }
         public List<TeamGroup> Groups { get; set; } = [];
+        public List<WorkoutItem> WorkoutItems { get; set; } = [];
     }
 }

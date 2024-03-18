@@ -7,10 +7,11 @@ namespace Models
         private readonly List<TeamGroup> selectedGroups = [];
         public IEnumerable<TeamGroup> GetSelectedGroups => selectedGroups;
 
-        public ActivityType SelectedActivityType { get; set; } = ActivityType.GetActivityType(ActivityType.WorkoutType.Run);
+        public ActivityType SelectedActivityType { get; set; } = GetActivityType(WorkoutType.Run);
         public int Minutes { get; set; }
         public string Description { get; set; } = "";
         public bool IsWorkOut { get; set; }
+        public List<WorkoutItem> WorkoutItems { get; set; } = [];
 
         public ActivityFormModel() { }
 
@@ -20,6 +21,7 @@ namespace Models
             selectedGroups.AddRange(activity.Groups);
             Description = activity.Description;
             IsWorkOut = activity.IsWorkOut;
+            WorkoutItems = activity.WorkoutItems;
             if (activity.WorkoutType is WorkoutType type)
                 SelectedActivityType = GetActivityType(type);
         }
@@ -32,6 +34,8 @@ namespace Models
             activity.IsWorkOut = IsWorkOut;
             activity.Groups.Clear();
             activity.Groups.AddRange(selectedGroups);
+            activity.WorkoutItems.Clear();
+            activity.WorkoutItems.AddRange(WorkoutItems);
         }
 
         public void ToggleSelectedGroup(TeamGroup group)
@@ -43,6 +47,7 @@ namespace Models
         public void ResetForm()
         {
             selectedGroups.Clear();
+            WorkoutItems.Clear();
             Minutes = 0;
             Description = "";
             SelectedActivityType = GetActivityType(WorkoutType.Run);

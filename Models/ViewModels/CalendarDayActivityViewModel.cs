@@ -64,6 +64,7 @@ namespace Models.ViewModels
                         .Collection(g => g.Activities)
                         .Query()
                         .Include(act => act.Groups)
+                        .Include(act => act.WorkoutItems)
                         .Where(act => act.DayAndTime.Date == day.Date)
                         .ToListAsync();
                     activities.AddRange(activitesForGroups);
@@ -111,6 +112,7 @@ namespace Models.ViewModels
                 .FirstOrDefaultAsync(act => act.Id == ActivityId)
                 ?? throw new NullReferenceException();
 
+
             Form.ApplyForm(loadedActivity);
             loadedActivity.Groups.Clear();
 
@@ -122,6 +124,19 @@ namespace Models.ViewModels
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
+
+            using var ctx2 = factory.CreateDbContext();
+            loadedActivity = await ctx2.Activity
+                .Include(act => act.WorkoutItems)
+                .Include(act => act.Groups)
+                .FirstOrDefaultAsync(act => act.Id == ActivityId)
+                ?? throw new NullReferenceException();
+
+            var toDelete = loadedActivity.WorkoutItems.Where(item => !Form.WorkoutItems.Any(item2 => item2.Id == item.Id));
+            ctx2.WorkoutItem.RemoveRange(toDelete);
+
+            await ctx2.SaveChangesAsync();
+            await ctx2.DisposeAsync();
 
             activities.RemoveAll(act => act.Id == loadedActivity.Id);
             activities.Add(loadedActivity);

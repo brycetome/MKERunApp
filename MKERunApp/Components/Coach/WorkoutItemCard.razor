@@ -1,0 +1,175 @@
+﻿@using static Models.ActivityType;
+
+<style>
+    .remove-padding .mud-input-slot.mud-input-root.mud-input-root-filled.mud-input-root-margin-dense {
+        padding-top: 6px !important;
+    }
+
+    .reduce-padding-mini-btns {
+        padding: 4px;
+    }
+
+    .pop-over-class {
+        background: none;
+        box-shadow: none;
+    }
+</style>
+
+<MudMenu ActivationEvent="@MouseEvent.MouseOver"
+         DisableElevation
+         AnchorOrigin="Origin.CenterCenter"
+         TransformOrigin="Origin.CenterRight"
+         PopoverClass="pop-over-class"
+         Class="py-1"
+         Style="width:100%;cursor:grab">
+    <ActivatorContent>
+        <MudPaper Class="pr-1" Width="100%" Elevation="0" Style="cursor:grab">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0" Style="width:100%;cursor:grab">
+                <MudIcon Icon="@Icons.Material.Filled.DragIndicator" Style="cursor:grab" />
+                <div style="width:125px;">
+                    <ActivitySelector ActivityType=activityType
+                                      ActivityTypeChanged="WorkOutOptionChanged"
+                                      ShowLabel=false />
+                </div>
+
+                <MudSpacer />
+                <MudStack Spacing="0">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
+                        <div style="width:100px;z-index:3000">
+                            <MudTextField Value=_timeValue
+                                          Placeholder="__:__"
+                                          ValueChanged="TimeValueChaned"
+                                          Mask="timeMask"
+                                          T="string"
+                                          Margin="Margin.Dense"
+                                          Variant="Variant.Filled"
+                                          Class="remove-padding"
+                                          Adornment="Adornment.End"
+                                          AdornmentIcon="@Icons.Material.Filled.Timer"
+                                          DisableUnderLine />
+                        </div>
+                        <MudDivider Vertical />
+                        @if (_distanceMeasurement != "none")
+                        {
+                            <div style="width:75px;z-index:3000">
+                                <MudNumericField Value=_distanceValue
+                                                 ValueChanged="DistanceValueChaned"
+                                                 T="int?"
+                                                 Min="0"
+                                                 HideSpinButtons
+                                                 Margin="Margin.Dense"
+                                                 Variant="Variant.Filled"
+                                                 Class="remove-padding"
+                                                 Adornment="Adornment.End"
+                                                 AdornmentText="@_distanceMeasurement"
+                                                 DisableUnderLine />
+                            </div>
+                        }
+                    </MudStack>
+                </MudStack>
+
+            </MudStack>
+        </MudPaper>
+    </ActivatorContent>
+    <ChildContent>
+        <div>
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="0" Justify="Justify.FlexStart">
+                <MudIconButton OnClick="OnDelete"
+                               Icon="@Icons.Material.Outlined.Delete"
+                               Size="Size.Small"
+                               Color="Color.Secondary"
+                               Class="reduce-padding-mini-btns" />
+                <MudIconButton OnClick=DistanceSetNextValue
+                               Icon="@Icons.Material.Filled.Straighten"
+                               Size="Size.Small"
+                               Class="reduce-padding-mini-btns" />
+            </MudStack>
+        </div>
+    </ChildContent>
+</MudMenu>
+
+@code {
+    [Parameter] public Action OnDelete { get; set; } = () => { };
+
+    [Parameter] public string TimeValue { get; set; } = "";
+    [Parameter] public EventCallback<string> TimeValueChanged { get; set; }
+
+    [Parameter] public int? DistanceValue { get; set; }
+    [Parameter] public EventCallback<int?> DistanceValueChanged { get; set; }
+
+    [Parameter] public string DistanceMeasurement { get; set; } = "none";
+    [Parameter] public EventCallback<string> DistanceMeasurementChanged { get; set; }
+
+    [Parameter] public WorkoutType ActivityType { get; set; }
+    [Parameter] public EventCallback<WorkoutType> ActivityTypeChanged { get; set; }
+
+
+    public PatternMask timeMask = new PatternMask("########")
+    {
+        MaskChars = new[] { new MaskChar('#', @"^[0-9:.]*$") }
+    };
+
+    private ActivityType activityType = GetActivityType(WorkoutType.Run);
+
+    private string _timeValue = "";
+
+    private IEnumerator<string>? DistanceAdornmentOptionsIterator;
+    private List<string> DistanceAdornmentOptions = ["mi", "km", "m", "none"];
+    private string _distanceMeasurement = "none";
+    private int? _distanceValue;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        DistanceInitializeIterator();
+        DistanceAdornmentOptionsIterator?.MoveNext();
+        var nextMeasurement = DistanceAdornmentOptionsIterator?.Current;
+        while (nextMeasurement != DistanceMeasurement && (DistanceAdornmentOptionsIterator?.MoveNext() ?? false))
+        {
+            DistanceAdornmentOptionsIterator?.MoveNext();
+            nextMeasurement = DistanceAdornmentOptionsIterator?.Current;
+        }
+
+        _timeValue = TimeValue;
+        _distanceMeasurement = DistanceMeasurement;
+        _distanceValue = DistanceValue;
+
+        activityType = GetActivityType(ActivityType);
+    }
+
+    private async Task TimeValueChaned(string value)
+    {
+        _timeValue = value;
+        await TimeValueChanged.InvokeAsync(value);
+    }
+
+    private async Task DistanceValueChaned(int? value)
+    {
+        _distanceValue = value;
+        await DistanceValueChanged.InvokeAsync(value);
+    }
+
+    private async Task WorkOutOptionChanged(ActivityType activityType)
+    {
+        await ActivityTypeChanged.InvokeAsync(activityType.Type);
+        this.activityType = activityType;
+    }
+
+    private async Task DistanceSetNextValue()
+    {
+        if (DistanceAdornmentOptionsIterator is null) return;
+        if (!DistanceAdornmentOptionsIterator.MoveNext())
+        {
+            DistanceInitializeIterator();
+            DistanceAdornmentOptionsIterator.MoveNext();
+        }
+        _distanceMeasurement = DistanceAdornmentOptionsIterator.Current;
+        await DistanceMeasurementChanged.InvokeAsync(DistanceAdornmentOptionsIterator.Current);
+    }
+
+    private void DistanceInitializeIterator()
+    {
+        DistanceAdornmentOptionsIterator = DistanceAdornmentOptions.GetEnumerator();
+    }
+}

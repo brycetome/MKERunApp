@@ -17,6 +17,7 @@ namespace Models.AccessServices
                 .ThenInclude(ath => ath.User)
                 .Include(t => t.Groups)
                 .ThenInclude(g => g.Activities)
+                .ThenInclude(act => act.WorkoutItems)
                 .FirstOrDefaultAsync(t => t.Id == teamId)
                 ?? throw new NullReferenceException("Could not find the team.");
 
