@@ -24,7 +24,11 @@
         <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%" />
     </ChildContent>
     <ItemRenderer>
-        <WorkoutItemCard @bind-ActivityType="context.WorkoutType" @bind-Value=context.Value @bind-Measurement=context.Measurement OnDelete="() => ClickDelete(context)" />
+        <WorkoutItemCard @bind-ActivityType="context.WorkoutType"
+                         @bind-TimeValue="context.Time"
+                         @bind-DistanceValue="context.Distance"
+                         @bind-DistanceMeasurement="context.DistanceMeasurment"
+                         OnDelete="() => ClickDelete(context)" />
     </ItemRenderer>
 </MudDropContainer>
 

@@ -30,9 +30,14 @@
             </TitleContent>
             <ChildContent>
                 <MudDivider />
-                <MudField Variant="Variant.Filled" Label="Description" Class="pb-2">
-                    <MudText Typo="Typo.body1">@act.Description</MudText>
-                </MudField>
+                <MudTextField Value="@act.Description"
+                              Label="Description"
+                              ReadOnly
+                              AutoGrow
+                              DisableUnderLine
+                              Variant="Variant.Filled"
+                              Class="mb-2"
+                              Margin=Margin.Dense />
             </ChildContent>
         </MudExpansionPanel>
     }

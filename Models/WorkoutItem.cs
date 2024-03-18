@@ -5,8 +5,9 @@ namespace Models
     public class WorkoutItem
     {
         public int Id { get; set; }
-        public int Value { get; set; }
-        public string Measurement { get; set; } = "min";
+        public string Time { get; set; } = "";
+        public int? Distance { get; set; }
+        public string DistanceMeasurment { get; set; } = "none";
         public WorkoutType WorkoutType { get; set; }
         public int Order { get; set; }
     }
