@@ -1,14 +1,49 @@
-﻿<MudDropContainer T="WorkoutItem" Items="WorkoutItems" ItemsSelector="@((item,dropzone) => true)" Class="d-flex flex-wrap flex-grow-1">
+﻿<style>
+    .overlay {
+        position: absolute;
+        top: 0;
+        right: 2px;
+        padding: 0;
+    }
+
+        .overlay .mud-icon-button {
+            padding: 4px;
+        }
+
+</style>
+
+<MudDropContainer @ref=_container
+                  T="WorkoutItem"
+                  Items="WorkoutItems"
+                  ItemsSelector="@((item,dropzone) => true)"
+                  Class="d-flex flex-wrap flex-grow-1 pb-2">
     <ChildContent>
-        <MudDropZone T="WorkoutItem" Identifier="">
+        <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%">
 
         </MudDropZone>
     </ChildContent>
     <ItemRenderer>
-
+        <WorkoutItemCard OnDelete="() => ClickDelete(context)" />
     </ItemRenderer>
 </MudDropContainer>
 
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Class="overlay">
+    <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="ClickAdd" Size="Size.Medium" />
+</MudStack>
+
 @code {
+    private MudDropContainer<WorkoutItem>? _container;
     private List<WorkoutItem> WorkoutItems = [];
+
+    private void ClickAdd()
+    {
+        WorkoutItems.Add(new WorkoutItem());
+        _container?.Refresh();
+    }
+
+    private void ClickDelete(WorkoutItem item)
+    {
+        WorkoutItems.Remove(item);
+        _container?.Refresh();
+    }
 }

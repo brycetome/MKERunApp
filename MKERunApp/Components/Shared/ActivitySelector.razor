@@ -1,11 +1,19 @@
-﻿<MudSelect Value=ActivityType
-           ValueChanged="ActivityTypeChanged"
+﻿<style>
+    .remove-padding .mud-input-root.mud-input-root-filled.mud-input-root-adorned-end.mud-input-root-margin-dense.mud-select-input {
+        padding-top: 6px !important;
+    }
+</style>
+
+<MudSelect T="ActivityType"
+           Value=ActivityType
+           ValueChanged="(act) => ActivityChanged(act)"
            Dense
            Margin="Margin.Dense"
-           AdornmentIcon="@Icon"
-           Label="Activity Type"
+           AdornmentIcon="@ActivityType?.Icon"
+           Label=@(ShowLabel ? "Activity Type" : null)
            DisableUnderLine
-           Variant="Variant.Filled">
+           Variant="Variant.Filled"
+           Class="@(ShowLabel ? "" : "remove-padding")">
     @foreach (var ActivityType in ActivityType.GetActivityTypes())
     {
         <MudSelectItem Value="ActivityType" Icon="@ActivityType.Icon">
@@ -20,5 +28,11 @@
 @code {
     [Parameter] public ActivityType? ActivityType { get; set; }
     [Parameter] public EventCallback<ActivityType?> ActivityTypeChanged { get; set; }
-    [Parameter] public string Icon { get; set; } = "";
+    [Parameter] public bool ShowLabel { get; set; } = true;
+
+    private async Task ActivityChanged(ActivityType activityType)
+    {
+        await ActivityTypeChanged.InvokeAsync(activityType);
+        StateHasChanged();
+    }
 }

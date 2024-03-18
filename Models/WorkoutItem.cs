@@ -7,5 +7,6 @@ namespace Models
         public int Id { get; set; }
         public int DurationSeconds { get; set; }
         public WorkoutType WorkoutType { get; set; }
+        public int Order { get; set; }
     }
 }

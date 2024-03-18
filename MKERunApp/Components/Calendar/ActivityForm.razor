@@ -14,7 +14,7 @@
     }
 
     .mud-input-filled {
-        border-radius: 12px !important;
+        border-radius: 8px !important;
     }
 
     .mud-input-label {
@@ -22,7 +22,7 @@
     }
 </style>
 
-<div style="position:absolute; top: @(offsetY)px; left: @(offsetX)px; black;width:300px;">
+<div style="position:absolute; top: @(offsetY)px; left: @(offsetX)px; black; @(FormModel.IsWorkOut ? "width: 450px;" : "width:300px;")">
     <MudPaper Class="pa-2">
         <MudForm @ref="form">
             <MudStack Spacing="2">
@@ -63,24 +63,37 @@
                               Margin=Margin.Dense />
 
 
-                <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType
-                                  Icon="@FormModel.SelectedActivityType?.Icon" />
+                <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
 
                 <MudField Variant="Variant.Filled"
                           Margin="Margin.Dense"
                           DisableUnderLine
                           Label="Groups">
-                    @foreach (var group in ViewModel.GetGroups)
-                    {
-                        <MudCheckBox T="bool"
-                                     Value="FormModel.GetSelectedGroups.Contains(group)"
-                                     ValueChanged="_ => FormModel.ToggleSelectedGroup(group)"
-                                     Label="@group.Name"
-                                     Dense
-                                     Size="Size.Small"
-                                     Color="Color.Primary" />
-                    }
+                    <MudGrid Class="pa-2">
+                        @foreach (var group in ViewModel.GetGroups)
+                        {
+                            <MudItem md="6" Style="padding:0;">
+                                <MudCheckBox T="bool"
+                                             Value="FormModel.GetSelectedGroups.Contains(group)"
+                                             ValueChanged="_ => FormModel.ToggleSelectedGroup(group)"
+                                             Label="@group.Name"
+                                             Dense
+                                             Size="Size.Small"
+                                             Color="Color.Primary" />
+                            </MudItem>
+                        }
+                    </MudGrid>
                 </MudField>
+
+                @if (FormModel.IsWorkOut)
+                {
+                    <MudField Variant="Variant.Filled"
+                              Margin="Margin.Dense"
+                              DisableUnderLine
+                              Label="Workout Specs">
+                        <MKERunApp.Components.Coach.Workout />
+                    </MudField>
+                }
 
 
                 <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
