@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using MudBlazor.Utilities
+
+<style>
     .overlay {
         position: absolute;
         top: 0;
@@ -14,16 +16,15 @@
 
 <MudDropContainer @ref=_container
                   T="WorkoutItem"
-                  Items="WorkoutItems"
+                  Items="WorkoutItems.OrderBy(item => item.Order)"
                   ItemsSelector="@((item,dropzone) => true)"
-                  Class="d-flex flex-wrap flex-grow-1 pb-2">
+                  Class="d-flex flex-wrap flex-grow-1 pb-2"
+                  ItemDropped="ItemUpdated">
     <ChildContent>
-        <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%">
-
-        </MudDropZone>
+        <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%" />
     </ChildContent>
     <ItemRenderer>
-        <WorkoutItemCard OnDelete="() => ClickDelete(context)" />
+        <WorkoutItemCard @bind-ActivityType="context.WorkoutType" @bind-Value=context.Value @bind-Measurement=context.Measurement OnDelete="() => ClickDelete(context)" />
     </ItemRenderer>
 </MudDropContainer>
 
@@ -32,8 +33,14 @@
 </MudStack>
 
 @code {
+    [Parameter] public List<WorkoutItem> WorkoutItems { get; set; } = [];
+
     private MudDropContainer<WorkoutItem>? _container;
-    private List<WorkoutItem> WorkoutItems = [];
+
+    private void ItemUpdated(MudItemDropInfo<WorkoutItem> dropItem)
+    {
+        WorkoutItems.UpdateOrder(dropItem, item => item.Order);
+    }
 
     private void ClickAdd()
     {

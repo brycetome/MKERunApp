@@ -1,4 +1,5 @@
 ﻿@inject ISnackbar Snackbar
+@using MKERunApp.Components.Coach
 
 <style>
     .overlay {
@@ -91,7 +92,7 @@
                               Margin="Margin.Dense"
                               DisableUnderLine
                               Label="Workout Specs">
-                        <MKERunApp.Components.Coach.Workout />
+                        <Workout WorkoutItems=FormModel.WorkoutItems />
                     </MudField>
                 }
 
