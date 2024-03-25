@@ -12,18 +12,26 @@
         var actType = ActivityType.GetActivityType(act.WorkoutType);
         <MudExpansionPanel Dense Style="@(act.IsWorkOut ? $"background: #c9a853" : "")">
             <TitleContent>
-                <MudStack Row AlignItems="AlignItems.Center">
+                <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                     <IconText Icon="@actType.Icon"
                               Text="@actType.Name"
                               SubText="@($"Group: {GroupName}")" />
-                    <MudStack Spacing="0">
-                        <MudStack Row
-                                  Class="pr-10 py-2"
-                                  Spacing="0"
-                                  Justify="Justify.FlexEnd"
-                                  AlignItems="AlignItems.Baseline">
-                            <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
-                            <MudText Typo="Typo.body1">min</MudText>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="4">
+                        @if (act.Title is not null)
+                        {
+                            <MudChip Class="pa-2 mud-background">
+                                <p>@act.Title</p>
+                            </MudChip>
+                        }
+                        <MudStack Spacing="0" Justify="Justify.FlexEnd">
+                            <MudStack Row
+                                      Class="pr-10 py-2"
+                                      Spacing="0"
+                                      Justify="Justify.FlexEnd"
+                                      AlignItems="AlignItems.Baseline">
+                                <MudText Typo="Typo.h4">@(act.DurationSeconds / 60)</MudText>
+                                <MudText Typo="Typo.body1">min</MudText>
+                            </MudStack>
                         </MudStack>
                     </MudStack>
                 </MudStack>
@@ -46,4 +54,13 @@
 @code {
     [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
     [Parameter] public string GroupName { get; set; } = "";
+
+
+    private string GetTite(Activity act, ActivityType actType)
+    {
+        if (act.IsWorkOut)
+            return $"{actType.Name} - {act.DurationSeconds / 60}";
+        else
+            return actType.Name;
+    }
 }
