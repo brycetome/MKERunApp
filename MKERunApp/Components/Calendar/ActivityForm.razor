@@ -56,13 +56,18 @@
                                  DisableUnderLine
                                  RequiredError="Minutes is required." />
 
+                <MudTextField @bind-Value="FormModel.Title"
+                              Label="Title"
+                              DisableUnderLine
+                              Variant="Variant.Filled"
+                              Margin=Margin.Dense />
+
                 <MudTextField @bind-Value="FormModel.Description"
                               Label="Description"
                               AutoGrow
                               DisableUnderLine
                               Variant="Variant.Filled"
                               Margin=Margin.Dense />
-
 
                 <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
 

@@ -8,6 +8,7 @@ namespace Models
         public IEnumerable<TeamGroup> GetSelectedGroups => selectedGroups;
 
         public ActivityType SelectedActivityType { get; set; } = GetActivityType(WorkoutType.Run);
+        public string? Title { get; set; }
         public int Minutes { get; set; }
         public string Description { get; set; } = "";
         public bool IsWorkOut { get; set; }
@@ -22,6 +23,7 @@ namespace Models
             Description = activity.Description;
             IsWorkOut = activity.IsWorkOut;
             WorkoutItems = activity.WorkoutItems;
+            Title = activity.Title;
             if (activity.WorkoutType is WorkoutType type)
                 SelectedActivityType = GetActivityType(type);
         }
@@ -32,6 +34,7 @@ namespace Models
             activity.Description = Description;
             activity.WorkoutType = SelectedActivityType.Type;
             activity.IsWorkOut = IsWorkOut;
+            activity.Title = Title;
             activity.Groups.Clear();
             activity.Groups.AddRange(selectedGroups);
             activity.WorkoutItems.Clear();
@@ -50,6 +53,7 @@ namespace Models
             WorkoutItems.Clear();
             Minutes = 0;
             Description = "";
+            Title = null;
             SelectedActivityType = GetActivityType(WorkoutType.Run);
             IsWorkOut = false;
         }
