@@ -1,6 +1,4 @@
-﻿@using MKERunApp.Components.Coach
-
-<style>
+﻿<style>
     .mud-expand-panel-header {
         padding-left: 0 !important;
         padding-bottom: 0 !important;
@@ -81,13 +79,4 @@
 @code {
     [Parameter] public IEnumerable<Activity> Activities { get; set; } = [];
     [Parameter] public string GroupName { get; set; } = "";
-
-
-    private string GetTite(Activity act, ActivityType actType)
-    {
-        if (act.IsWorkOut)
-            return $"{actType.Name} - {act.DurationSeconds / 60}";
-        else
-            return actType.Name;
-    }
 }
