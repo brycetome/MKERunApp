@@ -12,32 +12,65 @@
         var actType = ActivityType.GetActivityType(act.WorkoutType);
         <MudExpansionPanel Dense Style="@(act.IsWorkOut ? $"background: #c9a853" : "")">
             <TitleContent>
-                <MudStack Row AlignItems="AlignItems.Center">
+                <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                     <IconText Icon="@actType.Icon"
                               Text="@actType.Name"
                               SubText="@($"Group: {GroupName}")" />
-                    <MudStack Spacing="0">
-                        <MudStack Row
-                                  Class="pr-10 py-2"
-                                  Spacing="0"
-                                  Justify="Justify.FlexEnd"
-                                  AlignItems="AlignItems.Baseline">
-                            <MudText Typo="Typo.h3">@(act.DurationSeconds / 60)</MudText>
-                            <MudText Typo="Typo.body1">min</MudText>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="4">
+                        @if (act.Title is not null)
+                        {
+                            <MudChip Class="pa-2 mud-background">
+                                <p>@act.Title</p>
+                            </MudChip>
+                        }
+                        <MudStack Spacing="0" Justify="Justify.FlexEnd">
+                            <MudStack Row
+                                      Class="pr-10 py-2"
+                                      Spacing="0"
+                                      Justify="Justify.FlexEnd"
+                                      AlignItems="AlignItems.Baseline">
+                                <MudText Typo="Typo.h4">@(act.DurationSeconds / 60)</MudText>
+                                <MudText Typo="Typo.body1">min</MudText>
+                            </MudStack>
                         </MudStack>
                     </MudStack>
                 </MudStack>
             </TitleContent>
             <ChildContent>
                 <MudDivider />
-                <MudTextField Value="@act.Description"
-                              Label="Description"
-                              ReadOnly
-                              AutoGrow
-                              DisableUnderLine
-                              Variant="Variant.Filled"
-                              Class="mb-2"
-                              Margin=Margin.Dense />
+                <MudStack Spacing="2" Class="mb-2 mt-2">
+                    @if(!string.IsNullOrEmpty(act.Description))
+                    {
+                        <MudTextField Value="@act.Description"
+                                      Label="Description"
+                                      ReadOnly
+                                      AutoGrow
+                                      DisableUnderLine
+                                      Variant="Variant.Filled"
+                                      Margin=Margin.Dense />
+                    }
+                    @if (act.IsWorkOut && act.WorkoutItems.Count > 0)
+                    {
+                        <MudField Variant="Variant.Filled"
+                                  Margin="Margin.Dense"
+                                  DisableUnderLine
+                                  Label="Workout Specs">
+                            <MudStack Spacing="1" Class="pt-2">
+                                @foreach (var workItem in act.WorkoutItems.OrderBy(item => item.Order))
+                                {
+                                    var workItemType = ActivityType.GetActivityType(workItem.WorkoutType);
+                                    var distanceString = workItem.Distance is null ? "" : $" / {workItem.Distance} {workItem.DistanceMeasurment}";
+                                    <MudStack Row AlignItems="AlignItems.Center">
+                                        <MudTooltip Text="@workItemType.Name">
+                                            <MudIcon Size="Size.Small" Icon="@workItemType.Icon" />
+                                        </MudTooltip>
+                                        <MudText>@($"{workItem.Time}{distanceString}")</MudText>
+                                    </MudStack>
+                                }
+                            </MudStack>
+                        </MudField>
+                    }
+                </MudStack>
             </ChildContent>
         </MudExpansionPanel>
     }
