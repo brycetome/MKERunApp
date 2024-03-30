@@ -4,7 +4,7 @@
            Elevation="24"
            Variant="DrawerVariant.Mini">
     <MudNavMenu>
-        @foreach (var linkInfo in MKERunAppLink.NavLinks)
+        @foreach (var linkInfo in MKERunAppLink.AllNavLinks)
         {
             <MudNavLink Href="@linkInfo.Link" Icon="@linkInfo.Icon" />
         }

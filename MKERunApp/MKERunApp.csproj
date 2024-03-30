@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-MKERunApp-a0eba832-07c0-42da-a432-874fb6712b7b</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,10 +27,11 @@
     <ProjectReference Include="..\LocalMigrations\LocalMigrations.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
     <ProjectReference Include="..\ServerMigrations\ServerMigrations.csproj" />
+	<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Background\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="wwwroot\Background\" />
+	</ItemGroup>
 
 </Project>

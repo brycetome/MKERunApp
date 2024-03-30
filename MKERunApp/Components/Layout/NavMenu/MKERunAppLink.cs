@@ -10,10 +10,16 @@ namespace MKERunApp.Components.Layout.NavMenu
         private readonly string _Link = link;
         private readonly string _Icon = icon;
 
-        public static readonly MKERunAppLink[] NavLinks =
+        public static readonly MKERunAppLink[] AllNavLinks =
         [
             new MKERunAppLink("/", Icons.Material.Filled.Home),
             new MKERunAppLink("/CoachedTeams", Icons.Material.Filled.Sports),
+            new MKERunAppLink("/User", Icons.Material.Filled.AccountCircle)
+        ];
+
+        public static readonly MKERunAppLink[] MobileNavLinks =
+        [
+            new MKERunAppLink("/", Icons.Material.Filled.Home),
             new MKERunAppLink("/User", Icons.Material.Filled.AccountCircle)
         ];
     }
