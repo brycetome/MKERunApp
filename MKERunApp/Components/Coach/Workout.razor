@@ -13,7 +13,6 @@
         }
 
 </style>
-
 <MudDropContainer @ref=_container
                   T="WorkoutItem"
                   Items="WorkoutItems.OrderBy(item => item.Order)"
@@ -24,11 +23,13 @@
         <MudDropZone T="WorkoutItem" AllowReorder Style="width:100%" />
     </ChildContent>
     <ItemRenderer>
-        <WorkoutItemCard @bind-ActivityType="context.WorkoutType"
-                         @bind-TimeValue="context.Time"
-                         @bind-DistanceValue="context.Distance"
-                         @bind-DistanceMeasurement="context.DistanceMeasurment"
-                         OnDelete="() => ClickDelete(context)" />
+        <div @onkeydown="(e) => HandleKeyDown(e, context)">
+            <WorkoutItemCard @bind-ActivityType="context.WorkoutType"
+                             @bind-TimeValue="context.Time"
+                             @bind-DistanceValue="context.Distance"
+                             @bind-DistanceMeasurement="context.DistanceMeasurment"
+                             OnDelete="() => ClickDelete(context)" />
+        </div>
     </ItemRenderer>
 </MudDropContainer>
 
@@ -56,5 +57,17 @@
     {
         WorkoutItems.Remove(item);
         _container?.Refresh();
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e, WorkoutItem item)
+    {
+        if (e.Key == "Enter")
+        {
+            ClickAdd();
+        }
+        if (e.Key == "Delete")
+        {
+            ClickDelete(item);
+        }
     }
 }
