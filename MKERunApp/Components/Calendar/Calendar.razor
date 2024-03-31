@@ -16,6 +16,23 @@
 
 <MudStack>
     <MudPaper>
+        <MudToolBar WrapContent Dense DisableGutters>
+            @foreach (var actType in ActivityType.GetActivityTypes().OrderBy(act => act.Order))
+            {
+                <style>
+                    @($"#chip-{actType.Type} .mud-icon-root {{ color: {actType.Color} !important;{"}"}")
+                </style>
+                <div class="mx-1" @onclick="() => ToggleWorkoutTypeSelection(actType.Type)" style="cursor:pointer;" id="@($"chip-{actType.Type}")">
+                    <MudChip Icon="@actType.Icon"
+                             Text="@actType.Name"
+                             Disabled="!SelectedWorkoutTypes.Contains(actType.Type)"
+                             Style="" />
+                </div>
+            }
+        </MudToolBar>
+    </MudPaper>
+
+    <MudPaper>
         <MudStack Row AlignItems="AlignItems.Center" Class="pa-4">
             <MudIconButton OnClick="() => { monthsAway--; CreateMonth(); }"
                            Icon="@Icons.Material.Filled.NavigateBefore"
@@ -37,7 +54,7 @@
             }
             @for (int i = 0; i < emptyDaysFromPastMonth; i++)
             {
-                <div/>
+                <div />
             }
             @for (int i = 1; i <= monthEnd.Day; i++)
             {
@@ -45,7 +62,7 @@
 
 
                 <div class="calendar-box mud-background">
-                    <CalendarDay ViewModel="new CalendarDayActivityViewModel(Groups, dayDate, factory)" />
+                    <CalendarDay ViewModel="new CalendarDayActivityViewModel(Groups, dayDate, factory)" SelectedWorkoutTypes="SelectedWorkoutTypes" />
                 </div>
             }
         </section>
@@ -55,6 +72,8 @@
 
 @code {
     [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+
+    private List<ActivityType.WorkoutType> SelectedWorkoutTypes = ((ActivityType.WorkoutType[])Enum.GetValues(typeof(ActivityType.WorkoutType))).ToList();
 
     DateTime monthStart;
     DateTime monthEnd;
@@ -86,5 +105,13 @@
         monthEnd = monthStart.AddMonths(1).AddDays(-1);
 
         emptyDaysFromPastMonth = (int)monthStart.DayOfWeek - 1; // -1 for monday start of week
+    }
+
+    private void ToggleWorkoutTypeSelection(ActivityType.WorkoutType workoutType)
+    {
+        if (SelectedWorkoutTypes.Contains(workoutType))
+            SelectedWorkoutTypes.Remove(workoutType);
+        else
+            SelectedWorkoutTypes.Add(workoutType);
     }
 }

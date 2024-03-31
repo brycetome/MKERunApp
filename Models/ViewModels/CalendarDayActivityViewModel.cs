@@ -104,29 +104,24 @@ namespace Models.ViewModels
 
         public async Task<Activity> UpdateActivity(int ActivityId, ActivityFormModel Form)
         {
-
+            var act = activities.Find(act => act.Id == ActivityId) ?? throw new NullReferenceException();
             using var ctx = factory.CreateDbContext();
 
-            var loadedActivity = await ctx.Activity
-                .Include(act => act.Groups)
-                .FirstOrDefaultAsync(act => act.Id == ActivityId)
-                ?? throw new NullReferenceException();
-
-
-            Form.ApplyForm(loadedActivity);
-            loadedActivity.Groups.Clear();
+            ctx.Attach(act);
+            Form.ApplyForm(act);
+            act.Groups.Clear();
 
             foreach (var group in Form.GetSelectedGroups)
             {
                 var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
-                loadedActivity.Groups.Add(loadedGroup);
+                act.Groups.Add(loadedGroup);
             }
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();
 
             using var ctx2 = factory.CreateDbContext();
-            loadedActivity = await ctx2.Activity
+            var loadedActivity = await ctx2.Activity
                 .Include(act => act.WorkoutItems)
                 .Include(act => act.Groups)
                 .FirstOrDefaultAsync(act => act.Id == ActivityId)
@@ -137,10 +132,7 @@ namespace Models.ViewModels
 
             await ctx2.SaveChangesAsync();
             await ctx2.DisposeAsync();
-
-            activities.RemoveAll(act => act.Id == loadedActivity.Id);
-            activities.Add(loadedActivity);
-            return loadedActivity;
+            return act;
         }
 
         public async Task DeleteActivity(Activity activity)

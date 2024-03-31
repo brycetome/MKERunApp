@@ -18,7 +18,7 @@
     <MudStack Spacing="1" AlignItems="AlignItems.Start" Style="height:100%">
         <MudText>@ViewModel.GetDay.Day</MudText>
         <MudStack Spacing="0" Style="width:100%">
-            @foreach (Activity activity in ViewModel.GetActivities)
+            @foreach (Activity activity in ViewModel.GetActivities.Where(act => SelectedWorkoutTypes.Contains(act.WorkoutType)))
             {
                 <div @onclick:stopPropagation="true" style="width:100%">
                     <ActivityCalendarDay Activity=activity
@@ -35,6 +35,7 @@
 </MudPopover>
 @code {
     [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
+    [Parameter] public IEnumerable<ActivityType.WorkoutType> SelectedWorkoutTypes { get; set; } = [];
     private bool OpenNewActivity = false;
 
     private void ClickedDay()
