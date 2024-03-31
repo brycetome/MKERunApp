@@ -1,4 +1,5 @@
 ﻿using MudBlazor;
+using System.Security.AccessControl;
 
 namespace Models
 {
@@ -24,6 +25,18 @@ namespace Models
         public string Color => color;
         public WorkoutType Type => type;
         public int Order => order;
+
+        public string GetBackgroundColorCSS(bool IsWorkOut)
+        {
+            if (Color == "" && !IsWorkOut)
+                return "";
+            var ActivityColorBackground = "background-color: ";
+            if (IsWorkOut)
+                ActivityColorBackground += "#c9a853;";
+            else
+                ActivityColorBackground += $"{Color};";
+            return ActivityColorBackground;
+        }
 
         public override string ToString()
         {

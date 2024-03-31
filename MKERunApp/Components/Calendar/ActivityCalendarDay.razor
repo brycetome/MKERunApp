@@ -29,13 +29,7 @@
         base.OnParametersSet();
         var actType = ActivityType.GetActivityType(Activity.WorkoutType);
         Icon = actType.Icon;
-        if (actType.Color == "" && !Activity.IsWorkOut)
-            ActivityColorBackground = "";
-        ActivityColorBackground = "background-color: ";
-        if (Activity.IsWorkOut)
-            ActivityColorBackground += "#c9a853;";
-        else
-            ActivityColorBackground += $"{actType.Color};";
+        ActivityColorBackground = actType.GetBackgroundColorCSS(Activity.IsWorkOut);
     }
 
     private void ClickedActivity()
