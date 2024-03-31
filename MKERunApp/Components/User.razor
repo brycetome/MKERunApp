@@ -3,29 +3,40 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+<MudStack>
+    <MudPaper Class="pa-2">
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudText>Athlete Teams</MudText>
+            <TeamSelector @bind-SelectedTeam="SelectedAthleteTeam" Teams="Teams" />
+            <MudButton OnClick="SetDefaultAthleteTeam"
+                       Variant="Variant.Filled"
+                       DisableElevation
+                       Color="Color.Primary">
+                Set as Default
+            </MudButton>
+        </MudStack>
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudText>Coached Teams</MudText>
+            <TeamSelector @bind-SelectedTeam="SelectedCoachTeam" Teams="Teams" />
+            <MudButton OnClick="SetDefaultCoachTeam"
+                       Variant="Variant.Filled"
+                       DisableElevation
+                       Color="Color.Primary">
+                Set as Default
+            </MudButton>
+        </MudStack>
+    </MudPaper>
 
-<MudPaper Class="pa-2">
-    <MudStack Row AlignItems="AlignItems.Center">
-        <MudText>Athlete Teams</MudText>
-        <TeamSelector @bind-SelectedTeam="SelectedAthleteTeam" Teams="Teams" />
-        <MudButton OnClick="SetDefaultAthleteTeam"
+    <MudStack Row>
+        <MudButton Href="/Account/Manage"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.SwitchAccount"
                    Variant="Variant.Filled"
-                   DisableElevation
-                   Color="Color.Primary">
-            Set as Default
+                   Size="Size.Large">
+            Account
         </MudButton>
     </MudStack>
-    <MudStack Row AlignItems="AlignItems.Center">
-        <MudText>Coached Teams</MudText>
-        <TeamSelector @bind-SelectedTeam="SelectedCoachTeam" Teams="Teams" />
-        <MudButton OnClick="SetDefaultCoachTeam"
-                   Variant="Variant.Filled"
-                   DisableElevation
-                   Color="Color.Primary">
-            Set as Default
-        </MudButton>
-    </MudStack>
-</MudPaper>
+</MudStack>
 
 @code {
     private IEnumerable<Team> Teams = [];
