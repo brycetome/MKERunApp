@@ -1,0 +1,48 @@
+﻿@inject NavigationManager NavigationManager
+
+<MudTextField Value="Email"
+              ValueChanged="EmailChanged"
+              Variant="Variant.Outlined"
+              Margin="Margin.Dense"
+              Label="Email"
+              UserAttributes="@(new() {{"aria-required", "true"}})"
+              Placeholder="name@example.com" />
+
+<MudTextField Value="Password"
+              ValueChanged="PasswordChanged"
+              InputType="InputType.Password"
+              Variant="Variant.Outlined"
+              Margin="Margin.Dense"
+              Label="Password"
+              UserAttributes="@(new() {{"aria-required", "true"}})"
+              Placeholder="Password" />
+
+
+<MudCheckBox Value="RememberMe" ValueChanged="RememberMeChanged" Label="Remember me" Dense />
+
+<MudStack Row>
+    <MudButton Color=Color.Primary
+               Variant=Variant.Filled
+               ButtonType="ButtonType.Submit"
+               Class="w-100 btn btn-lg btn-primary">
+        Log in
+    </MudButton>
+    <MudButton Color="Color.Tertiary"
+               Variant="Variant.Filled"
+               Href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">
+        Register as a new user
+    </MudButton>
+
+</MudStack>
+
+
+@code {
+    [Parameter] public string Email { get; set; } = "";
+    [Parameter] public EventCallback<string> EmailChanged { get; set; }
+    [Parameter] public string Password { get; set; } = "";
+    [Parameter] public EventCallback<string> PasswordChanged { get; set; }
+    [Parameter] public bool RememberMe { get; set; }
+    [Parameter] public EventCallback<bool> RememberMeChanged { get; set; }
+
+    [Parameter] public string? ReturnUrl { get; set; }
+}

@@ -1,18 +1,38 @@
-﻿<MudDrawer Open
+﻿@inject IJSRuntime JSRuntime
+
+<MudDrawer Open
            Anchor="Anchor.Bottom"
            Width="100%"
-           Height="42px"
+           Height="@(IsiOS ? "72px" : "42px")"
            Variant="DrawerVariant.Persistent"
            Style="position: absolute;bottom:0;right:0;width:100%;">
     <MudStack Row Justify="Justify.SpaceAround" Spacing="0">
-        @foreach (var linkInfo in MKERunAppLink.NavLinks)
+        @foreach (var linkInfo in MKERunAppLink.MobileNavLinks)
         {
             <MudButton DisableRipple
                        FullWidth
                        DisableElevation
+                       Color="Color.Dark"
                        Variant="Variant.Filled"
                        StartIcon="@linkInfo.Icon"
+                       Size="Size.Large"
+                       Style="height:40px;"
                        Href="@linkInfo.Link" />
+            <MudDivider Vertical />
         }
     </MudStack>
 </MudDrawer>
+
+@code {
+    bool IsiOS { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            IsiOS = await JSRuntime.InvokeAsync<bool>("detectiOS");
+            StateHasChanged();
+        }
+    }
+}
