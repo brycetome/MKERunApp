@@ -1,4 +1,4 @@
-﻿<MudChip OnClick="ClickedActivity">
+﻿<MudChip OnClick="ClickedActivity" Style="@ActivityColorBackground">
     <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
         <MudText Typo="Typo.caption">
             @string.Join(", ", Activity.Groups.Select(g => g.Name))
@@ -20,6 +20,21 @@
     [Parameter][EditorRequired] public required Activity Activity { get; set; }
     [Parameter] public EventCallback<Activity> ActivityChanged { get; set; }
     private bool OpenActivity = false;
+
+    private string ActivityColorBackground = "";
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        var actType = ActivityType.GetActivityType(Activity.WorkoutType);
+        if (actType.Color == "" && !Activity.IsWorkOut)
+            ActivityColorBackground = "";
+        ActivityColorBackground = "background-color: ";
+        if (Activity.IsWorkOut)
+            ActivityColorBackground += "#c9a853;";
+        else
+            ActivityColorBackground += $"{actType.Color};";
+    }
 
     private void ClickedActivity()
     {

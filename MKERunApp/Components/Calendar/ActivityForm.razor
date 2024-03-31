@@ -176,10 +176,10 @@
             {
                 Activity? act = null;
                 if (Activity != null)
-                    act = await ViewModel.UpdateActivity(Activity.Id, FormModel);
+                    await ViewModel.UpdateActivity(Activity.Id, FormModel);
                 else
-                    act = await ViewModel.AddNewActivity(FormModel);
-                await ActivityChanged.InvokeAsync(act);
+                    await ViewModel.AddNewActivity(FormModel);
+                await ActivityChanged.InvokeAsync(Activity);
                 Snackbar.Add("Saved the activity", Severity.Success);
             }
             catch (Exception ex)
@@ -212,5 +212,6 @@
         await ShowChanged.InvokeAsync(false);
         startX = 0;
         startY = 0;
+        FormModel.ResetForm();
     }
 }
