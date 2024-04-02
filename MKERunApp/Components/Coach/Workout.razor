@@ -39,6 +39,7 @@
 
 @code {
     [Parameter] public List<WorkoutItem> WorkoutItems { get; set; } = [];
+    [Parameter] public EventCallback<List<WorkoutItem>> WorkoutItemsChanged { get; set; }
 
     private MudDropContainer<WorkoutItem>? _container;
 
@@ -50,12 +51,14 @@
     private void ClickAdd()
     {
         WorkoutItems.Add(new WorkoutItem());
+        WorkoutItemsChanged.InvokeAsync(WorkoutItems);
         _container?.Refresh();
     }
 
     private void ClickDelete(WorkoutItem item)
     {
         WorkoutItems.Remove(item);
+        WorkoutItemsChanged.InvokeAsync(WorkoutItems);
         _container?.Refresh();
     }
 

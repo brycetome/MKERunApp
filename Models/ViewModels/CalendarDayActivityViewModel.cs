@@ -109,13 +109,6 @@ namespace Models.ViewModels
 
             ctx.Attach(act);
             Form.ApplyForm(act);
-            act.Groups.Clear();
-
-            foreach (var group in Form.GetSelectedGroups)
-            {
-                var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
-                act.Groups.Add(loadedGroup);
-            }
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();

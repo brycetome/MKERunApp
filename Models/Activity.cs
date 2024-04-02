@@ -10,6 +10,7 @@ namespace Models
         public double DurationSeconds { get; set; }
         public string? Title { get; set; }
         public string Description { get; set; } = "";
+        public string Recovery { get; set; } = "";
         public bool IsWorkOut { get; set; }
         public List<TeamGroup> Groups { get; set; } = [];
         public List<WorkoutItem> WorkoutItems { get; set; } = [];

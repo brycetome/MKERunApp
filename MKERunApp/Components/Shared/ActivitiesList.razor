@@ -54,6 +54,14 @@
                     }
                     @if (act.IsWorkOut && act.WorkoutItems.Count > 0)
                     {
+                        <MudTextField Value="@act.Recovery"
+                                      Label="Recovery"
+                                      ReadOnly
+                                      AutoGrow
+                                      DisableUnderLine
+                                      Variant="Variant.Filled"
+                                      Margin=Margin.Dense />
+
                         <MudField Variant="Variant.Filled"
                                   Margin="Margin.Dense"
                                   DisableUnderLine
