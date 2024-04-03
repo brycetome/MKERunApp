@@ -108,6 +108,7 @@ namespace Models.ViewModels
             using var ctx = factory.CreateDbContext();
 
             ctx.Attach(act);
+            ctx.UpdateRange(Form.WorkoutItems);
             Form.ApplyForm(act);
 
             await ctx.SaveChangesAsync();
