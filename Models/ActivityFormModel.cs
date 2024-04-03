@@ -11,6 +11,7 @@ namespace Models
         public string? Title { get; set; }
         public int Minutes { get; set; }
         public string Description { get; set; } = "";
+        public string Recovery { get; set; } = "";
         public bool IsWorkOut { get; set; }
         public List<WorkoutItem> WorkoutItems { get; set; } = [];
 
@@ -22,7 +23,8 @@ namespace Models
             selectedGroups.AddRange(activity.Groups);
             Description = activity.Description;
             IsWorkOut = activity.IsWorkOut;
-            WorkoutItems = activity.WorkoutItems;
+            Recovery = activity.Recovery;
+            WorkoutItems.AddRange(activity.WorkoutItems);
             Title = activity.Title;
             if (activity.WorkoutType is WorkoutType type)
                 SelectedActivityType = GetActivityType(type);
@@ -35,6 +37,7 @@ namespace Models
             activity.WorkoutType = SelectedActivityType.Type;
             activity.IsWorkOut = IsWorkOut;
             activity.Title = Title;
+            activity.Recovery = Recovery;
             activity.Groups.Clear();
             activity.Groups.AddRange(selectedGroups);
             activity.WorkoutItems.Clear();
@@ -52,6 +55,7 @@ namespace Models
             selectedGroups.Clear();
             WorkoutItems.Clear();
             Minutes = 0;
+            Recovery = "";
             Description = "";
             Title = null;
             SelectedActivityType = GetActivityType(WorkoutType.Run);

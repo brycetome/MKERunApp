@@ -108,14 +108,8 @@ namespace Models.ViewModels
             using var ctx = factory.CreateDbContext();
 
             ctx.Attach(act);
+            ctx.UpdateRange(Form.WorkoutItems);
             Form.ApplyForm(act);
-            act.Groups.Clear();
-
-            foreach (var group in Form.GetSelectedGroups)
-            {
-                var loadedGroup = await ctx.TeamGroup.FindAsync(group.Id) ?? throw new NullReferenceException();
-                act.Groups.Add(loadedGroup);
-            }
 
             await ctx.SaveChangesAsync();
             await ctx.DisposeAsync();

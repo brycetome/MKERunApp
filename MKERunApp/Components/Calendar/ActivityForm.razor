@@ -26,7 +26,7 @@
 <div style="position:absolute; top: @(offsetY)px; left: @(offsetX)px; black; @(FormModel.IsWorkOut ? "width: 450px;" : "width:300px;")">
     <MudPaper Class="pa-2">
         <MudForm @ref="form">
-            <MudStack Spacing="2">
+            <MudStack Spacing="1">
                 <div draggable="true" @ondragend="OnDragEnd" @ondragstart="OnDragStart" style="cursor: move">
                     <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                         <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
@@ -44,17 +44,21 @@
 
                 <MudDivider />
 
-                <MudNumericField @bind-Value="FormModel.Minutes"
-                                 T="int"
-                                 Min="0"
-                                 Label="Time"
-                                 Required
-                                 AdornmentText="min"
-                                 Adornment="Adornment.End"
-                                 Margin=Margin.Dense
-                                 Variant="Variant.Filled"
-                                 DisableUnderLine
-                                 RequiredError="Minutes is required." />
+                <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+                    <MudNumericField @bind-Value="FormModel.Minutes"
+                                     T="int"
+                                     Min="0"
+                                     Label="Time"
+                                     Required
+                                     AdornmentText="min"
+                                     Adornment="Adornment.End"
+                                     Margin=Margin.Dense
+                                     Variant="Variant.Filled"
+                                     DisableUnderLine
+                                     RequiredError="Minutes is required." />
+
+                    <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
+                </MudStack>
 
                 <MudTextField @bind-Value="FormModel.Title"
                               Label="Title"
@@ -68,8 +72,6 @@
                               DisableUnderLine
                               Variant="Variant.Filled"
                               Margin=Margin.Dense />
-
-                <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
 
                 <MudField Variant="Variant.Filled"
                           Margin="Margin.Dense"
@@ -93,11 +95,18 @@
 
                 @if (FormModel.IsWorkOut)
                 {
+                    <MudTextField @bind-Value="FormModel.Recovery"
+                                  Label="Recovery"
+                                  AutoGrow
+                                  DisableUnderLine
+                                  Variant="Variant.Filled"
+                                  Margin=Margin.Dense />
+
                     <MudField Variant="Variant.Filled"
                               Margin="Margin.Dense"
                               DisableUnderLine
                               Label="Workout Specs">
-                        <Workout WorkoutItems=FormModel.WorkoutItems />
+                        <Workout @bind-WorkoutItems=FormModel.WorkoutItems />
                     </MudField>
                 }
 
@@ -174,13 +183,13 @@
         {
             try
             {
-                Activity? act = null;
                 if (Activity != null)
                     await ViewModel.UpdateActivity(Activity.Id, FormModel);
                 else
                     await ViewModel.AddNewActivity(FormModel);
                 await ActivityChanged.InvokeAsync(Activity);
                 Snackbar.Add("Saved the activity", Severity.Success);
+                await ShowChanged.InvokeAsync(false);
             }
             catch (Exception ex)
             {
