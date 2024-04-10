@@ -14,12 +14,12 @@
 @if(Activity.IsWorkOut)
 {
     <style>
-        @($"#chip-{Activity.Id.ToString()} .mud-paper {{ background-color: #c9a853 !important;{"}"}")
+        @($"#activity-week-{Activity.Id.ToString()} .mud-paper {{ background-color: #c9a853 !important;{"}"}")
     </style>
 }
 
 
-<div id="@($"chip-{Activity.Id.ToString()}")">
+<div id="@($"activity-week-{Activity.Id.ToString()}")" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true">
 <MudPaper Class="mud-background px-1">
     <MudStack Spacing="0">
             <MudToolBar WrapContent Dense DisableGutters Class="pt-1" Style="min-height:0">
@@ -57,8 +57,19 @@
      </MudStack>
 </MudPaper>
 </div>
+
+<MudPopover AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
+    <ActivityForm @bind-Show=OpenActivity
+                  Activity=Activity
+                  ActivityChanged="ActivityChanged"
+                  ViewModel="ViewModel" />
+</MudPopover>
+
 @code {
+    [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
     [Parameter][EditorRequired] public required Activity Activity { get; set; }
+    [Parameter] public required EventCallback<Activity> ActivityChanged { get; set; }
+    private bool OpenActivity = false;
 
     private ActivityType? actType;
     private string ActivityColor = "";
@@ -70,5 +81,11 @@
         actType = ActivityType.GetActivityType(Activity.WorkoutType);
         Icon = actType.Icon;
         ActivityColor = actType.Color;
+    }
+
+    private void OnRightClick(MouseEventArgs args)
+    {
+        if (args.Button == 2)
+            OpenActivity = true;
     }
 }
