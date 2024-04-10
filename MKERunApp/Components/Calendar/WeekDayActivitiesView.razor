@@ -6,10 +6,6 @@
         padding: 0 !important;
     }
 
-    .hide-icon .mud-expand-panel-icon
-    {
-        display: none;
-    }
 </style>
 @if(Activity.IsWorkOut)
 {
@@ -18,12 +14,11 @@
     </style>
 }
 
-
 <div id="@($"activity-week-{Activity.Id.ToString()}")" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true">
 <MudPaper Class="mud-background px-1">
     <MudStack Spacing="0">
             <MudToolBar WrapContent Dense DisableGutters Class="pt-1" Style="min-height:0">
-                                            <MudIcon Icon="@Icon"/>
+                <MudIcon Icon="@Icon"/>
                 @foreach(var group in Activity.Groups)
                 {
                     <div class="mr-1"><MudChip Variant=Variant.Text Text="@group.Name"/></div>
@@ -47,7 +42,7 @@
                         </MudStack>
                     </TitleContent>
                     <ChildContent>
-                       <ActivityDetails Description="Activity.Description"
+                       <ActivityDetails Description="@Activity.Description"
                                         IsWorkOut="Activity.IsWorkOut"
                                         Recovery="Activity.Recovery"
                                         WorkoutItems="Activity.WorkoutItems" />
