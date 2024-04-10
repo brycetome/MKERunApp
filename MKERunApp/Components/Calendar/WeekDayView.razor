@@ -1,0 +1,20 @@
+﻿<MudPaper Class="pa-2 py-1">
+    <MudStack Spacing="2">
+        @if (ViewModel.GetActivities.Count() == 0)
+        {
+            <MudText Class="py-2" Align="Align.Center" Typo="Typo.body2">No activities</MudText>
+        }
+        else
+        {
+            foreach (Activity activity in ViewModel.GetActivities)
+            {
+                <WeekDayActivitiesView Activity="activity" />
+            }
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
+    [Parameter] public int DayNumber { get; set; }
+}
