@@ -31,3 +31,15 @@ h1:focus {
 .text-danger {
     color: #e50000 !important;
 }
+
+.section-display {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-box {
+    border-radius: 12px;
+    border-collapse: collapse;
+    margin: 1px;
+    min-height: 100px;
+}

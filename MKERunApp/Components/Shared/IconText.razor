@@ -2,12 +2,15 @@
     <MudIcon Icon="@Icon" Size="Size.Large" />
     <MudStack Spacing="0" AlignItems="AlignItems.Start">
         <MudText Typo="Typo.body1"><b>@Text</b></MudText>
-        <MudText Typo="Typo.caption">@SubText</MudText>
+        @if (!string.IsNullOrEmpty(SubText))
+        {
+            <MudText Typo="Typo.caption">@SubText</MudText>
+        }
     </MudStack>
 </MudStack>
 
 @code {
     [Parameter] public string Icon { get; set; } = "";
     [Parameter] public string Text { get; set; } = "";
-    [Parameter] public string SubText { get; set; } = "";
+    [Parameter] public string? SubText { get; set; }
 }

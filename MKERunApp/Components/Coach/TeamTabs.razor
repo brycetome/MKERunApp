@@ -3,6 +3,10 @@
 
 <MudStack>
     <MudTabs Rounded PanelClass="mt-4" KeepPanelsAlive>
+        <MudTabPanel Text="This Week">
+            <WeekView Groups="Team.Groups" />
+        </MudTabPanel>
+
         <MudTabPanel Text="Calender">
             <Calendar Groups="Team.Groups" />
         </MudTabPanel>

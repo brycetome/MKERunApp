@@ -14,8 +14,7 @@
             <TitleContent>
                 <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                     <IconText Icon="@actType.Icon"
-                              Text="@actType.Name"
-                              SubText="@($"Group: {GroupName}")" />
+                              Text="@actType.Name" />
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="4">
                         @if (act.Title is not null)
                         {
@@ -41,47 +40,12 @@
             </TitleContent>
             <ChildContent>
                 <MudDivider />
-                <MudStack Spacing="2" Class="mb-2 mt-2">
-                    @if(!string.IsNullOrEmpty(act.Description))
-                    {
-                        <MudTextField Value="@act.Description"
-                                      Label="Description"
-                                      ReadOnly
-                                      AutoGrow
-                                      DisableUnderLine
-                                      Variant="Variant.Filled"
-                                      Margin=Margin.Dense />
-                    }
-                    @if (act.IsWorkOut && act.WorkoutItems.Count > 0)
-                    {
-                        <MudTextField Value="@act.Recovery"
-                                      Label="Recovery"
-                                      ReadOnly
-                                      AutoGrow
-                                      DisableUnderLine
-                                      Variant="Variant.Filled"
-                                      Margin=Margin.Dense />
-
-                        <MudField Variant="Variant.Filled"
-                                  Margin="Margin.Dense"
-                                  DisableUnderLine
-                                  Label="Workout Specs">
-                            <MudStack Spacing="1" Class="pt-2">
-                                @foreach (var workItem in act.WorkoutItems.OrderBy(item => item.Order))
-                                {
-                                    var workItemType = ActivityType.GetActivityType(workItem.WorkoutType);
-                                    var distanceString = workItem.Distance is null ? "" : $" / {workItem.Distance} {workItem.DistanceMeasurment}";
-                                    <MudStack Row AlignItems="AlignItems.Center">
-                                        <MudTooltip Text="@workItemType.Name">
-                                            <MudIcon Size="Size.Small" Icon="@workItemType.Icon" />
-                                        </MudTooltip>
-                                        <MudText>@($"{workItem.Time}{distanceString}")</MudText>
-                                    </MudStack>
-                                }
-                            </MudStack>
-                        </MudField>
-                    }
-                </MudStack>
+                <div class="mb-2 mt-2">
+                    <ActivityDetails Description="@act.Description"
+                                     Recovery="@act.Recovery"
+                                     IsWorkOut="act.IsWorkOut"
+                                     WorkoutItems="act.WorkoutItems" />
+                </div>
             </ChildContent>
         </MudExpansionPanel>
     }

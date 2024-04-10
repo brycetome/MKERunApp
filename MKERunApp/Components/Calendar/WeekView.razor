@@ -1,0 +1,36 @@
+﻿@inject IDbContextFactory<ApplicationDbContext> factory
+
+<section class="section-display">
+    @foreach (var weekday in Calendar.GetDaysOfWeek())
+    {
+        <MudText Class="py-2" Align="Align.Center">@weekday</MudText>
+    }
+    @foreach(var day in DaysOfTheWeek)
+    {
+        <div style="padding-inline:1px;">
+            <WeekDayView ViewModel="new CalendarDayActivityViewModel(Groups, day, factory)" DayNumber="day.Day" />
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+
+    private List<DateTime> DaysOfTheWeek = [];
+    private DateTime today = DateTime.Today;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // Calculate the start of the current week (Monday)
+        DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
+
+
+        // Add the day numbers to the list
+        for (int i = 0; i < 7; i++)
+        {
+            DateTime day = startOfWeek.AddDays(i);
+            DaysOfTheWeek.Add(day);
+        }
+    }
+}

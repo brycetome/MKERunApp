@@ -1,0 +1,85 @@
+﻿<style>
+    @($"#chip-{Activity.Id.ToString()} .mud-icon-root {{ color: {ActivityColor} !important;{"}"}")
+
+    .reset-header-padding .mud-expand-panel-header
+    {
+        padding: 0 !important;
+    }
+</style>
+@if(Activity.IsWorkOut)
+{
+    <style>
+        @($"#activity-week-{Activity.Id.ToString()} .mud-paper {{ background-color: #c9a853 !important;{"}"}")
+    </style>
+}
+
+<div id="@($"activity-week-{Activity.Id.ToString()}")" @oncontextmenu="OnRightClick" @oncontextmenu:preventDefault="true">
+<MudPaper Class="mud-background px-1">
+    <MudStack Spacing="0">
+            <MudToolBar WrapContent Dense DisableGutters Class="pt-1" Style="min-height:0">
+                <MudIcon Icon="@Icon"/>
+                @foreach(var group in Activity.Groups)
+                {
+                    <div class="mr-1"><MudChip Variant=Variant.Text Text="@group.Name"/></div>
+                }
+            </MudToolBar>
+            <MudExpansionPanels Dense
+                                Elevation="0"
+                                DisableGutters
+                                DisableBorders
+                                Style="background-color:transparent;">
+                 <MudExpansionPanel Dense
+                                    DisableGutters
+                                    Class="reset-header-padding"
+                                    Style="background-color:transparent;"
+                                    HideIcon="@(Activity.Description == "" && !Activity.IsWorkOut)">
+                    <TitleContent>
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="px-1">
+                            <MudText><b>@(Activity.Title ?? actType?.Name)</b></MudText>
+                            <MudSpacer />
+                            <MudText>@(Activity.DurationSeconds / 60) min</MudText>
+                        </MudStack>
+                    </TitleContent>
+                    <ChildContent>
+                       <ActivityDetails Description="@Activity.Description"
+                                        IsWorkOut="Activity.IsWorkOut"
+                                        Recovery="Activity.Recovery"
+                                        WorkoutItems="Activity.WorkoutItems" />
+                    </ChildContent>
+                 </MudExpansionPanel>
+            </MudExpansionPanels>
+     </MudStack>
+</MudPaper>
+</div>
+
+<MudPopover AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
+    <ActivityForm @bind-Show=OpenActivity
+                  Activity=Activity
+                  ActivityChanged="ActivityChanged"
+                  ViewModel="ViewModel" />
+</MudPopover>
+
+@code {
+    [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
+    [Parameter][EditorRequired] public required Activity Activity { get; set; }
+    [Parameter] public required EventCallback<Activity> ActivityChanged { get; set; }
+    private bool OpenActivity = false;
+
+    private ActivityType? actType;
+    private string ActivityColor = "";
+    private string Icon = "";
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        actType = ActivityType.GetActivityType(Activity.WorkoutType);
+        Icon = actType.Icon;
+        ActivityColor = actType.Color;
+    }
+
+    private void OnRightClick(MouseEventArgs args)
+    {
+        if (args.Button == 2)
+            OpenActivity = true;
+    }
+}
