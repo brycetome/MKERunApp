@@ -1,11 +1,10 @@
 ﻿<style>
     @($"#chip-{Activity.Id.ToString()} .mud-icon-root {{ color: {ActivityColor} !important;{"}"}")
 
-    .reset-padding .mud-expand-panel-header
+    .reset-header-padding .mud-expand-panel-header
     {
         padding: 0 !important;
     }
-
 </style>
 @if(Activity.IsWorkOut)
 {
@@ -31,7 +30,7 @@
                                 Style="background-color:transparent;">
                  <MudExpansionPanel Dense
                                     DisableGutters
-                                    Class="reset-padding"
+                                    Class="reset-header-padding"
                                     Style="background-color:transparent;"
                                     HideIcon="@(Activity.Description == "" && !Activity.IsWorkOut)">
                     <TitleContent>
