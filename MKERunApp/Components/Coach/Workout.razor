@@ -50,7 +50,12 @@
 
     private void ClickAdd()
     {
-        WorkoutItems.Add(new WorkoutItem());
+        var newItem = new WorkoutItem();
+        var nextMaxOrder = 0;
+        if (WorkoutItems.Count() > 0)
+            nextMaxOrder = WorkoutItems.Max(item => item.Order) + 1;
+        newItem.Order = nextMaxOrder;
+        WorkoutItems.Add(newItem);
         WorkoutItemsChanged.InvokeAsync(WorkoutItems);
         _container?.Refresh();
     }
