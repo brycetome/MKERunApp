@@ -22,13 +22,13 @@
 <div id="@($"chip-{Activity.Id.ToString()}")">
 <MudPaper Class="mud-background px-1">
     <MudStack Spacing="0">
-                                <MudToolBar WrapContent Dense DisableGutters Class="pt-1" Style="min-height:0">
-                                                        <MudIcon Icon="@Icon"/>
-                            @foreach(var group in Activity.Groups)
-                            {
-                                <div class="mr-1"><MudChip Variant=Variant.Text Text="@group.Name"/></div>
-                            }
-                        </MudToolBar>
+            <MudToolBar WrapContent Dense DisableGutters Class="pt-1" Style="min-height:0">
+                                            <MudIcon Icon="@Icon"/>
+                @foreach(var group in Activity.Groups)
+                {
+                    <div class="mr-1"><MudChip Variant=Variant.Text Text="@group.Name"/></div>
+                }
+            </MudToolBar>
             <MudExpansionPanels Dense
                                 Elevation="0"
                                 DisableGutters
@@ -47,44 +47,10 @@
                         </MudStack>
                     </TitleContent>
                     <ChildContent>
-                        @if(Activity.Description != "")
-                        {
-                            <MudTextField Value="@Activity.Description"
-                                            Label="Description"
-                                            ReadOnly
-                                            AutoGrow
-                                            DisableUnderLine
-                                            Variant="Variant.Filled"
-                                            Margin=Margin.Dense />
-                        }
-                        @if (Activity.IsWorkOut)
-                        {
-                            <MudTextField Value="@Activity.Recovery"
-                                                    Label="Recovery"
-                                                    ReadOnly
-                                                    AutoGrow
-                                                    DisableUnderLine
-                                                    Variant="Variant.Filled"
-                                                    Margin=Margin.Dense />
-                            <MudField Variant="Variant.Filled"
-                                    Margin="Margin.Dense"
-                                    DisableUnderLine
-                                    Label="Workout Specs">
-                                <MudStack Spacing="1" Class="pt-2">
-                                    @foreach (var workItem in Activity.WorkoutItems.OrderBy(item => item.Order))
-                                    {
-                                        var workItemType = ActivityType.GetActivityType(workItem.WorkoutType);
-                                        var distanceString = workItem.Distance is null ? "" : $" / {workItem.Distance} {workItem.DistanceMeasurment}";
-                                        <MudStack Row AlignItems="AlignItems.Center">
-                                            <MudTooltip Text="@workItemType.Name">
-                                                <MudIcon Size="Size.Small" Icon="@workItemType.Icon" />
-                                            </MudTooltip>
-                                            <MudText>@($"{workItem.Time}{distanceString}")</MudText>
-                                        </MudStack>
-                                    }
-                                </MudStack>
-                            </MudField>
-                        }
+                       <ActivityDetails Description="Activity.Description"
+                                        IsWorkOut="Activity.IsWorkOut"
+                                        Recovery="Activity.Recovery"
+                                        WorkoutItems="Activity.WorkoutItems" />
                     </ChildContent>
                  </MudExpansionPanel>
             </MudExpansionPanels>

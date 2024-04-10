@@ -1,0 +1,45 @@
+﻿@if (!string.IsNullOrEmpty(Description))
+{
+    <MudTextField Value="@Description"
+                  Label="Description"
+                  ReadOnly
+                  AutoGrow
+                  DisableUnderLine
+                  Variant="Variant.Filled"
+                  Margin=Margin.Dense />
+}
+@if (IsWorkOut)
+{
+    <MudTextField Value="@Recovery"
+                  Label="Recovery"
+                  ReadOnly
+                  AutoGrow
+                  DisableUnderLine
+                  Variant="Variant.Filled"
+                  Margin=Margin.Dense />
+    <MudField Variant="Variant.Filled"
+              Margin="Margin.Dense"
+              DisableUnderLine
+              Label="Workout Specs">
+        <MudStack Spacing="1" Class="pt-2">
+            @foreach (var workItem in WorkoutItems.OrderBy(item => item.Order))
+            {
+                var workItemType = ActivityType.GetActivityType(workItem.WorkoutType);
+                var distanceString = workItem.Distance is null ? "" : $" / {workItem.Distance} {workItem.DistanceMeasurment}";
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudTooltip Text="@workItemType.Name">
+                        <MudIcon Size="Size.Small" Icon="@workItemType.Icon" />
+                    </MudTooltip>
+                    <MudText>@($"{workItem.Time}{distanceString}")</MudText>
+                </MudStack>
+            }
+        </MudStack>
+    </MudField>
+}
+
+@code {
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string Recovery { get; set; } = "";
+    [Parameter] public bool IsWorkOut { get; set; }
+    [Parameter] public IEnumerable<WorkoutItem> WorkoutItems { get; set; } = [];
+}
