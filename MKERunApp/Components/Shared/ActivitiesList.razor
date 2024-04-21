@@ -10,7 +10,7 @@
     @foreach (Activity act in Activities)
     {
         var actType = ActivityType.GetActivityType(act.WorkoutType);
-        <MudExpansionPanel Dense Style="@(actType.GetBackgroundColorCSS(act.IsWorkOut))">
+        <MudExpansionPanel Dense Style="@(actType.GetBackgroundColorCSS(act.IsWorkOut))" HideIcon="@(act.Description == "" && !act.IsWorkOut)">
             <TitleContent>
                 <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                     <IconText Icon="@actType.Icon"
@@ -39,13 +39,16 @@
                 </MudStack>
             </TitleContent>
             <ChildContent>
-                <MudDivider />
-                <div class="mb-2 mt-2">
-                    <ActivityDetails Description="@act.Description"
-                                     Recovery="@act.Recovery"
-                                     IsWorkOut="act.IsWorkOut"
-                                     WorkoutItems="act.WorkoutItems" />
-                </div>
+                @if (act.Description != "" || act.IsWorkOut)
+                {
+                    <MudDivider />
+                    <div class="mb-2 mt-2">
+                        <ActivityDetails Description="@act.Description"
+                                         Recovery="@act.Recovery"
+                                         IsWorkOut="act.IsWorkOut"
+                                         WorkoutItems="act.WorkoutItems" />
+                    </div>
+                }
             </ChildContent>
         </MudExpansionPanel>
     }

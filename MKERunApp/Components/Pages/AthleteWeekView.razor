@@ -1,0 +1,62 @@
+﻿@page "/Week"
+@using MKERunApp.Components.Calendar
+@inject IDbContextFactory<ApplicationDbContext> factory
+
+<MudPaper Class="py-2" Style="margin-inline:-10px">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceAround">
+        @foreach (var weekday in DaysOfTheWeek)
+        {
+            <MudChip Size="Size.Medium"
+                     OnClick="() => ClickedDay(weekday)"
+                     DisableRipple
+                     Text="@weekday.ToString("dddd")[0].ToString()"
+                     Variant="@(SelectedDay.Day == weekday.Day ? Variant.Filled : Variant.Outlined)"
+                     Color="Color.Primary" />
+        }
+    </MudStack>
+    <ActivitiesList Activities="activities" />
+</MudPaper>
+
+@code {
+    [Parameter] public TeamGroup Group { get; set; }
+
+    private IEnumerable<Activity> activities = [];
+
+    private DateTime SelectedDay = DateTime.Today;
+    private List<DateTime> DaysOfTheWeek = [];
+    private DateTime today = DateTime.Today;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // Calculate the start of the current week (Monday)
+        DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
+
+
+        // Add the day numbers to the list
+        for (int i = 0; i < 7; i++)
+        {
+            DateTime day = startOfWeek.AddDays(i);
+            DaysOfTheWeek.Add(day);
+        }
+    }
+
+    private async Task ClickedDay(DateTime day)
+    {
+        try
+        {
+            SelectedDay = day;
+            using var ctx = factory.CreateDbContext();
+            activities = await ctx.Activity
+                                .Include(act => act.WorkoutItems)
+                                .Include(act => act.Groups)
+                                .Where(act => act.DayAndTime.Date == SelectedDay.Date && act.Groups.Any(g => g.Id == Group.Id))
+                                .ToListAsync();
+            await ctx.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            var test = 1;
+        }
+    }
+}

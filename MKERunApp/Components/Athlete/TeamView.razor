@@ -1,45 +1,105 @@
 ﻿@using MKERunApp.Components.Notifications
 @inject ISnackbar Snackbar
 @inject IDbContextFactory<ApplicationDbContext> factory
+@inject IJSRuntime JSRuntime
 @inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavMan
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudStack Spacing="4">
-    <MudGrid>
-        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
-            <MudPaper Class="pa-2" Style="width:100%">
-                <MudStack Row AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.h4"><b>Teams</b></MudText>
-                    <TeamSelector SelectedTeam="SelectedTeam" SelectedTeamChanged=ChangeTeam Teams="Teams" />
-                </MudStack>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
+<MudStack Justify="Justify.SpaceBetween" Style="height: 100vh;margin-inline:-5px">
+    <MudStack Spacing="4">
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+                <MudStack>
+                    <MudPaper Class="pa-2 mud-background-gray">
+                        @* <TeamSelector SelectedTeam="SelectedTeam" SelectedTeamChanged=ChangeTeam Teams="Teams" /> *@
+                        @if (SelectedTeam == null)
+                        {
+                            <MudText>Select a team from the user page.</MudText>
+                        }
+                        else
+                        {
+                            <div style="color: #c9a853;">
+                                <MudText Typo="Typo.h4" Align="Align.Center"><b>@SelectedTeam.Name</b></MudText>
+                            </div>
+                            <MudText Typo="Typo.body1" Align="Align.Center"><b>@Athlete?.Group?.Name</b></MudText>
+                        }
 
-    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
-        <MudText Typo="Typo.h3">Today</MudText>
-        <MudHidden Breakpoint="Breakpoint.SmAndUp">
-            <NotifactionsBell />
-        </MudHidden>
+                    </MudPaper>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="0">
+            @if (today == SelectedDay)
+            {
+                <MudText Typo="Typo.h4"><b>Today</b></MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h4"><b>@SelectedDay.ToString("dddd")</b></MudText>
+            }
+
+            <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIconButton OnClick="Refresh" Icon="@Icons.Material.Outlined.Refresh" />
+                    <NotifactionsBell />
+                </MudStack>
+            </MudHidden>
+        </MudStack>
+
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
+                @if (ViewModel != null && Athlete?.Group != null)
+                {
+                    <ActivitiesList Activities="activities" GroupName="@Athlete.Group.Name" />
+                }
+            </MudItem>
+        </MudGrid>
     </MudStack>
 
-    <MudGrid>
-        <MudItem xs="12" sm="12" md="6" lg="4" xl="3">
-            @if (DayActivities != null && Athlete?.Group != null)
-            {
-                <ActivitiesList Activities="activities" GroupName="@Athlete.Group.Name" />
-            }
-        </MudItem>
-    </MudGrid>
+    <MudPaper Class="pa-2" Elevation="25" Style="@("width:100%;" + (IsiOS ? "margin-bottom: 112px;" : "margin-bottom: 72px;"))">
+        @if (ViewModel != null)
+        {
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceAround">
+                @foreach (var weekday in DaysOfTheWeek)
+                {
+                    <MudChip Size="Size.Medium"
+                             OnClick="() => ClickedDay(weekday)"
+                             Text="@weekday.ToString("dddd")[0].ToString()"
+                             Variant="@(SelectedDay.Day == weekday.Day ? Variant.Filled : Variant.Outlined)"
+                             Color="Color.Dark" />
+                }
+            </MudStack>
+        }
+    </MudPaper>
 </MudStack>
-
 
 @code {
     private IEnumerable<Team> Teams = [];
     private Team? SelectedTeam;
     private TeamAthlete? Athlete;
-    private CalendarDayActivityViewModel? DayActivities;
+    private CalendarDayActivityViewModel? ViewModel;
     private IEnumerable<Activity> activities = [];
+
+    private DateTime SelectedDay = DateTime.Today;
+    private List<DateTime> DaysOfTheWeek = [];
+    private DateTime today = DateTime.Today;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // Calculate the start of the current week (Monday)
+        DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
+
+
+        // Add the day numbers to the list
+        for (int i = 0; i < 7; i++)
+        {
+            DateTime day = startOfWeek.AddDays(i);
+            DaysOfTheWeek.Add(day);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,6 +119,18 @@
         StateHasChanged();
     }
 
+    bool IsiOS { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            IsiOS = await JSRuntime.InvokeAsync<bool>("detectiOS");
+            StateHasChanged();
+        }
+    }
+
     private async Task ChangeTeam(Team? team)
     {
         SelectedTeam = team;
@@ -67,12 +139,33 @@
         Athlete = user.AthleteTeams.Where(athTeam => athTeam.TeamId == team.Id).FirstOrDefault();
         try
         {
-            DayActivities = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team);
-            activities = DayActivities.GetActivitiesForGroup(Athlete.Group);
+            ViewModel = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team);
+            await ClickedDay(today);
         }
         catch
         {
             Snackbar.Add("Failed to load the activities.", Severity.Error);
         }
+    }
+
+    private async Task ClickedDay(DateTime day)
+    {
+        try
+        {
+            if (ViewModel == null || Athlete?.Group == null)
+                throw new NullReferenceException("ViewModel or athlete was not in a group. Set these before changing the day.");
+            SelectedDay = day;
+            await ViewModel.ChangeDay(day.ToUniversalTime());
+            activities = ViewModel.GetActivitiesForGroup(Athlete.Group);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Failed to load the activities.", Severity.Error);
+        }
+    }
+
+    private void Refresh()
+    {
+        NavMan.Refresh(forceReload: true);
     }
 }
