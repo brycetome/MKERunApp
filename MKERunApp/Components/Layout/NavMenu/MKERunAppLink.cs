@@ -12,14 +12,14 @@ namespace MKERunApp.Components.Layout.NavMenu
 
         public static readonly MKERunAppLink[] AllNavLinks =
         [
-            new MKERunAppLink("/", Icons.Material.Filled.Home),
+            new MKERunAppLink("/", Icons.Material.Filled.Today),
             new MKERunAppLink("/CoachedTeams", Icons.Material.Filled.Sports),
             new MKERunAppLink("/User", Icons.Material.Filled.AccountCircle)
         ];
 
         public static readonly MKERunAppLink[] MobileNavLinks =
         [
-            new MKERunAppLink("/", Icons.Material.Filled.Home),
+            new MKERunAppLink("/", Icons.Material.Filled.Today),
             new MKERunAppLink("/User", Icons.Material.Filled.AccountCircle)
         ];
     }
