@@ -1,4 +1,9 @@
-﻿@if (!string.IsNullOrEmpty(Description))
+﻿@inject IDbContextFactory<ApplicationDbContext> factory
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISnackbar Snackbar
+
+@if (!string.IsNullOrEmpty(Description))
 {
     <MudTextField Value="@Description"
                   Label="Description"
@@ -47,6 +52,26 @@
             </MudStack>
         </MudField>
     }
+
+    @if (Report != null)
+    {
+        <MudTextField @bind-Value="Report.Notes"
+                      Label="My Splits & Notes"
+                      AutoGrow
+                      DisableUnderLine
+                      Variant="Variant.Filled"
+                      Margin=Margin.Dense />
+
+        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.FlexEnd Spacing="0">
+            <MudIconButton Color="Color.Primary"
+                           Class="bottom-activity-buttons"
+                           Icon="@Icons.Material.Filled.Save"
+                           Edge="Edge.Start"
+                           DisableRipple
+                           DisableElevation
+                           OnClick="ClickSubmit" />
+        </MudStack>
+    }
 }
 
 @code {
@@ -55,5 +80,56 @@
     [Parameter] public bool IsWorkOut { get; set; }
     [Parameter] public bool UseUIWorkOut { get; set; }
     [Parameter] public string WorkoutSpecs { get; set; } = "";
+    [Parameter] public int ActivityId { get; set; }
     [Parameter] public IEnumerable<WorkoutItem> WorkoutItems { get; set; } = [];
+
+    private AthleteActivityReport? Report;
+    private bool newReport;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await base.OnInitializedAsync();
+            using var ctx = factory.CreateDbContext();
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider) ?? throw new NullReferenceException();
+            Report = await ctx.Reports.FirstOrDefaultAsync(r => r.ActivityId == ActivityId && r.UserId == user.Id);
+            if (Report == null)
+            {
+                newReport = true;
+                Report = new()
+                    {
+                        User = user,
+                        UserId = user.Id,
+                        ActivityId = ActivityId
+                    };
+            }
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load athlete notes", Severity.Error);
+        }
+    }
+
+    private async Task ClickSubmit()
+    {
+        try
+        {
+            if (Report == null)
+                throw new NullReferenceException();
+            using var ctx = factory.CreateDbContext();
+            ctx.Entry(Report).State = EntityState.Modified;
+            if(newReport)
+                ctx.Entry(Report).State = EntityState.Added;
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+            Snackbar.Add("Updated your notes", Severity.Success);
+            newReport = false;
+        }
+        catch
+        {
+            Snackbar.Add("Failed to save your notes", Severity.Error);
+        }
+
+    }
 }
