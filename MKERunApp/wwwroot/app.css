@@ -43,3 +43,9 @@ h1:focus {
     margin: 1px;
     min-height: 100px;
 }
+
+.bottom-activity-buttons {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+}

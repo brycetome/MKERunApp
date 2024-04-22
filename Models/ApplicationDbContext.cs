@@ -52,12 +52,6 @@ namespace Models
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<AthleteActivityReport>()
-                .HasOne(r => r.Activity)
-                .WithMany(act => act.ActivityReports)
-                .HasForeignKey(r => r.ActivityId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<AthleteActivityReport>()
                 .HasKey(r => new { r.UserId, r.ActivityId });
 
             base.OnModelCreating(modelBuilder);
