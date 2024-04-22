@@ -36,10 +36,10 @@
     {
         try
         {
-            SelectedTeam = null;
-            StateHasChanged();
+            SelectedTeam = null;;
             if(team is not null)
                 SelectedTeam = await factory.LoadTeam(team.Id);
+            StateHasChanged();
         }
         catch (Exception ex)
         {
