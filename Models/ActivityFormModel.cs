@@ -13,6 +13,8 @@ namespace Models
         public string Description { get; set; } = "";
         public string Recovery { get; set; } = "";
         public bool IsWorkOut { get; set; }
+        public bool UseUIWorkOut { get; set; }
+        public string WorkoutSpecs { get; set; } = "";
         public List<WorkoutItem> WorkoutItems { get; set; } = [];
 
         public ActivityFormModel() { }
@@ -25,6 +27,8 @@ namespace Models
             IsWorkOut = activity.IsWorkOut;
             Recovery = activity.Recovery;
             WorkoutItems.AddRange(activity.WorkoutItems);
+            UseUIWorkOut = activity.UseUIWorkOut;
+            WorkoutSpecs = activity.WorkoutSpecs;
             Title = activity.Title;
             if (activity.WorkoutType is WorkoutType type)
                 SelectedActivityType = GetActivityType(type);
@@ -42,6 +46,8 @@ namespace Models
             activity.Groups.AddRange(selectedGroups);
             activity.WorkoutItems.Clear();
             activity.WorkoutItems.AddRange(WorkoutItems);
+            activity.UseUIWorkOut = UseUIWorkOut;
+            activity.WorkoutSpecs = WorkoutSpecs;
         }
 
         public void ToggleSelectedGroup(TeamGroup group)

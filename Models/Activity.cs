@@ -12,6 +12,8 @@ namespace Models
         public string Description { get; set; } = "";
         public string Recovery { get; set; } = "";
         public bool IsWorkOut { get; set; }
+        public bool UseUIWorkOut { get; set; }
+        public string WorkoutSpecs { get; set; } = "";
         public List<TeamGroup> Groups { get; set; } = [];
         public List<WorkoutItem> WorkoutItems { get; set; } = [];
     }
