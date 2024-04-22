@@ -102,17 +102,35 @@
                                   Variant="Variant.Filled"
                                   Margin=Margin.Dense />
 
-                    <MudField Variant="Variant.Filled"
-                              Margin="Margin.Dense"
-                              DisableUnderLine
-                              Label="Workout Specs">
-                        <Workout @bind-WorkoutItems=FormModel.WorkoutItems />
-                    </MudField>
+                    if (!FormModel.UseUIWorkOut)
+                    {
+                        <MudTextField @bind-Value="FormModel.WorkoutSpecs"
+                                      Label="Workout Specs"
+                                      AutoGrow
+                                      DisableUnderLine
+                                      Variant="Variant.Filled"
+                                      Margin=Margin.Dense />
+                    }
+                    else
+                    {
+                        <MudField Variant="Variant.Filled"
+                                  Margin="Margin.Dense"
+                                  DisableUnderLine
+                                  Label="Workout Specs">
+                            <Workout @bind-WorkoutItems=FormModel.WorkoutItems />
+                        </MudField>
+                    }
                 }
 
 
                 <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
-                    <MudSwitch @bind-Value=FormModel.IsWorkOut Label="Workout" Color="Color.Primary" Class="pl-3" />
+                    <MudStack Row AlignItems="AlignItems.Center">
+                        <MudSwitch @bind-Value=FormModel.IsWorkOut Label="Workout" Color="Color.Primary" Class="pl-3" />
+                        @if (FormModel.IsWorkOut)
+                        {
+                            <MudSwitch @bind-Value=FormModel.UseUIWorkOut Label="Drag & Drop" Color="Color.Primary" />
+                        }
+                    </MudStack>
 
 
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
