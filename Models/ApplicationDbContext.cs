@@ -11,6 +11,7 @@ namespace Models
         public DbSet<TeamGroup> TeamGroup { get; set; }
         public DbSet<TeamInvitation> TeamInvitation { get; set; }
         public DbSet<WorkoutItem> WorkoutItem { get; set; }
+        public DbSet<AthleteActivityReport> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,21 @@ namespace Models
             modelBuilder.Entity<TeamGroup>()
                 .HasMany(group => group.Activities)
                 .WithMany(activity => activity.Groups);
+
+            modelBuilder.Entity<Activity>()
+                .HasMany(act => act.ActivityReports)
+                .WithOne(r => r.Activity)
+                .HasForeignKey(r => r.ActivityId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AthleteActivityReport>()
+                .HasOne(r => r.Activity)
+                .WithMany(act => act.ActivityReports)
+                .HasForeignKey(r => r.ActivityId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AthleteActivityReport>()
+                .HasKey(r => new { r.UserId, r.ActivityId });
 
             base.OnModelCreating(modelBuilder);
         }

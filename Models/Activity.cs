@@ -16,5 +16,6 @@ namespace Models
         public string WorkoutSpecs { get; set; } = "";
         public List<TeamGroup> Groups { get; set; } = [];
         public List<WorkoutItem> WorkoutItems { get; set; } = [];
+        public List<AthleteActivityReport> ActivityReports { get; set; } = [];
     }
 }
