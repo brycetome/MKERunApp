@@ -1,6 +1,9 @@
 ﻿@inject IDbContextFactory<ApplicationDbContext> factory
+@inject ISnackbar Snackbar
 
-<MudStack>
+@if(SelectedTeam != null)
+{
+    <MudStack>
     <MudPaper>
         <MudToolBar WrapContent Dense DisableGutters>
             @foreach (var actType in ActivityType.GetActivityTypes().OrderBy(act => act.Order))
@@ -48,12 +51,13 @@
 
 
                 <div class="calendar-box mud-background">
-                    <CalendarDay ViewModel="new CalendarDayActivityViewModel(Groups, dayDate, factory)" SelectedWorkoutTypes="SelectedWorkoutTypes" />
+                    <CalendarDay ViewModel="new CalendarDayActivityViewModel(SelectedTeam.Groups, dayDate, factory)" SelectedWorkoutTypes="SelectedWorkoutTypes" />
                 </div>
             }
         </section>
     </MudPaper>
 </MudStack>
+}
 
 
 @code {
@@ -61,6 +65,8 @@
 
     private List<ActivityType.WorkoutType> SelectedWorkoutTypes = ((ActivityType.WorkoutType[])Enum.GetValues(typeof(ActivityType.WorkoutType))).ToList();
 
+
+    private Team? SelectedTeam;
     DateTime monthStart;
     DateTime monthEnd;
     int monthsAway = 0;
@@ -69,6 +75,22 @@
     protected override void OnInitialized()
     {
         CreateMonth();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        try
+        {
+            SelectedTeam = null;
+            if (Groups.First() is TeamGroup g)
+                SelectedTeam = await factory.LoadTeam(g.TeamId);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
     }
 
     public static List<string> GetDaysOfWeek()

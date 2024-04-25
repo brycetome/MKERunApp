@@ -1,21 +1,26 @@
 ﻿@inject IDbContextFactory<ApplicationDbContext> factory
+@inject ISnackbar Snackbar
 
-<section class="section-display">
-    @foreach (var weekday in Calendar.GetDaysOfWeek())
-    {
-        <MudText Class="py-2" Align="Align.Center">@weekday</MudText>
-    }
-    @foreach(var day in DaysOfTheWeek)
-    {
-        <div style="padding-inline:1px;">
-            <WeekDayView ViewModel="new CalendarDayActivityViewModel(Groups, day, factory)" DayNumber="day.Day" />
-        </div>
-    }
-</section>
+@if (SelectedTeam != null)
+{
+    <section class="section-display">
+        @foreach (var weekday in Calendar.GetDaysOfWeek())
+        {
+            <MudText Class="py-2" Align="Align.Center">@weekday</MudText>
+        }
+        @foreach (var day in DaysOfTheWeek)
+        {
+            <div style="padding-inline:1px;">
+                <WeekDayView ViewModel="new CalendarDayActivityViewModel(SelectedTeam.Groups, day, factory)" DayNumber="day.Day" />
+            </div>
+        }
+    </section>
+}
 
 @code {
     [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
 
+    private Team? SelectedTeam;
     private List<DateTime> DaysOfTheWeek = [];
     private DateTime today = DateTime.Today;
 
@@ -31,6 +36,22 @@
         {
             DateTime day = startOfWeek.AddDays(i);
             DaysOfTheWeek.Add(day);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        try
+        {
+            SelectedTeam = null; ;
+            if (Groups.First() is TeamGroup g)
+                SelectedTeam = await factory.LoadTeam(g.TeamId);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
         }
     }
 }
