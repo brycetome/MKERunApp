@@ -1,11 +1,16 @@
-﻿<MudChip OnClick="ClickedActivity" Style="@ActivityColorBackground" Icon="@Icon">
-    <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
-        <MudText Typo="Typo.caption">
-            @string.Join(", ", Activity.Groups.Select(g => g.Name))
-        </MudText>
-        <MudText Typo="Typo.caption">@($"{Activity.DurationSeconds / 60}min")</MudText>
-    </MudStack>
-</MudChip>
+﻿
+<MudBadge Visible="Activity?.ActivityReports.Where(r => !string.IsNullOrEmpty(r.Notes)).Any() ?? false" Content="Activity?.ActivityReports.Where(r => !string.IsNullOrEmpty(r.Notes)).Count()" Overlap Color="Color.Warning" Style="width:100% ">
+    <MudChip OnClick="ClickedActivity" Style="@(ActivityColorBackground + "width:100%")" Icon="@Icon">
+        <MudStack Row Justify="Justify.SpaceBetween" Style="width:100%">
+            <MudText Typo="Typo.caption">
+                @string.Join(", ", Activity.Groups.Select(g => g.Name))
+            </MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.caption">@($"{Activity?.DurationSeconds / 60}min")</MudText>
+        </MudStack>
+    </MudChip>
+</MudBadge>
+
 
 <MudPopover AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" Open=OpenActivity Fixed>
     <ActivityForm Show=OpenActivity

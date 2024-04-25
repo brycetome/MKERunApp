@@ -65,6 +65,7 @@ namespace Models.ViewModels
                         .Query()
                         .Include(act => act.Groups)
                         .Include(act => act.WorkoutItems)
+                        .Include(act => act.ActivityReports)
                         .Where(act => act.DayAndTime.Date == day.Date)
                         .ToListAsync();
                     activities.AddRange(activitesForGroups);

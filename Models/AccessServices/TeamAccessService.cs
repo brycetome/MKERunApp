@@ -21,6 +21,11 @@ namespace Models.AccessServices
                 .FirstOrDefaultAsync(t => t.Id == teamId)
                 ?? throw new NullReferenceException("Could not find the team.");
 
+            await ctx.Entry(team).Collection(t => t.Groups).Query()
+                .Include(g => g.Activities)
+                .ThenInclude(act => act.ActivityReports)
+                .LoadAsync();
+
             await ctx.DisposeAsync();
             return team;
         }
