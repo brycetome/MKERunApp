@@ -8,6 +8,7 @@
     <MudTextField Value="@Description"
                   Label="Description"
                   ReadOnly
+                  Disabled
                   AutoGrow
                   DisableUnderLine
                   Variant="Variant.Filled"
@@ -19,6 +20,7 @@
                   Label="Recovery"
                   ReadOnly
                   AutoGrow
+                  Disabled
                   DisableUnderLine
                   Variant="Variant.Filled"
                   Margin=Margin.Dense />
@@ -26,6 +28,8 @@
     {
         <MudTextField @bind-Value="WorkoutSpecs"
                       Label="Workout Specs"
+                      ReadOnly
+                      Disabled
                       AutoGrow
                       DisableUnderLine
                       Variant="Variant.Filled"
@@ -53,16 +57,21 @@
         </MudField>
     }
 }
-@if (Report != null)
+@if (Report != null && !HideReport)
 {
-    <MudTextField @bind-Value="Report.Notes"
+    <MudTextField @bind-Value="ReportNotes"
                   Label="My Splits & Notes"
                   AutoGrow
                   DisableUnderLine
+                  Immediate
                   Variant="Variant.Filled"
-                  Margin=Margin.Dense />
+                  Margin=Margin.Dense
+                  Adornment="@(Report.Notes == ReportNotes ? Adornment.None : Adornment.End)"
+                  AdornmentIcon="@Icons.Material.Filled.Save"
+                  AdornmentColor="Color.Primary"
+                  OnAdornmentClick="ClickSubmit" />
 
-    <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.FlexEnd Spacing="0">
+@*     <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.FlexEnd Spacing="0">
         <MudIconButton Color="Color.Primary"
                        Class="bottom-activity-buttons"
                        Icon="@Icons.Material.Filled.Save"
@@ -70,7 +79,7 @@
                        DisableRipple
                        DisableElevation
                        OnClick="ClickSubmit" />
-    </MudStack>
+    </MudStack> *@
 }
 
 @code {
@@ -80,8 +89,10 @@
     [Parameter] public bool UseUIWorkOut { get; set; }
     [Parameter] public string WorkoutSpecs { get; set; } = "";
     [Parameter] public int ActivityId { get; set; }
+    [Parameter] public bool HideReport { get; set; }
     [Parameter] public IEnumerable<WorkoutItem> WorkoutItems { get; set; } = [];
 
+    private string ReportNotes = "";
     private AthleteActivityReport? Report;
     private bool newReport;
 
@@ -103,6 +114,7 @@
                         ActivityId = ActivityId
                     };
             }
+            ReportNotes = Report.Notes;
         }
         catch
         {
@@ -115,8 +127,9 @@
         try
         {
             if (Report == null)
-                throw new NullReferenceException();
+                return;
             using var ctx = factory.CreateDbContext();
+            Report.Notes = ReportNotes;
             ctx.Entry(Report).State = EntityState.Modified;
             if(newReport)
                 ctx.Entry(Report).State = EntityState.Added;

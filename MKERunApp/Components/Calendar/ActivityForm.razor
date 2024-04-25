@@ -24,157 +24,157 @@
     <MudPaper Style="@Width" Elevation="25">
         <div class="d-flex">
 
-                <MudForm @ref="form" Style="@(FormModel.IsWorkOut ? "width: 450px;" : "width:300px;")"  UserAttributes="@(new() {{"id", Activity?.Id}})">
-                    <MudStack Spacing="1" Class="pa-2">
-                        <div draggable="true" @ondragend="OnDragEnd" @ondragstart="OnDragStart" style="cursor: move">
-                            <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
-                                <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
-                                    <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
-                                    <MudText Class="pl-3"><b>@ViewModel.GetDay.ToShortDateString()</b></MudText>
-                                </MudStack>
-
-                                <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
-                                    @if (Activity?.ActivityReports != null && Activity.ActivityReports.Count > 0)
-                                    {
-                                    <MudBadge Content="Activity.ActivityReports.Count" Overlap Color="Color.Warning" OnClick="() => { OpenReports = !OpenReports; }" Class="cursor-pointer">
-                                            <MudIconButton Color=Color.Info
-                                                           OnClick="() => { OpenReports = !OpenReports; }"
-                                                           Size="Size.Small"
-                                                           Edge="Edge.Start"
-                                                           DisableRipple
-                                                           DisableElevation
-                                                           Icon="@Icons.Material.Outlined.ModeComment" />
-                                        </MudBadge>
-                                    }
-
-                                    <MudIconButton Icon="@Icons.Material.Filled.Close"
-                                                   Color="Color.Default"
-                                                   OnClick="Close"
-                                                   Size="Size.Small"
-                                                   Style="padding: 8px;" />
-
-                                </MudStack>
+            <MudForm @ref="form" Style="@(FormModel.IsWorkOut ? "width: 450px;" : "width:300px;")" UserAttributes="@(new() {{"id", Activity?.Id}})">
+                <MudStack Spacing="1" Class="pa-2">
+                    <div draggable="true" @ondragend="OnDragEnd" @ondragstart="OnDragStart" style="cursor: move">
+                        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
+                            <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
+                                <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
+                                <MudText Class="pl-3"><b>@ViewModel.GetDay.ToShortDateString()</b></MudText>
                             </MudStack>
-                        </div>
 
-                        <MudDivider />
+                            <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
+                                @if (Reports.Count() > 0)
+                                {
+                                    <MudBadge Content="Reports.Count()" Overlap Color="Color.Warning" OnClick="() => { OpenReports = !OpenReports; }" Class="cursor-pointer">
+                                        <MudIconButton Color=Color.Info
+                                                       OnClick="() => { OpenReports = !OpenReports; }"
+                                                       Size="Size.Small"
+                                                       Edge="Edge.Start"
+                                                       DisableRipple
+                                                       DisableElevation
+                                                       Icon="@Icons.Material.Outlined.ModeComment" />
+                                    </MudBadge>
+                                }
 
-                        <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
-                            <MudNumericField @bind-Value="FormModel.Minutes"
-                                             T="int"
-                                             Min="0"
-                                             Label="Time"
-                                             Required
-                                             AdornmentText="min"
-                                             Adornment="Adornment.End"
-                                             Margin=Margin.Dense
-                                             Variant="Variant.Filled"
-                                             DisableUnderLine
-                                             RequiredError="Minutes is required." />
+                                <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                               Color="Color.Default"
+                                               OnClick="Close"
+                                               Size="Size.Small"
+                                               Style="padding: 8px;" />
 
-                            <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
+                            </MudStack>
                         </MudStack>
+                    </div>
 
-                        <MudTextField @bind-Value="FormModel.Title"
-                                      Label="Title"
-                                      DisableUnderLine
-                                      Variant="Variant.Filled"
-                                      Margin=Margin.Dense />
+                    <MudDivider />
 
-                        <MudTextField @bind-Value="FormModel.Description"
-                                      Label="Description"
+                    <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+                        <MudNumericField @bind-Value="FormModel.Minutes"
+                                         T="int"
+                                         Min="0"
+                                         Label="Time"
+                                         Required
+                                         AdornmentText="min"
+                                         Adornment="Adornment.End"
+                                         Margin=Margin.Dense
+                                         Variant="Variant.Filled"
+                                         DisableUnderLine
+                                         RequiredError="Minutes is required." />
+
+                        <ActivitySelector @bind-ActivityType=FormModel.SelectedActivityType />
+                    </MudStack>
+
+                    <MudTextField @bind-Value="FormModel.Title"
+                                  Label="Title"
+                                  DisableUnderLine
+                                  Variant="Variant.Filled"
+                                  Margin=Margin.Dense />
+
+                    <MudTextField @bind-Value="FormModel.Description"
+                                  Label="Description"
+                                  AutoGrow
+                                  DisableUnderLine
+                                  Variant="Variant.Filled"
+                                  Margin=Margin.Dense />
+
+                    <MudField Variant="Variant.Filled"
+                              Margin="Margin.Dense"
+                              DisableUnderLine
+                              Label="Groups">
+                        <MudGrid Class="pa-2">
+                            @foreach (var group in ViewModel.GetGroups)
+                            {
+                                <MudItem md="6" Style="padding:0;">
+                                    <MudCheckBox T="bool"
+                                                 Value="FormModel.GetSelectedGroups.Contains(group)"
+                                                 ValueChanged="_ => FormModel.ToggleSelectedGroup(group)"
+                                                 Label="@group.Name"
+                                                 Dense
+                                                 Size="Size.Small"
+                                                 Color="Color.Primary" />
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    </MudField>
+
+                    @if (FormModel.IsWorkOut)
+                    {
+                        <MudTextField @bind-Value="FormModel.Recovery"
+                                      Label="Recovery"
                                       AutoGrow
                                       DisableUnderLine
                                       Variant="Variant.Filled"
                                       Margin=Margin.Dense />
 
-                        <MudField Variant="Variant.Filled"
-                                  Margin="Margin.Dense"
-                                  DisableUnderLine
-                                  Label="Groups">
-                            <MudGrid Class="pa-2">
-                                @foreach (var group in ViewModel.GetGroups)
-                                {
-                                    <MudItem md="6" Style="padding:0;">
-                                        <MudCheckBox T="bool"
-                                                     Value="FormModel.GetSelectedGroups.Contains(group)"
-                                                     ValueChanged="_ => FormModel.ToggleSelectedGroup(group)"
-                                                     Label="@group.Name"
-                                                     Dense
-                                                     Size="Size.Small"
-                                                     Color="Color.Primary" />
-                                    </MudItem>
-                                }
-                            </MudGrid>
-                        </MudField>
-
-                        @if (FormModel.IsWorkOut)
+                        if (!FormModel.UseUIWorkOut)
                         {
-                            <MudTextField @bind-Value="FormModel.Recovery"
-                                          Label="Recovery"
+                            <MudTextField @bind-Value="FormModel.WorkoutSpecs"
+                                          Label="Workout Specs"
                                           AutoGrow
                                           DisableUnderLine
                                           Variant="Variant.Filled"
                                           Margin=Margin.Dense />
-
-                            if (!FormModel.UseUIWorkOut)
-                            {
-                                <MudTextField @bind-Value="FormModel.WorkoutSpecs"
-                                              Label="Workout Specs"
-                                              AutoGrow
-                                              DisableUnderLine
-                                              Variant="Variant.Filled"
-                                              Margin=Margin.Dense />
-                            }
-                            else
-                            {
-                                <MudField Variant="Variant.Filled"
-                                          Margin="Margin.Dense"
-                                          DisableUnderLine
-                                          Label="Workout Specs">
-                                    <Workout @bind-WorkoutItems=FormModel.WorkoutItems />
-                                </MudField>
-                            }
                         }
+                        else
+                        {
+                            <MudField Variant="Variant.Filled"
+                                      Margin="Margin.Dense"
+                                      DisableUnderLine
+                                      Label="Workout Specs">
+                                <Workout @bind-WorkoutItems=FormModel.WorkoutItems />
+                            </MudField>
+                        }
+                    }
 
 
-                        <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
-                            <MudStack Row AlignItems="AlignItems.Center">
-                                <MudSwitch @bind-Value=FormModel.IsWorkOut Label="Workout" Color="Color.Primary" Class="pl-3" />
-                                @if (FormModel.IsWorkOut)
-                                {
-                                    <MudSwitch @bind-Value=FormModel.UseUIWorkOut Label="Drag & Drop" Color="Color.Primary" />
-                                }
-                            </MudStack>
+                    <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <MudSwitch @bind-Value=FormModel.IsWorkOut Label="Workout" Color="Color.Primary" Class="pl-3" />
+                            @if (FormModel.IsWorkOut)
+                            {
+                                <MudSwitch @bind-Value=FormModel.UseUIWorkOut Label="Drag & Drop" Color="Color.Primary" />
+                            }
+                        </MudStack>
 
 
-                            <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
-                                @if (Activity != null)
-                                {
-                                    <MudIconButton Color=Color.Secondary
-                                                   Class="bottom-activity-buttons"
-                                                   OnClick="ClickDelete"
-                                                   Edge="Edge.Start"
-                                                   DisableRipple
-                                                   DisableElevation
-                                                   Icon="@Icons.Material.Outlined.Delete" />
-                                }
-
-                                <MudIconButton Color="Color.Primary"
+                        <MudStack Row AlignItems="AlignItems.Center" Spacing="0">
+                            @if (Activity != null)
+                            {
+                                <MudIconButton Color=Color.Secondary
                                                Class="bottom-activity-buttons"
-                                               Icon="@Icons.Material.Filled.Save"
+                                               OnClick="ClickDelete"
                                                Edge="Edge.Start"
                                                DisableRipple
                                                DisableElevation
-                                               OnClick="ClickSubmit" />
-                            </MudStack>
+                                               Icon="@Icons.Material.Outlined.Delete" />
+                            }
+
+                            <MudIconButton Color="Color.Primary"
+                                           Class="bottom-activity-buttons"
+                                           Icon="@Icons.Material.Filled.Save"
+                                           Edge="Edge.Start"
+                                           DisableRipple
+                                           DisableElevation
+                                           OnClick="ClickSubmit" />
                         </MudStack>
                     </MudStack>
-                </MudForm>
+                </MudStack>
+            </MudForm>
 
 
 
-            @if (Activity?.ActivityReports != null && Activity.ActivityReports.Count > 0 && OpenReports)
+            @if (Reports.Count() > 0 && OpenReports)
             {
                 <MudDivider Vertical FlexItem Class="" />
 
@@ -188,17 +188,17 @@
                         <MudText>Splits & Notes</MudText>
                     </MudStack>
 
-                        @foreach (var report in Activity.ActivityReports)
-                        {
-                            <MudTextField Variant="Variant.Filled"
-                                          ReadOnly
-                                          AutoGrow
-                                          FullWidth
-                                          Value="@report.Notes"
-                                          Margin="Margin.Dense"
-                                          DisableUnderLine
-                                          Label="@report.User.Email" />
-                        }
+                    @foreach (var report in Reports)
+                    {
+                        <MudTextField Variant="Variant.Filled"
+                                        ReadOnly
+                                        AutoGrow
+                                        FullWidth
+                                        Value="@report.Notes"
+                                        Margin="Margin.Dense"
+                                        DisableUnderLine
+                                        Label="@report.User.Email" />
+                    }
                 </MudStack>
 
             }
@@ -213,6 +213,9 @@
     [Parameter] public EventCallback<Activity?> ActivityChanged { get; set; }
 
     [Parameter][EditorRequired] public required CalendarDayActivityViewModel ViewModel { get; set; }
+
+
+    private IEnumerable<AthleteActivityReport> Reports => Activity?.ActivityReports.Where(r => !string.IsNullOrEmpty(r.Notes)) ?? [];
 
     private ActivityFormModel FormModel = new();
     private MudForm? form;
