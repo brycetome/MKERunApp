@@ -58,7 +58,7 @@ if (builder.Environment.IsProduction())
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(connectionString, x => x.MigrationsAssembly("LocalMigrations"));
+    options.UseNpgsql(connectionString, x => x.MigrationsAssembly("ServerMigrations"));
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

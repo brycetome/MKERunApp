@@ -35,6 +35,21 @@ namespace Models
                 .HasForeignKey(grop => grop.TeamId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Team>()
+                .HasMany(team => team.Coaches)
+                .WithMany(coach => coach.CoachedTeams);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(u => u.DefaultAthelteTeam)
+                .WithMany()
+                .HasForeignKey(u => u.DefaultAthelteTeamId);
+
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(u => u.DefaultCoachTeam)
+                .WithMany()
+                .HasForeignKey(u => u.DefaultCoachTeamId);
+
             modelBuilder.Entity<TeamGroup>()
                 .HasMany(group => group.Athletes)
                 .WithOne(ath => ath.Group)

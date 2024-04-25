@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ServerMigrations.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240422180750_AthleteReports")]
+    partial class AthleteReports
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,21 +38,6 @@ namespace ServerMigrations.Migrations
                     b.HasIndex("GroupsId");
 
                     b.ToTable("ActivityTeamGroup");
-                });
-
-            modelBuilder.Entity("ApplicationUserTeam", b =>
-                {
-                    b.Property<int>("CoachedTeamsId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("CoachesId")
-                        .HasColumnType("text");
-
-                    b.HasKey("CoachedTeamsId", "CoachesId");
-
-                    b.HasIndex("CoachesId");
-
-                    b.ToTable("ApplicationUserTeam");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -328,11 +316,16 @@ namespace ServerMigrations.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Team");
                 });
@@ -452,21 +445,6 @@ namespace ServerMigrations.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ApplicationUserTeam", b =>
-                {
-                    b.HasOne("Models.Team", null)
-                        .WithMany()
-                        .HasForeignKey("CoachedTeamsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("CoachesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -552,6 +530,13 @@ namespace ServerMigrations.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Models.Team", b =>
+                {
+                    b.HasOne("Models.ApplicationUser", null)
+                        .WithMany("CoachedTeams")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("Models.TeamAthlete", b =>
                 {
                     b.HasOne("Models.TeamGroup", "Group")
@@ -623,6 +608,8 @@ namespace ServerMigrations.Migrations
                     b.Navigation("ActivityReports");
 
                     b.Navigation("AthleteTeams");
+
+                    b.Navigation("CoachedTeams");
 
                     b.Navigation("Invitations");
                 });
