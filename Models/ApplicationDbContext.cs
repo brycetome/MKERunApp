@@ -66,6 +66,12 @@ namespace Models
                 .HasForeignKey(r => r.ActivityId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Activity>()
+                .HasMany(act => act.WorkoutItems)
+                .WithOne(r => r.Activity)
+                .HasForeignKey(r => r.ActivityId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<AthleteActivityReport>()
                 .HasKey(r => new { r.UserId, r.ActivityId });
 
