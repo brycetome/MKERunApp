@@ -2,9 +2,12 @@
     .remove-padding .mud-input-root.mud-input-root-filled.mud-input-root-adorned-end.mud-input-root-margin-dense.mud-select-input {
         padding-top: 6px !important;
     }
+    
+    @($"#adornment-{newUuid} .mud-input-adornment svg path {"{"} color: {ActivityType.Color} !important;{"}"}")
 </style>
 
-<MudSelect T="ActivityType"
+<div id="@($"adornment-{newUuid}")">
+   <MudSelect T="ActivityType"
            Value=ActivityType
            ValueChanged="(act) => ActivityChanged(act)"
            Dense
@@ -13,22 +16,32 @@
            Label=@(ShowLabel ? "Activity Type" : null)
            DisableUnderLine
            Variant="Variant.Filled"
-           Class="@(ShowLabel ? "" : "remove-padding")">
-    @foreach (var ActivityType in ActivityType.GetActivityTypes())
+           AdornmentColor="Color.Surface"
+           Class="@((ShowLabel ? "" : "remove-padding"))">
+    @foreach (var ActivityTypeOption in ActivityType.GetActivityTypes())
     {
-        <MudSelectItem Value="ActivityType" Icon="@ActivityType.Icon">
+        <MudSelectItem Value="ActivityTypeOption" Icon="@ActivityTypeOption.Icon">
             <MudStack Row AlignItems="AlignItems.Center" Spacing="0" Justify="Justify.SpaceBetween">
-                <MudText>@ActivityType.Name</MudText>
-                <MudIcon Icon="@ActivityType.Icon" />
+                <MudText>@ActivityTypeOption.Name</MudText>
+                <style>
+                    @($" .mud-list-item #selector-{ActivityTypeOption.Type} {{ color: {ActivityTypeOption.Color} !important;{"}"}")
+                </style>
+                <MudIcon Icon="@ActivityTypeOption.Icon" id="@($"selector-{ActivityTypeOption.Type}")" />
             </MudStack>
         </MudSelectItem>
     }
-</MudSelect>
+</MudSelect> 
+</div>
+
 
 @code {
-    [Parameter] public ActivityType? ActivityType { get; set; }
+    [Parameter]
+    public ActivityType ActivityType { get; set; } = ActivityType.GetActivityType(ActivityType.WorkoutType.Run);
     [Parameter] public EventCallback<ActivityType?> ActivityTypeChanged { get; set; }
     [Parameter] public bool ShowLabel { get; set; } = true;
+
+    private MudSelect<ActivityType>? select;
+    Guid newUuid = Guid.NewGuid();
 
     private async Task ActivityChanged(ActivityType activityType)
     {
