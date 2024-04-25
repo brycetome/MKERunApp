@@ -6,7 +6,7 @@ namespace Models
     {
         public int Id { get; set; }
         public DateTime DayAndTime { get; set; }
-        public WorkoutType WorkoutType { get; set; }
+        public WorkoutType WorkoutType { get; set; } = WorkoutType.Run;
         public double DurationSeconds { get; set; }
         public string? Title { get; set; }
         public string Description { get; set; } = "";

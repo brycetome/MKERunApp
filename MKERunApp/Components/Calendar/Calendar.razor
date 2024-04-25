@@ -18,8 +18,16 @@
                              Style="" />
                 </div>
             }
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" OnClick="() => { ShowAddWeek = !ShowAddWeek;}" Color="Color.Tertiary" DisableElevation Class="mr-2">New Week</MudButton>
         </MudToolBar>
     </MudPaper>
+
+    @if(ShowAddWeek)
+    {
+        <MKERunApp.Components.Coach.MinutesEdit Groups="Groups" />
+    }
+
 
     <MudPaper>
         <MudStack Row AlignItems="AlignItems.Center" Class="pa-4">
@@ -65,7 +73,7 @@
 
     private List<ActivityType.WorkoutType> SelectedWorkoutTypes = ((ActivityType.WorkoutType[])Enum.GetValues(typeof(ActivityType.WorkoutType))).ToList();
 
-
+    private bool ShowAddWeek;
     private Team? SelectedTeam;
     DateTime monthStart;
     DateTime monthEnd;

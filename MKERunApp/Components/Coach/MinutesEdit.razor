@@ -1,0 +1,234 @@
+﻿@using MKERunApp.Components.Calendar
+@using Models
+
+@inject IDbContextFactory<ApplicationDbContext> factory
+@inject ISnackbar Snackbar
+@inject NavigationManager NavMan
+
+<MudTable Items="GroupEntries">
+
+
+    <HeaderContent>
+        <MudTh>Group Name</MudTh>
+        @foreach (var weekday in Calendar.GetDaysOfWeek())
+        {
+            <MudTh>@weekday</MudTh>
+        }
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd>@context.Group.Name</MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+            <MudNumericField @bind-Value="@context.Monday.DurationSeconds"
+                             Min="0"
+                             Step="5"
+                             Margin="Margin.Dense"
+                             Variant="Variant.Filled"
+                             DisableUnderLine
+                             Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Monday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Monday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Tuesday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Tuesday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Tuesday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Wedensday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Wedensday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Wedensday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Thursday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Thursday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Thursday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Friday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Friday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Friday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Saturday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2" />
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Saturday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Saturday.WorkoutType = t.Type; }"
+                                  ShowLabel=false />
+            </MudStack>
+
+        </MudTd>
+        <MudTd>
+            <MudStack Row AlignItems="AlignItems.Center">
+                <MudNumericField @bind-Value="@context.Sunday.DurationSeconds"
+                                 Min="0"
+                                 Step="5"
+                                 Margin="Margin.Dense"
+                                 Variant="Variant.Filled"
+                                 DisableUnderLine
+                                 Class="remove-padding2"/>
+                <ActivitySelector ActivityType=ActivityType.GetActivityType(context.Sunday.WorkoutType)
+                                  ActivityTypeChanged="(ActivityType t) => { context.Sunday.WorkoutType = t.Type; }"
+                                  ShowLabel=false/>
+            </MudStack>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudStack Row Justify="Justify.FlexEnd">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveNewWeek">Save Week</MudButton>
+</MudStack>
+
+
+@code {
+    [Parameter] public IEnumerable<TeamGroup> Groups { get; set; } = [];
+
+    private List<GroupWeekEntry> GroupEntries = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        GroupEntries = Groups.Select(g => new GroupWeekEntry(g)).ToList();
+    }
+
+    private async Task SaveNewWeek()
+    {
+        try
+        {
+            using var ctx = factory.CreateDbContext();
+            // Calculate the start of the current week (Monday)
+
+            foreach (var entry in GroupEntries)
+            {
+                ctx.Attach(entry.Group);
+                if (entry.Monday.DurationSeconds > 0)
+                {
+                    entry.Monday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Monday);
+                }
+                if (entry.Tuesday.DurationSeconds > 0)
+                {
+                    entry.Tuesday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Tuesday);
+                }
+                if (entry.Wedensday.DurationSeconds > 0)
+                {
+                    entry.Wedensday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Wedensday);
+                }
+                if (entry.Thursday.DurationSeconds > 0)
+                {
+                    entry.Thursday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Thursday);
+                }
+                if (entry.Friday.DurationSeconds > 0)
+                {
+                    entry.Friday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Friday);
+                }
+                if (entry.Saturday.DurationSeconds > 0)
+                {
+                    entry.Saturday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Saturday);
+                }
+                if (entry.Sunday.DurationSeconds > 0)
+                {
+                    entry.Sunday.DurationSeconds *= 60;
+                    entry.Group.Activities.Add(entry.Sunday);
+                }
+            }
+            await ctx.SaveChangesAsync();
+            await ctx.DisposeAsync();
+            Snackbar.Add("Savedn the week", Severity.Success);
+            NavMan.Refresh(forceReload: true);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Failed to save the week. Refresh and try again.", Severity.Error);
+        }
+
+    }
+
+    public class GroupWeekEntry(TeamGroup group)
+    {
+        static DateTime startOfWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
+        public TeamGroup Group = group;
+        public Activity Monday = new()
+            {
+                DayAndTime = startOfWeek.ToUniversalTime()
+            };
+        public Activity Tuesday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(1).ToUniversalTime()
+            };
+        public Activity Wedensday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(2).ToUniversalTime()
+            };
+        public Activity Thursday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(3).ToUniversalTime()
+            };
+        public Activity Friday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(4).ToUniversalTime()
+            };
+        public Activity Saturday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(5).ToUniversalTime()
+            };
+        public Activity Sunday = new()
+            {
+                DayAndTime = startOfWeek.AddDays(6).ToUniversalTime()
+            };
+    }
+}
