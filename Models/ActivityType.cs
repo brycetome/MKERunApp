@@ -18,6 +18,7 @@ namespace Models
             Hills = 8,
             LongRun = 9,
             Double =10,
+            Race = 11,
         }
 
         public string Name => name;
@@ -26,8 +27,10 @@ namespace Models
         public WorkoutType Type => type;
         public int Order => order;
 
-        public string GetBackgroundColorCSS(bool IsWorkOut)
+        public string GetBackground(bool IsWorkOut, bool IsRace)
         {
+            if (IsRace)
+                return "   background: \r\n    linear-gradient(0deg, rgba(0, 0, 0) 1.5px, transparent 1.5px) 0 0,\r\n    linear-gradient(0deg, rgba(0, 0, 0) 1.5px, transparent 1.5px) 1.5px 1.5px;\r\n  background-size: 3px 3px;background-color:gray; ";
             if (Color == "" && !IsWorkOut)
                 return "";
             var ActivityColorBackground = "background-color: ";
@@ -72,6 +75,8 @@ namespace Models
                     return new ActivityType(WorkoutType.LongRun, "Long Run", Icons.Material.Filled.DirectionsRun, Colors.Yellow.Default, 5);
                 case WorkoutType.Double:
                     return new ActivityType(WorkoutType.Double, "Double", Icons.Material.Filled.DirectionsRun, Colors.Green.Darken1, 6);
+                case WorkoutType.Race:
+                    return new ActivityType(WorkoutType.Race, "Race", Icons.Material.Filled.SportsScore, "", 11);
                 default:
                     break;
             }

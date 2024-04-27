@@ -20,6 +20,7 @@ namespace MKERunApp.Components.Layout.NavMenu
         public static readonly MKERunAppLink[] MobileNavLinks =
         [
             new MKERunAppLink("/", Icons.Material.Filled.Today),
+            new MKERunAppLink("/athlete-calendar", Icons.Material.Filled.CalendarMonth),
             new MKERunAppLink("/User", Icons.Material.Filled.AccountCircle)
         ];
     }

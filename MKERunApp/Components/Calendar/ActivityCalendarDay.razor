@@ -34,7 +34,7 @@
         base.OnParametersSet();
         var actType = ActivityType.GetActivityType(Activity.WorkoutType);
         Icon = actType.Icon;
-        ActivityColorBackground = actType.GetBackgroundColorCSS(Activity.IsWorkOut);
+        ActivityColorBackground = actType.GetBackground(Activity.IsWorkOut, Activity.WorkoutType == ActivityType.WorkoutType.Race);
     }
 
     private void ClickedActivity()

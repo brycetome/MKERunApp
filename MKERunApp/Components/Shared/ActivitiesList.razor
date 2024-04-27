@@ -10,7 +10,7 @@
     @foreach (Activity act in Activities)
     {
         var actType = ActivityType.GetActivityType(act.WorkoutType);
-        <MudExpansionPanel Dense Style="@(actType.GetBackgroundColorCSS(act.IsWorkOut))">
+        <MudExpansionPanel Dense Style="@(actType.GetBackground(act.IsWorkOut, act.WorkoutType == ActivityType.WorkoutType.Race))">
             <TitleContent>
                 <MudStack Row AlignItems="AlignItems.Center" Justify=Justify.SpaceBetween Spacing="0">
                     <IconText Icon="@actType.Icon"

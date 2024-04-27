@@ -1,0 +1,100 @@
+﻿@page "/athlete-calendar"
+
+@inject ISnackbar Snackbar
+@inject IDbContextFactory<ApplicationDbContext> factory
+@inject IJSRuntime JSRuntime
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavMan
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<style>
+    .mud-picker-calendar-content
+    {
+        justify-content: center;
+    }
+</style>
+
+<MudStack>
+    <MudDatePicker PickerVariant="PickerVariant.Static" Rounded Date=SelectedDay DateChanged="SelectedDayChanged" Color="Color.Dark" Elevation="25" />
+
+    @if (ViewModel != null && Athlete?.Group != null)
+    {
+        @if (activities.Any())
+        {
+            <ActivitiesList Activities="activities" GroupName="@Athlete.Group.Name" />
+        }
+        else
+        {
+            <MudText Align="Align.Center">No activites found for this date.</MudText>
+        }
+    }
+</MudStack>
+
+@code {
+    private IEnumerable<Team> Teams = [];
+    private Team? SelectedTeam;
+    private TeamAthlete? Athlete;
+    private CalendarDayActivityViewModel? ViewModel;
+    private IEnumerable<Activity> activities = [];
+    private DateTime? SelectedDay = DateTime.Today;
+    private DateTime today = DateTime.Today;
+
+    private async Task SelectedDayChanged(DateTime? selectedDay)
+    {
+        SelectedDay = selectedDay;
+        if (selectedDay is DateTime date)
+            await ClickedDay(date);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+            Teams = user.AthleteTeams.Select(at => at.Team);
+            Athlete = user.AthleteTeams.FirstOrDefault(at => at.TeamId == user.DefaultAthelteTeamId);
+            SelectedTeam = Athlete?.Team;
+            if (SelectedTeam is Team team)
+                await ChangeTeam(team);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the User's Teams.", Severity.Error);
+        }
+        StateHasChanged();
+    }
+
+    private async Task ChangeTeam(Team? team)
+    {
+        SelectedTeam = team;
+        var user = await factory.LoadUser(UserManager, AuthenticationStateProvider);
+        Teams = user.AthleteTeams.Select(at => at.Team);
+        Athlete = user.AthleteTeams.Where(athTeam => athTeam.TeamId == team.Id).FirstOrDefault();
+        try
+        {
+            ViewModel = await CalendarDayActivityViewModel.CreateDayFromTeam(factory, team);
+            await ClickedDay(today);
+        }
+        catch
+        {
+            Snackbar.Add("Failed to load the activities.", Severity.Error);
+        }
+    }
+
+    private async Task ClickedDay(DateTime day)
+    {
+        try
+        {
+            if (ViewModel == null || Athlete?.Group == null)
+                throw new NullReferenceException("ViewModel or athlete was not in a group. Set these before changing the day.");
+            SelectedDay = day;
+            await ViewModel.ChangeDay(day.ToUniversalTime());
+            activities = ViewModel.GetActivitiesForGroup(Athlete.Group);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Failed to load the activities.", Severity.Error);
+        }
+    }
+}
